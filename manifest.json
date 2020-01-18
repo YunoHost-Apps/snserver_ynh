@@ -1,0 +1,79 @@
+{
+    "name": "Standard Notes - Syncing Server",
+    "id": "snserver",
+    "packaging_format": 1,
+    "description": {
+        "en": "The Standard Notes syncing server. An end-to-end encrypted note-taking app."
+    },
+    "version": "1.0~ynh1",
+    "url": "https://github.com/standardnotes/syncing-server",
+    "license": "free",
+    "maintainer": {
+        "name": "Fabian Wilkens",
+        "email": "wilkens.fabian+github@gmail.com",
+        "url": "https://github.com/FabianWilkens/snserver_ynh"
+    },
+    "requirements": {
+        "yunohost": ">= 3.5"
+    },
+    "multi_instance": true,
+    "services": [
+	"nginx",
+        "mysql"
+    ],
+    "arguments": {
+        "install" : [
+            {
+                "name": "domain",
+                "type": "domain",
+                "ask": {
+                    "en": "Choose a domain name for snserver",
+		    "fr": "Choisissez un domaine pour Mastodon",
+		    "de": "Wähle einen Domain Namen für snserver"
+                },
+                "example": "example.com"
+            },
+            {
+                "name": "path",
+                "type": "path",
+                "ask": {
+                    "en": "Choose a path for snserver",
+		    "de": "Wähle einen Pfad für snserver"
+                },
+                "example": "/snserver",
+                "default": "/snserver"
+            },
+            {
+                "name": "admin",
+                "type": "user",
+                "ask": {
+                    "en": "Choose an admin user",
+		    "fr": "Choisissez l'administrateur",
+		    "de": "Wähle einen Admin Benutzer"
+                },
+                "example": "johndoe"
+            },
+            {
+                "name": "is_public",
+                "type": "boolean",
+                "ask": {
+                    "en": "Is it a public application?",
+		    "fr": "Est-ce une application publique ?",
+		    "de": "Ist die Application Öffendlich?"
+                },
+                "default": true
+            },
+            {
+                "name": "language",
+                "type": "string",
+                "ask": {
+                    "en": "Choose the application language",
+		    "fr": "Choisissez la langue de l'application",
+		    "de": "Wähle die Application Sprache"
+                },
+                "choices": ["en", "fr", "de"],
+                "default": "en"
+            }
+        ]
+    }
+}

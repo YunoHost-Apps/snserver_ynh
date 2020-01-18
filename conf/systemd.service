@@ -1,0 +1,26 @@
+[Unit]
+Description=__APP__ service
+After=network.target
+
+[Service]
+Type=simple
+User=__APP__
+Group=__APP__
+WorkingDirectory=__FINALPATH__/live
+Environment=RAILS_ENV=production
+Environment="PORT=__PORT_WEB__"
+#ExecStart=/opt/yunohost/snserver/rails s >> /var/log/snserver/snserver.log 2>&1
+#ExecStart=__FINALPATH__/bin/rails s -e production >> /var/log/__APP__/__APP__.log 2>&1
+ExecStart=/opt/rbenv/versions/2.6.5/bin/bundle exec puma -C config/puma.rb
+ExecReload=/bin/kill -SIGUSR1 $MAINPID
+StandardError=syslog
+Restart=always
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+
+
