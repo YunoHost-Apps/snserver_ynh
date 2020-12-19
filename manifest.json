@@ -5,7 +5,7 @@
     "description": {
         "en": "The Standard Notes syncing server. An end-to-end encrypted note-taking app."
     },
-    "version": "1.0~ynh1",
+    "version": "3.13.6~ynh1",
     "url": "https://github.com/standardnotes/syncing-server",
     "license": "free",
     "maintainer": {
@@ -14,7 +14,7 @@
         "url": "https://github.com/FabianWilkens/snserver_ynh"
     },
     "requirements": {
-        "yunohost": ">= 3.5"
+        "yunohost": ">= 4.0"
     },
     "multi_instance": true,
     "services": [
@@ -32,16 +32,6 @@
 		    "de": "Wähle einen Domain Namen für snserver"
                 },
                 "example": "example.com"
-            },
-            {
-                "name": "path",
-                "type": "path",
-                "ask": {
-                    "en": "Choose a path for snserver",
-		    "de": "Wähle einen Pfad für snserver"
-                },
-                "example": "/snserver",
-                "default": "/snserver"
             },
             {
                 "name": "admin",

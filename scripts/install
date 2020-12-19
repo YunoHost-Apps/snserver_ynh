@@ -7,7 +7,7 @@
 #=================================================
 
 source _common.sh
-source ynh_install_ruby__2
+source ynh_install_ruby
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -36,15 +36,15 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
-### About --weight and --time
+### About --time --weight and --time
 ### ynh_script_progression will show to your final users the progression of each scripts.
-### In order to do that, --weight will represent the relative time of execution compared to the other steps in the script.
+### In order to do that, --time --weight will represent the relative time of execution compared to the other steps in the script.
 ### --time is a packager option, it will show you the execution time since the previous call.
 ### This option should be removed before releasing your app.
 ### Use the execution time, given by --time, to estimate the weight of a step.
 ### A common way to do it is to set a weight equal to the execution time in second +1.
 ### The execution time is given for the duration since the previous call. So the weight should be applied to this previous call.
-ynh_script_progression --message="Validating installation parameters..." --weight=2
+ynh_script_progression --message="Validating installation parameters..." --time --weight=2
 
 ### If the app uses nginx as web server (written in HTML/PHP in most cases), the final path should be "/var/www/$app".
 ### If the app provides an internal web server (or uses another application server such as uwsgi), the final path should be "/opt/yunohost/$app"
@@ -58,7 +58,7 @@ ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
-ynh_script_progression --message="Storing installation settings..." --weight=2
+ynh_script_progression --message="Storing installation settings..." --time --weight=2
 
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
@@ -71,7 +71,7 @@ ynh_app_setting_set --app=$app --key=language --value=$language
 #=================================================
 # FIND AND OPEN A PORT
 #=================================================
-ynh_script_progression --message="Configuring firewall..." --weight=1
+ynh_script_progression --message="Configuring firewall..." --time --weight=1
 
 ### Use these lines if you have to open a port for the application
 ### `ynh_find_port` will find the first available port starting from the given port.
@@ -93,7 +93,7 @@ ynh_app_setting_set --app=$app --key=port_web --value=$port_web
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Installing dependencies..." --weight=7
+ynh_script_progression --message="Installing dependencies..." --time --weight=7
 
 ### `ynh_install_app_dependencies` allows you to add any "apt" dependencies to the package.
 ### Those deb packages will be installed as dependencies of this package.
@@ -108,7 +108,7 @@ ynh_install_app_dependencies $pkg_dependencies
 #=================================================
 # CREATE A MYSQL DATABASE
 #=================================================
-ynh_script_progression --message="Creating a MySQL database..." --weight=2
+ynh_script_progression --message="Creating a MySQL database..." --time --weight=2
 
 ### Use these lines if you need a database for the application.
 ### `ynh_mysql_setup_db` will create a database, an associated user and a ramdom password.
@@ -127,7 +127,7 @@ ynh_mysql_setup_db --db_user=$db_user --db_name=$db_name
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Setting up source files..." --weight=2
+ynh_script_progression --message="Setting up source files..." --time --weight=2
 
 ### `ynh_setup_source` is used to install an app from a zip or tar.gz file,
 ### downloaded from an upstream source, like a git repository.
@@ -142,17 +142,18 @@ ynh_setup_source  --dest_dir="$final_path/live"
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring nginx web server..." --weight=2
+ynh_script_progression --message="Configuring nginx web server..." --time --weight=2
 
 ### `ynh_add_nginx_config` will use the file conf/nginx.conf
 
 # Create a dedicated nginx config
-ynh_add_nginx_config 'port_web'
+ynh_replace_string --match_string="proxy_pass http://127.0.0.1:__PORT__;" --replace_string="proxy_pass http://127.0.0.1:$port_web;" --target_file="../conf/nginx.conf"
+ynh_add_nginx_config
 
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Configuring system user..." --weight=2
+ynh_script_progression --message="Configuring system user..." --time --weight=2
 
 # Create a system user
 #ynh_system_user_create --username=$app
@@ -169,16 +170,16 @@ pwd
 ls -al
 # INSTALLING RUBY AND BUNDLER
 #=================================================
-ynh_script_progression --message="Installing Ruby..." --weight=321
+ynh_script_progression --message="Installing Ruby..." --time --weight=321
 
-ynh_install_ruby --ruby_version=2.6.5
-/opt/rbenv/versions/2.6.5/bin/gem update --system
-#/opt/rbenv/versions/2.6.5/bin/gem install bundler --no-document
+ynh_install_ruby --ruby_version=$RUBY_VERSION
+/opt/rbenv/versions/$RUBY_VERSION/bin/gem update --system --no-document
+#/opt/rbenv/versions/$RUBY_VERSION/bin/gem install bundler --no-document
 
 #=================================================
 # Setup
 #=================================================
-#ynh_script_progression --message="Setup..." --weight=780
+#ynh_script_progression --message="Setup..." --time --weight=780
 
 # Set right permissions
 #chown -R "$app":"$app" $final_path
@@ -188,7 +189,7 @@ ynh_install_ruby --ruby_version=2.6.5
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Modifying a config file..." --weight=2
+ynh_script_progression --message="Modifying a config file..." --time --weight=2
 ### `ynh_replace_string` is used to replace a string in a file.
 ### (It's compatible with sed regular expressions syntax)
 
@@ -198,31 +199,32 @@ config_file="$final_path/live/.env"
 ynh_replace_string --match_string="EXPOSED_PORT=3000" --replace_string="EXPOSED_PORT=$port_web" --target_file="$config_file"
 secret_key=$(ynh_string_random --length=48 | base64)
 ynh_replace_string --match_string="SECRET_KEY_BASE=changeme123" --replace_string="SECRET_KEY_BASE=$secret_key" --target_file="$config_file"
+pseudo_key=$(ynh_string_random --length=48 | base64)
+ynh_replace_string --match_string="PSEUDO_KEY_PARAMS_KEY=changeme456" --replace_string="PSEUDO_KEY_PARAMS_KEY=$pseudo_key" --target_file="$config_file"
 ynh_replace_string --match_string="RAILS_ENV=development" --replace_string="RAILS_ENV=production" --target_file="$config_file"
 ynh_replace_string --match_string="DB_DATABASE=standard_notes_db" --replace_string="DB_DATABASE=$db_name" --target_file="$config_file"
 ynh_replace_string --match_string="DB_USERNAME=std_notes_user" --replace_string="DB_USERNAME=$db_user" --target_file="$config_file"
 ynh_replace_string --match_string="DB_PASSWORD=changeme123" --replace_string="DB_PASSWORD=$db_pwd" --target_file="$config_file"
-ynh_replace_string --match_string="DB_ROOT_PASSWORD=changeme123" --replace_string="DB_ROOT_PASSWORD=" --target_file="$config_file"
 
-ynh_replace_string --match_string="proxy_pass http://127.0.0.1:3000;" --replace_string="proxy_pass http://127.0.0.1:$port_web;" --target_file="../conf/nginx.conf"
+
 
 #=================================================
 # INSTALLING Standard Notes - Synicing Server 
 #=================================================
-ynh_script_progression --message="Installing Standard Notes - Synicing Server..." --weight=153
+ynh_script_progression --message="Installing Standard Notes - Synicing Server..." --time --weight=153
 
 chown -R "$app": "$final_path"
 
 pushd "$final_path/live"
-	sudo -u "$app" env PATH=$PATH /opt/rbenv/versions/2.6.5/bin/bundle config set path 'vendor/bundle'
-	sudo -u "$app" env PATH=$PATH /opt/rbenv/versions/2.6.5/bin/bundle config set with 'development'
-	sudo -u "$app" env PATH=$PATH /opt/rbenv/versions/2.6.5/bin/bundle install
-	#sudo -u "$app" env PATH=$PATH yarn install --pure-lockfile
-	#sudo -u "$app" echo "SAFETY_ASSURED=1">> .env.production
-	sudo -u "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/2.6.5/bin/bundle exec rails db:create db:migrate
-	#sudo -u "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/2.6.5/bin/bundle exec rails assets:precompile --quiet
-	#sudo -u "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/2.6.5/bin/bundle exec rake mastodon:webpush:generate_vapid_key > key.txt
-	#sudo -u "$app" env PATH=$PATH RAILS_ENV=production bin/tootctl accounts create "$admin" --email="$admin_mail" --confirmed --role=admin > acc.txt
+	exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set path 'vendor/bundle'
+	exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set with 'development'
+	exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle install
+	#exec_as "$app" env PATH=$PATH yarn install --pure-lockfile
+	#exec_as "$app" echo "SAFETY_ASSURED=1">> .env.production
+	exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:create db:migrate
+	#exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails assets:precompile --quiet
+	#exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rake mastodon:webpush:generate_vapid_key > key.txt
+	#exec_as "$app" env PATH=$PATH RAILS_ENV=production bin/tootctl accounts create "$admin" --email="$admin_mail" --confirmed --role=admin > acc.txt
 popd
 
 #(cd "$final_path"
@@ -252,7 +254,7 @@ popd
 #chown -R $app: $final_path
 
 # Set the app as temporarily public for curl call
-#ynh_script_progression --message="Configuring SSOwat..." --time --weight=1
+#ynh_script_progression --message="Configuring SSOwat..." --time --time --weight=1
 #ynh_app_setting_set --app=$app --key=skipped_uris --value="/"
 # Reload SSOwat config
 #yunohost app ssowatconf
@@ -261,7 +263,7 @@ popd
 #ynh_systemd_action --service_name=nginx --action=reload
 
 # Installation with curl
-#ynh_script_progression --message="Finalizing installation..." --time --weight=1
+#ynh_script_progression --message="Finalizing installation..." --time --time --weight=1
 #ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
 
 # Remove the public access
@@ -273,7 +275,7 @@ popd
 #=================================================
 # SETUP SYSTEMD
 #=================================================
-ynh_script_progression --message="Configuring a systemd service..." --weight=2
+ynh_script_progression --message="Configuring a systemd service..." --time --weight=2
 
 ### `ynh_systemd_config` is used to configure a systemd script for an app.
 ### It can be used for apps that use sysvinit (with adaptation) or systemd.
@@ -289,6 +291,7 @@ ynh_script_progression --message="Configuring a systemd service..." --weight=2
 # Create a dedicated systemd config
 #ynh_add_systemd_config
 ynh_replace_string --match_string="__PORT_WEB__" --replace_string="$port_web" --target_file="../conf/systemd.service"
+ynh_replace_string --match_string="__RUBY_VERSION__" --replace_string="$RUBY_VERSION" --target_file="../conf/systemd.service"
 ynh_add_systemd_config --service="$app" --template="systemd.service"
 
 #=================================================
@@ -307,7 +310,7 @@ ynh_store_file_checksum --file="$config_file"
 #=================================================
 # SECURE FILES AND DIRECTORIES
 #=================================================
-ynh_script_progression --message="Securing files and directories..." --weight=1
+ynh_script_progression --message="Securing files and directories..." --time --weight=1
 ### For security reason, any app should set the permissions to root: before anything else.
 ### Then, if write authorization is needed, any access should be given only to directories
 ### that really need such authorization.
@@ -315,12 +318,16 @@ ynh_script_progression --message="Securing files and directories..." --weight=1
 # Set permissions to app files
 chown -R root: $final_path
 chown $app: $final_path
+mkdir -p $final_path/live/log
 chown -R $app: $final_path/live/log/
+mkdir -p $final_path/live/tmp
+chown -R $app: $final_path/live/tmp/
+
 
 #=================================================
 # SETUP LOGROTATE
 #=================================================
-ynh_script_progression --message="Configuring log rotation..." --weight=2
+ynh_script_progression --message="Configuring log rotation..." --time --weight=2
 
 ### `ynh_use_logrotate` is used to configure a logrotate configuration for the logs of this app.
 ### Use this helper only if there is effectively a log file for this app.
@@ -330,8 +337,12 @@ ynh_script_progression --message="Configuring log rotation..." --weight=2
 ###		- As well as the section "RESTORE THE LOGROTATE CONFIGURATION" in the restore script
 ###		- And the section "SETUP LOGROTATE" in the upgrade script
 
+mkdir -p /var/log/snserver
+chown -R $app: /var/log/snserver
+
 # Use logrotate to manage application logfile(s)
-ynh_use_logrotate
+ynh_use_logrotate --logfile="$final_path/log/production.log"
+ynh_use_logrotate --logfile="/var/log/snserver/snserver.log"
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
@@ -358,7 +369,7 @@ yunohost service add $app --description "Standard Notes - Syncing Server"
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..." --weight=1
+ynh_script_progression --message="Starting a systemd service..." --time --weight=1
 
 ### `ynh_systemd_action` is used to start a systemd service for an app.
 ### Only needed if you have configure a systemd service
@@ -374,7 +385,7 @@ ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$ap
 #=================================================
 # SETUP FAIL2BAN
 #=================================================
-#ynh_script_progression --message="Configuring fail2ban..." --time --weight=1
+#ynh_script_progression --message="Configuring fail2ban..." --time --time --weight=1
 
 # Create a dedicated fail2ban config
 #ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
@@ -382,19 +393,17 @@ ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$ap
 #=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_script_progression --message="Configuring SSOwat..." --weight=1
-
-# Make app public if necessary
+ynh_script_progression --message="Configuring SSOwat..." --time --weight=1
+# Make app public if necessary or protect it
 if [ $is_public -eq 1 ]
 then
-	# unprotected_uris allows SSO credentials to be passed anyway.
-	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
+	ynh_permission_update --permission "main" --add "visitors"
 fi
 
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading nginx web server..." --weight=1
+ynh_script_progression --message="Reloading nginx web server..." --time --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 

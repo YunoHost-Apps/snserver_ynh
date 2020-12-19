@@ -9,11 +9,11 @@ Group=__APP__
 WorkingDirectory=__FINALPATH__/live
 Environment=RAILS_ENV=production
 Environment="PORT=__PORT_WEB__"
-#ExecStart=/opt/yunohost/snserver/rails s >> /var/log/snserver/snserver.log 2>&1
-#ExecStart=__FINALPATH__/bin/rails s -e production >> /var/log/__APP__/__APP__.log 2>&1
-ExecStart=/opt/rbenv/versions/2.6.5/bin/bundle exec puma -C config/puma.rb
+ExecStart=/opt/rbenv/versions/__RUBY_VERSION__/bin/bundle exec rails server
 ExecReload=/bin/kill -SIGUSR1 $MAINPID
-StandardError=syslog
+StandardOutput=/var/log/__APP__/__APP__.log
+StandardError=/var/log/__APP__/__APP__.log
+SyslogIdentifier=__APP__
 Restart=always
 RestartSec=15
 
