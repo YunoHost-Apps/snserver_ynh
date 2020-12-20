@@ -8,16 +8,18 @@ If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to
 
 ## Overview
 
-The Standard Notes syncing server
+Standard Notes syncing server
+
 You can run your own Standard Notes server and use it with any Standard Notes app. This allows you to have 100% control of your data.
 
 **Shipped version:** 3.13.6
 * Apps available for free. https://standardnotes.org/ 
 * Desktop (Windows, Mac, Linux)
 * Mobile (Android and iOS)
-* Web 
-
+* Web https://app.standardnotes.org/
 * Self-Hosted Yunohost - Web-App https://github.com/FabianWilkens/snweb_ynh
+> Change Sync Server Domain during Registation and Sign in
+
 ## Screenshots
 
 ![](https://camo.githubusercontent.com/ca3744729c6c33f2f42d7917a4e7167c12a786615e14d1719f7d1ec6ed77aae8/68747470733a2f2f7374616e646172646e6f7465732e6f72672f6173736574732f686f6d65706167652d6865726f2e706e67)
