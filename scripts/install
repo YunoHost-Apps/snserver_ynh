@@ -218,8 +218,8 @@ ynh_script_progression --message="Configuring SSOwat..."  --weight=3
 if [ $is_public -eq 1 ]
 then
 	# Create the visitors permission if needed
-	if ! ynh_permission_exists --permission "visitors"; then
-		ynh_permission_create --permission "visitors"
+	if ! ynh_permission_exists --permission "main"; then
+		ynh_permission_create --permission "main" --allowed "visitors"
 	fi
 fi
 

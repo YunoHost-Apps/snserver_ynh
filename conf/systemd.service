@@ -11,8 +11,8 @@ Environment=RAILS_ENV=production
 Environment="PORT=__PORT_WEB__"
 ExecStart=/opt/rbenv/versions/__RUBY_VERSION__/bin/bundle exec rails server
 ExecReload=/bin/kill -SIGUSR1 $MAINPID
-StandardOutput=/var/log/__APP__/__APP__.log
-StandardError=/var/log/__APP__/__APP__.log
+StandardOutput=file:/var/log/__APP__/__APP__.log
+StandardError=file:/var/log/__APP__/__APP__.log
 SyslogIdentifier=__APP__
 Restart=always
 RestartSec=15
