@@ -6,7 +6,6 @@
 RUBY_VERSION="2.7.2"
 
 # dependencies used by the app
-#pkg_dependencies="ruby ruby-dev rails zlib1g-dev libsqlite3-dev default-libmysqlclient-dev libssl-dev libreadline-dev"
 pkg_dependencies="\
 	zlib1g-dev \
 	libsqlite3-dev \

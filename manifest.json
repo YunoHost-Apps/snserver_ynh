@@ -34,16 +34,6 @@
                 "example": "example.com"
             },
             {
-                "name": "admin",
-                "type": "user",
-                "ask": {
-                    "en": "Choose an admin user",
-		    "fr": "Choisissez l'administrateur",
-		    "de": "Wähle einen Admin Benutzer"
-                },
-                "example": "johndoe"
-            },
-            {
                 "name": "is_public",
                 "type": "boolean",
                 "ask": {
@@ -52,17 +42,6 @@
 		    "de": "Ist die Application Öffendlich?"
                 },
                 "default": true
-            },
-            {
-                "name": "language",
-                "type": "string",
-                "ask": {
-                    "en": "Choose the application language",
-		    "fr": "Choisissez la langue de l'application",
-		    "de": "Wähle die Application Sprache"
-                },
-                "choices": ["en", "fr", "de"],
-                "default": "en"
             }
         ]
     }
