@@ -12,12 +12,12 @@ The Standard Notes syncing server
 You can run your own Standard Notes server and use it with any Standard Notes app. This allows you to have 100% control of your data.
 
 **Shipped version:** 3.13.6
-Apps available for free. https://standardnotes.org/ 
-Desktop (Windows, Mac, Linux)
-Mobile (Android and iOS)
-Web https://github.com/YunoHost-Apps/snweb_ynh
+* Apps available for free. https://standardnotes.org/ 
+* Desktop (Windows, Mac, Linux)
+* Mobile (Android and iOS)
+* Web 
 
-Self-Hosted Yunohost - Web-App 
+* Self-Hosted Yunohost - Web-App https://github.com/FabianWilkens/snweb_ynh
 ## Screenshots
 
 ![](https://camo.githubusercontent.com/ca3744729c6c33f2f42d7917a4e7167c12a786615e14d1719f7d1ec6ed77aae8/68747470733a2f2f7374616e646172646e6f7465732e6f72672f6173736574732f686f6d65706167652d6865726f2e706e67)
@@ -30,7 +30,8 @@ Extensions, Editors, Themes: https://standardnotes.org/extensions
 
 ## Configuration
 
-How to configure this app: The config-file is stored under "/opt/yunohost/$app/live/.env"
+How to configure this app: 
+* The config-file is stored under "/opt/yunohost/$app/live/.env"
 
 ## Documentation
 
@@ -40,8 +41,8 @@ How to configure this app: The config-file is stored under "/opt/yunohost/$app/l
 
 #### Multi-users support
 
-Are LDAP and HTTP auth supported?	No
-Can the app be used by multiple users?	Yes
+* Are LDAP and HTTP auth supported?	No
+* Can the app be used by multiple users?	Yes
 
 #### Supported architectures
 
@@ -61,7 +62,7 @@ https://yunohost.org/packaging_apps
 
 ## Links
 
- * Report a bug: https://github.com/YunoHost-Apps/snserver_ynh/issues
+ * Report a bug: https://github.com/FabianWilkens/snserver_ynh/issues
  * App website: https://standardnotes.org/
  * Upstream app repository: https://github.com/standardnotes/syncing-server
  * YunoHost website: https://yunohost.org/
@@ -72,11 +73,11 @@ Developers info
 ----------------
 
 **Only if you want to use a testing branch for coding, instead of merging directly into master.**
-Please do your pull request to the [testing branch](https://github.com/YunoHost-Apps/snserver_ynh/tree/testing).
+Please do your pull request to the [testing branch](https://github.com/FabianWilkens/snserver_ynh/tree/testing).
 
 To try the testing branch, please proceed like that.
 ```
-sudo yunohost app install https://github.com/YunoHost-Apps/snserver_ynh/tree/testing --debug
+sudo yunohost app install https://github.com/FabianWilkens/snserver_ynh/tree/testing --debug
 or
-sudo yunohost app upgrade snserver -u https://github.com/YunoHost-Apps/snserver_ynh/tree/testing --debug
+sudo yunohost app upgrade snserver -u https://github.com/FabianWilkens/snserver_ynh/tree/testing --debug
 ```
