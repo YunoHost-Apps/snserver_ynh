@@ -133,8 +133,8 @@ ynh_systemd_action --service_name=nginx --action=reload
 #=================================================
 ynh_script_progression --message="Storing settings..."  --weight=2
 
-ynh_app_setting_set --app=$app --key=domain --value=$domain
-ynh_app_setting_set --app=$app --key=path --value=$path_url
+ynh_app_setting_set --app=$app --key=domain --value=$new_domain
+ynh_app_setting_set --app=$app --key=path --value=$new_path
 
 #=================================================
 # END OF SCRIPT
