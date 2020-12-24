@@ -97,7 +97,7 @@ chown -R $app: /var/log/$app
 #=================================================
 # REINSTALL DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Reinstalling dependencies..." --weight=254
+ynh_script_progression --message="Reinstalling dependencies..." --weight=17
 
 # Define and install dependencies
 ynh_install_app_dependencies $pkg_dependencies
@@ -106,7 +106,7 @@ ynh_install_app_dependencies $pkg_dependencies
 #=================================================
 # INSTALLING RUBY
 #=================================================
-ynh_script_progression --message="Installing Ruby..." --weight=331
+ynh_script_progression --message="Installing Ruby...( This may take a while... )" --weight=100	#331
 
 ynh_install_ruby --ruby_version=$RUBY_VERSION
 /opt/rbenv/versions/$RUBY_VERSION/bin/gem update --system --no-document
@@ -125,11 +125,12 @@ ynh_mysql_connect_as --user=$db_user --password=$db_pwd --database=$db_name < ./
 ynh_script_progression --message="Restoring the systemd configuration..." --weight=1
 
 ynh_restore_file --origin_path="/etc/systemd/system/$app.service"
-systemctl enable $app.service
+systemctl enable $app.service --quiet
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
+ynh_script_progression --message="Integrate $app service in Yunohost..."  --weight=1
 
 yunohost service add $app --description "Standard Notes - Syncing Server" --log "/var/log/$app/$app.log"
 
@@ -139,10 +140,13 @@ yunohost service add $app --description "Standard Notes - Syncing Server" --log 
 ynh_script_progression --message="Starting a systemd service..." --weight=1
 
 ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+# Wait 10 secends tor server to start
+sleep 10
 
 #=================================================
 # RESTORE THE LOGROTATE CONFIGURATION
 #=================================================
+ynh_script_progression --message="Configuring log rotation..."  --weight=1
 
 ynh_restore_file --origin_path="/etc/logrotate.d/$app"
 

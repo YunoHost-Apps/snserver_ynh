@@ -7,11 +7,7 @@
 	; Manifest
 		domain="domain.tld"	(DOMAIN)
 		path="/path"	(PATH)
-		admin="john"	(USER)
-		language="en"
 		is_public=1	(PUBLIC|public=1|private=0)
-		password="pass"
-		port="666"	(PORT)
 	; Checks
 		pkg_linter=1
 		setup_sub_dir=1
@@ -31,10 +27,10 @@
 	# If the level 5 (Package linter) is forced to 1. Please add justifications here.
 	Level 5=auto
 ;;; Options
-Email=
-Notification=none
+Email=wilkens.fabian+github@gmail.com
+Notification=all
 ;;; Upgrade options
 	; commit=CommitHash
 		name=Name and date of the commit.
-		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&language=fr&is_public=1&password=pass&port=666&
+		manifest_arg=domain=DOMAIN&path=PATH&is_public=1
 

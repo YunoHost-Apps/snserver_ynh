@@ -24,7 +24,7 @@ ynh_abort_if_errors
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Loading installation settings..." --weight=2
+ynh_print_info "Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -37,35 +37,35 @@ db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Stopping a systemd service..." --weight=1
+#ynh_print_info "Stopping a systemd service..."
 
-ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
+#ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # BACKUP THE APP MAIN DIR
 #=================================================
-ynh_script_progression --message="Backing up the main app directory..." --weight=1
+ynh_print_info "Backing up the main app directory..."
 
 ynh_backup --src_path="$final_path"
 
 #=================================================
 # BACKUP THE NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Backing up nginx web server configuration..." --weight=2
+ynh_print_info "Backing up nginx web server configuration..."
 
 ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
 # BACKUP THE MYSQL DATABASE
 #=================================================
-ynh_script_progression --message="Backing up the MySQL database..." --weight=1
+ynh_print_info "Backing up the MySQL database..."
 
 ynh_mysql_dump_db --database="$db_name" > db.sql
 
 #=================================================
 # BACKUP FAIL2BAN CONFIGURATION
 #=================================================
-#ynh_script_progression --message="Backing up fail2ban configuration..." --weight=1
+#ynh_print_info "Backing up fail2ban configuration..."
 
 #ynh_backup --src_path="/etc/fail2ban/jail.d/$app.conf"
 #ynh_backup --src_path="/etc/fail2ban/filter.d/$app.conf"
@@ -75,26 +75,26 @@ ynh_mysql_dump_db --database="$db_name" > db.sql
 #=================================================
 # BACKUP LOGROTATE
 #=================================================
-ynh_script_progression --message="Backing up logrotate configuration..." --weight=1
+ynh_print_info "Backing up logrotate configuration..."
 
 ynh_backup --src_path="/etc/logrotate.d/$app"
 
 #=================================================
 # BACKUP SYSTEMD
 #=================================================
-ynh_script_progression --message="Backing up systemd configuration..." --weight=1
+ynh_print_info "Backing up systemd configuration..."
 
 ynh_backup --src_path="/etc/systemd/system/$app.service"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..." --weight=1
+#ynh_print_info "Starting a systemd service..."
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+#ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Backup script completed for $app. (YunoHost will then actually copy those files to the archive)." --last
+ynh_print_info "Backup script completed for $app. (YunoHost will then actually copy those files to the archive)."

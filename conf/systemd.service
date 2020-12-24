@@ -8,7 +8,7 @@ User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/live
 Environment=RAILS_ENV=production
-Environment="PORT=__PORT_WEB__"
+Environment="PORT=__PORT__"
 ExecStart=/opt/rbenv/versions/__RUBY_VERSION__/bin/bundle exec rails server
 ExecReload=/bin/kill -SIGUSR1 $MAINPID
 StandardOutput=file:/var/log/__APP__/__APP__.log
