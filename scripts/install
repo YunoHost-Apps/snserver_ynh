@@ -15,7 +15,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 ynh_clean_setup () {
-	ynh_clean_check_starting
+    ynh_clean_check_starting
 }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
@@ -94,8 +94,7 @@ ynh_setup_source  --dest_dir="$final_path/live"
 ynh_script_progression --message="Configuring nginx web server..."  --weight=3
 
 # Create a dedicated nginx config
-ynh_replace_string --match_string="proxy_pass http://127.0.0.1:__PORT__;" --replace_string="proxy_pass http://127.0.0.1:$port;" --target_file="../conf/nginx.conf"
-ynh_add_nginx_config
+ynh_add_nginx_config "port"
 
 #=================================================
 # CREATE DEDICATED USER
@@ -110,7 +109,7 @@ ynh_system_user_create --username=$app --home_dir=$final_path
 #=================================================
 # INSTALLING RUBY
 #=================================================
-ynh_script_progression --message="Installing Ruby...( This may take a while... )"  --weight=100	#331
+ynh_script_progression --message="Installing Ruby...( This may take a while... )"  --weight=100 #331
 
 ynh_install_ruby --ruby_version=$RUBY_VERSION
 /opt/rbenv/versions/$RUBY_VERSION/bin/gem update --system --no-document
@@ -134,19 +133,20 @@ ynh_replace_string --match_string="RAILS_ENV=development" --replace_string="RAIL
 ynh_replace_string --match_string="DB_DATABASE=standard_notes_db" --replace_string="DB_DATABASE=$db_name" --target_file="$config_file"
 ynh_replace_string --match_string="DB_USERNAME=std_notes_user" --replace_string="DB_USERNAME=$db_user" --target_file="$config_file"
 ynh_replace_string --match_string="DB_PASSWORD=changeme123" --replace_string="DB_PASSWORD=$db_pwd" --target_file="$config_file"
+ynh_replace_string --match_string="RAILS_RELATIVE_URL_ROOT=/" --replace_string="RAILS_RELATIVE_URL_ROOT=$path_url" --target_file="$config_file"
 
 #=================================================
-# INSTALLING Standard Notes - Synicing Server 
+# INSTALLING Standard Notes - Synicing Server
 #=================================================
 ynh_script_progression --message="Installing Standard Notes - Synicing Server..."  --weight=93
 
 chown -R "$app": "$final_path"
 
 pushd "$final_path/live"
-	exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set path 'vendor/bundle'
-	exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set with 'development'
-	exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle install
-	exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:create db:migrate
+    exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set path 'vendor/bundle'
+    exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set with 'development'
+    exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle install
+    exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:create db:migrate --quiet
 popd
 
 #=================================================
@@ -155,9 +155,10 @@ popd
 ynh_script_progression --message="Configuring a systemd service..."  --weight=4
 
 # Create a dedicated systemd config
-ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file="../conf/systemd.service"
-ynh_replace_string --match_string="__RUBY_VERSION__" --replace_string="$RUBY_VERSION" --target_file="../conf/systemd.service"
-ynh_add_systemd_config --service="$app" --template="systemd.service"
+ynh_add_systemd_config --others_var="\
+    port \
+    RUBY_VERSION \
+"
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
@@ -179,13 +180,13 @@ ynh_script_progression --message="Securing files and directories..." --weight=1
 # Set permissions to app files
 chown -R root: $final_path
 chown $app: $final_path
-mkdir -p $final_path/live/log
-chown -R $app: $final_path/live/log/
-mkdir -p $final_path/live/tmp
-chown -R $app: $final_path/live/tmp/
+mkdir -p "$final_path/live/log"
+chown -R $app: "$final_path/live/log/"
+mkdir -p "$final_path/live/tmp"
+chown -R $app: "$final_path/live/tmp/"
 
-mkdir -p /var/log/$app
-chown -R $app: /var/log/$app
+mkdir -p "/var/log/$app"
+chown -R $app: "/var/log/$app"
 
 #=================================================
 # SETUP LOGROTATE
@@ -218,8 +219,8 @@ ynh_script_progression --message="Configuring SSOwat..."  --weight=3
 # Make app public if necessary or protect it
 if [ $is_public -eq 1 ]
 then
-	# Create the visitors permission if needed
-	ynh_permission_update --permission "main" --add "visitors" --remove "all_users"
+    # Create the visitors permission if needed
+    ynh_permission_update --permission "main" --add "visitors"  --remove "all_users"
 fi
 
 #=================================================
@@ -229,7 +230,6 @@ ynh_script_progression --message="Starting a systemd service..."  --weight=1
 
 # Start a systemd service
 ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
-# Wait 10 secends tor server to start
 sleep 10
 
 #=================================================
