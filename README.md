@@ -43,7 +43,7 @@ How to configure this app:
 
 #### Multi-users support
 
-* Are LDAP and HTTP auth supported?	No
+* Are LDAP and HTTP auth supported?    LDAP=No    HTTP=Yes
 * Can the app be used by multiple users?	Yes
 
 #### Supported architectures

@@ -15,7 +15,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 ynh_clean_setup () {
-	ynh_clean_check_starting
+    ynh_clean_check_starting
 }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
@@ -25,8 +25,7 @@ ynh_abort_if_errors
 #=================================================
 
 domain=$YNH_APP_ARG_DOMAIN
-#path_url=$YNH_APP_ARG_PATH
-path_url="/"
+path_url=$YNH_APP_ARG_PATH
 is_public=$YNH_APP_ARG_IS_PUBLIC
 app=$YNH_APP_INSTANCE_NAME
 
@@ -56,9 +55,9 @@ ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 ynh_script_progression --message="Configuring firewall..."  --weight=1
 
 # Find an available port
-port_web=$(ynh_find_port --port=3000)
+port=$(ynh_find_port --port=3000)
 # Open the port
-ynh_app_setting_set --app=$app --key=port_web --value=$port_web
+ynh_app_setting_set --app=$app --key=port --value=$port
 
 
 #=================================================
@@ -86,7 +85,7 @@ ynh_script_progression --message="Setting up source files..."  --weight=2
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
-mkdir $final_path
+mkdir -p $final_path
 ynh_setup_source  --dest_dir="$final_path/live"
 
 #=================================================
@@ -95,8 +94,7 @@ ynh_setup_source  --dest_dir="$final_path/live"
 ynh_script_progression --message="Configuring nginx web server..."  --weight=3
 
 # Create a dedicated nginx config
-ynh_replace_string --match_string="proxy_pass http://127.0.0.1:__PORT__;" --replace_string="proxy_pass http://127.0.0.1:$port_web;" --target_file="../conf/nginx.conf"
-ynh_add_nginx_config
+ynh_add_nginx_config "port"
 
 #=================================================
 # CREATE DEDICATED USER
@@ -109,9 +107,9 @@ ynh_system_user_create --username=$app --home_dir=$final_path
 #=================================================
 # SPECIFIC SETUP
 #=================================================
-# INSTALLING RUBY AND BUNDLER
+# INSTALLING RUBY
 #=================================================
-ynh_script_progression --message="Installing Ruby..."  --weight=331
+ynh_script_progression --message="Installing Ruby...( This may take a while... )"  --weight=100 #331
 
 ynh_install_ruby --ruby_version=$RUBY_VERSION
 /opt/rbenv/versions/$RUBY_VERSION/bin/gem update --system --no-document
@@ -126,7 +124,7 @@ ynh_script_progression --message="Modifying a config file..."  --weight=2
 
 config_file="$final_path/live/.env"
 cp -f ../conf/env.sample $config_file
-ynh_replace_string --match_string="EXPOSED_PORT=3000" --replace_string="EXPOSED_PORT=$port_web" --target_file="$config_file"
+ynh_replace_string --match_string="EXPOSED_PORT=3000" --replace_string="EXPOSED_PORT=$port" --target_file="$config_file"
 secret_key=$(ynh_string_random --length=48 | base64)
 ynh_replace_string --match_string="SECRET_KEY_BASE=changeme123" --replace_string="SECRET_KEY_BASE=$secret_key" --target_file="$config_file"
 pseudo_key=$(ynh_string_random --length=48 | base64)
@@ -135,19 +133,20 @@ ynh_replace_string --match_string="RAILS_ENV=development" --replace_string="RAIL
 ynh_replace_string --match_string="DB_DATABASE=standard_notes_db" --replace_string="DB_DATABASE=$db_name" --target_file="$config_file"
 ynh_replace_string --match_string="DB_USERNAME=std_notes_user" --replace_string="DB_USERNAME=$db_user" --target_file="$config_file"
 ynh_replace_string --match_string="DB_PASSWORD=changeme123" --replace_string="DB_PASSWORD=$db_pwd" --target_file="$config_file"
+ynh_replace_string --match_string="RAILS_RELATIVE_URL_ROOT=/" --replace_string="RAILS_RELATIVE_URL_ROOT=$path_url" --target_file="$config_file"
 
 #=================================================
-# INSTALLING Standard Notes - Synicing Server 
+# INSTALLING Standard Notes - Synicing Server
 #=================================================
 ynh_script_progression --message="Installing Standard Notes - Synicing Server..."  --weight=93
 
 chown -R "$app": "$final_path"
 
 pushd "$final_path/live"
-	exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set path 'vendor/bundle'
-	exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set with 'development'
-	exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle install
-	exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:create db:migrate
+    exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set path 'vendor/bundle'
+    exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set with 'development'
+    exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle install
+    exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:create db:migrate --quiet
 popd
 
 #=================================================
@@ -156,13 +155,15 @@ popd
 ynh_script_progression --message="Configuring a systemd service..."  --weight=4
 
 # Create a dedicated systemd config
-ynh_replace_string --match_string="__PORT_WEB__" --replace_string="$port_web" --target_file="../conf/systemd.service"
-ynh_replace_string --match_string="__RUBY_VERSION__" --replace_string="$RUBY_VERSION" --target_file="../conf/systemd.service"
-ynh_add_systemd_config --service="$app" --template="systemd.service"
+ynh_add_systemd_config --others_var="\
+    port \
+    RUBY_VERSION \
+"
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
+ynh_script_progression --message="Storing the config file checksum..." --weight=1
 
 # Calculate and store the config file checksum into the app settings
 ynh_store_file_checksum --file="$config_file"
@@ -174,17 +175,18 @@ ynh_store_file_checksum --file="/etc/nginx/conf.d/$domain.d/$app.conf"
 #=================================================
 # SECURE FILES AND DIRECTORIES
 #=================================================
+ynh_script_progression --message="Securing files and directories..." --weight=1
 
 # Set permissions to app files
 chown -R root: $final_path
 chown $app: $final_path
-mkdir -p $final_path/live/log
-chown -R $app: $final_path/live/log/
-mkdir -p $final_path/live/tmp
-chown -R $app: $final_path/live/tmp/
+mkdir -p "$final_path/live/log"
+chown -R $app: "$final_path/live/log/"
+mkdir -p "$final_path/live/tmp"
+chown -R $app: "$final_path/live/tmp/"
 
-mkdir -p /var/log/$app
-chown -R $app: /var/log/$app
+mkdir -p "/var/log/$app"
+chown -R $app: "/var/log/$app"
 
 #=================================================
 # SETUP LOGROTATE
@@ -200,7 +202,7 @@ ynh_use_logrotate --logfile="/var/log/$app/$app.log"
 #=================================================
 ynh_script_progression --message="Integrate $app service in Yunohost..."  --weight=1
 
-yunohost service add $app --description "Standard Notes - Syncing Server" 
+yunohost service add $app --description "Standard Notes - Syncing Server" --log "/var/log/$app/$app.log"
 
 #=================================================
 # SETUP FAIL2BAN
@@ -217,8 +219,8 @@ ynh_script_progression --message="Configuring SSOwat..."  --weight=3
 # Make app public if necessary or protect it
 if [ $is_public -eq 1 ]
 then
-	# Create the visitors permission if needed
-	ynh_permission_update --permission "main" --add "visitors" --remove "all_users"
+    # Create the visitors permission if needed
+    ynh_permission_update --permission "main" --add "visitors"  --remove "all_users"
 fi
 
 #=================================================
@@ -228,6 +230,7 @@ ynh_script_progression --message="Starting a systemd service..."  --weight=1
 
 # Start a systemd service
 ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+sleep 10
 
 #=================================================
 # RELOAD NGINX
