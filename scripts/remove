@@ -99,10 +99,10 @@ fi
 #=================================================
 # REMOVE FAIL2BAN CONFIGURATION
 #=================================================
-#ynh_script_progression --message="Removing fail2ban configuration..."  --weight=1
+ynh_script_progression --message="Removing fail2ban configuration..."  --weight=1
 
 # Remove the dedicated fail2ban config
-#ynh_remove_fail2ban_config
+ynh_remove_fail2ban_config
 
 #=================================================
 # SPECIFIC REMOVE
