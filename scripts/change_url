@@ -117,7 +117,7 @@ ynh_replace_string --match_string="RAILS_RELATIVE_URL_ROOT=$old_path" --replace_
 #=================================================
 # SETUP FAIL2BAN
 #=================================================
-ynh_script_progression --message="Configuring fail2ban..."  --time --weight=1
+ynh_script_progression --message="Configuring fail2ban..." --weight=1
 
 domain=$new_domain
 path_url=$new_path

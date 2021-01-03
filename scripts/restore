@@ -142,7 +142,7 @@ ynh_restore_file --origin_path="/etc/logrotate.d/$app"
 #=================================================
 # RESTORE FAIL2BAN CONFIGURATION
 #=================================================
-ynh_script_progression --message="Restoring the fail2ban configuration..." --weight=
+ynh_script_progression --message="Restoring the fail2ban configuration..." --weight=1
 
 touch "/var/log/$app/$app.log"
 ynh_restore_file "/etc/fail2ban/jail.d/$app.conf"

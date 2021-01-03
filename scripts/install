@@ -205,7 +205,7 @@ yunohost service add $app --description "Standard Notes - Syncing Server" --log 
 #=================================================
 # SETUP FAIL2BAN
 #=================================================
-ynh_script_progression --message="Configuring fail2ban..."  --time --weight=1
+ynh_script_progression --message="Configuring fail2ban..." --weight=1
 
 # Create a dedicated fail2ban config
 touch "/var/log/$app/$app.log"
