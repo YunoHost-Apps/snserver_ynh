@@ -56,10 +56,10 @@ ynh_mysql_dump_db --database="$db_name" > db.sql
 #=================================================
 # BACKUP FAIL2BAN CONFIGURATION
 #=================================================
-#ynh_print_info "Backing up fail2ban configuration..."
+ynh_print_info "Backing up fail2ban configuration..."
 
-#ynh_backup --src_path="/etc/fail2ban/jail.d/$app.conf"
-#ynh_backup --src_path="/etc/fail2ban/filter.d/$app.conf"
+ynh_backup --src_path="/etc/fail2ban/jail.d/$app.conf"
+ynh_backup --src_path="/etc/fail2ban/filter.d/$app.conf"
 
 #=================================================
 # SPECIFIC BACKUP

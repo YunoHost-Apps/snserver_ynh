@@ -59,7 +59,6 @@ port=$(ynh_find_port --port=3000)
 # Open the port
 ynh_app_setting_set --app=$app --key=port --value=$port
 
-
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
@@ -81,7 +80,6 @@ ynh_mysql_setup_db --db_user=$db_user --db_name=$db_name
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression --message="Setting up source files..."  --weight=2
-
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
@@ -207,10 +205,14 @@ yunohost service add $app --description "Standard Notes - Syncing Server" --log 
 #=================================================
 # SETUP FAIL2BAN
 #=================================================
-#ynh_script_progression --message="Configuring fail2ban..."  --time --weight=1
+ynh_script_progression --message="Configuring fail2ban..." --weight=1
 
 # Create a dedicated fail2ban config
-#ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
+touch "/var/log/$app/$app.log"
+ynh_add_fail2ban_config --use_template --others_var="\
+	domain \
+	path_url \
+	"
 
 #=================================================
 # SETUP SSOWAT
@@ -230,7 +232,7 @@ ynh_script_progression --message="Starting a systemd service..."  --weight=1
 
 # Start a systemd service
 ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
-sleep 10
+sleep 15
 
 #=================================================
 # RELOAD NGINX

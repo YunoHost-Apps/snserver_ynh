@@ -5,9 +5,9 @@
     "description": {
         "en": "The Standard Notes syncing server. An end-to-end encrypted note-taking app."
     },
-    "version": "3.13.6~ynh1",
+    "version": "3.13.6~ynh2",
     "url": "https://github.com/standardnotes/syncing-server",
-    "license": "free",
+    "license": "AGPL-3.0-or-later",
     "maintainer": {
         "name": "Fabian Wilkens",
         "email": "wilkens.fabian+github@gmail.com",

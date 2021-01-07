@@ -237,10 +237,14 @@ yunohost service add $app --description "Standard Notes - Syncing Server" --log 
 #=================================================
 # SETUP FAIL2BAN
 #=================================================
-#ynh_script_progression --message="Reconfiguring fail2ban..." --weight=1
+ynh_script_progression --message="Reconfiguring fail2ban..." --weight=1
 
 # Create a dedicated fail2ban config
-#ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
+touch "/var/log/$app/$app.log"
+ynh_add_fail2ban_config --use_template --others_var="\
+	domain \
+	path_url \
+	"
 
 #=================================================
 # SETUP SSOWAT
@@ -262,7 +266,7 @@ ynh_script_progression --message="Starting a systemd service..." --weight=1
 
 # Start a systemd service
 ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
-sleep 10
+sleep 15
 
 #=================================================
 # RELOAD NGINX
