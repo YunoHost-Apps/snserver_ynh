@@ -28,6 +28,13 @@ domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
 is_public=$YNH_APP_ARG_IS_PUBLIC
 app=$YNH_APP_INSTANCE_NAME
+install_extensions=$YNH_APP_ARG_INSTALL_EXTENSIONS
+if [ $install_extensions -eq 0 ]
+then
+    access_domain=$domain
+else
+    access_domain=$YNH_APP_ARG_ACCESS_DOMAIN
+fi
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
@@ -46,6 +53,8 @@ ynh_script_progression --message="Storing installation settings..."  --weight=3
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=is_public --value=$is_public
+ynh_app_setting_set --app=$app --key=install_extensions --value=$install_extensions
+ynh_app_setting_set --app=$app --key=access_domain --value=$access_domain
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -92,7 +101,7 @@ ynh_setup_source  --dest_dir="$final_path/live"
 ynh_script_progression --message="Configuring nginx web server..."  --weight=3
 
 # Create a dedicated nginx config
-ynh_add_nginx_config "port"
+ynh_add_nginx_config "port access_domain"
 
 #=================================================
 # CREATE DEDICATED USER
@@ -145,7 +154,18 @@ pushd "$final_path/live"
     exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set with 'development'
     exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle install
     exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:create db:migrate --quiet
+    exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails assets:precompile --quiet
 popd
+
+#=================================================
+# INSTALLING Standard Notes - Extensions
+#=================================================
+if [ $install_extensions ]
+then
+    ynh_script_progression --message="Installing Standard Notes - Extensions..."  --weight=1
+
+    ynh_replace_string --match_string="RAILS_SERVE_STATIC_FILES=false" --replace_string="RAILS_SERVE_STATIC_FILES=$install_extensions" --target_file="$config_file"
+fi
 
 #=================================================
 # SETUP SYSTEMD
@@ -210,9 +230,9 @@ ynh_script_progression --message="Configuring fail2ban..." --weight=1
 # Create a dedicated fail2ban config
 touch "/var/log/$app/$app.log"
 ynh_add_fail2ban_config --use_template --others_var="\
-	domain \
-	path_url \
-	"
+    domain \
+    path_url \
+    "
 
 #=================================================
 # SETUP SSOWAT

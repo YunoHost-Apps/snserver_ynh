@@ -25,6 +25,7 @@ db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
 db_pwd=$(ynh_app_setting_get --app=$app --key=mysqlpwd)
 port=$(ynh_app_setting_get --app=$app --key=port)
+access_domain=(ynh_app_setting_get --app=$app --key=access_domain)
 
 #=================================================
 # CHECK VERSION
@@ -179,7 +180,18 @@ then
         exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set with 'development'
         exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle install
         exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:create db:migrate --quiet
+        exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails assets:precompile --quiet
     popd
+fi
+
+#=================================================
+# INSTALLING Standard Notes - Extensions
+#=================================================
+if [ $install_extensions ]
+then
+    ynh_script_progression --message="Installing Standard Notes - Extensions..."  --weight=1
+
+    ynh_replace_string --match_string="RAILS_SERVE_STATIC_FILES=false" --replace_string="RAILS_SERVE_STATIC_FILES=true" --target_file="$config_file"
 fi
 
 #=================================================
