@@ -1,0 +1,11 @@
+{
+  "identifier": "org.stndardnotes.token-vault",
+  "name": "Token Vault",
+  "content_type": "SN|Component",
+  "area": "editor-editor",
+  "version": "1.0.5",
+  "description": "Use Standard Notes on both desktop and mobile as your authenticator app. TokenVault handles your 2FA secrets so that you never lose them again, or have to start over when you get a new device.",
+  "url": "https://__DOMAIN__PATH__/extensions/src/token-vault/dist/index.html", 
+  "download_url": "https://github.com/sn-extensions/token-vault/archive/1.0.5.zip",
+  "latest_url": "https://__DOMAIN__PATH__/extensions/src/token-vault.json"
+}

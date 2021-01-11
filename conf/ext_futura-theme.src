@@ -1,0 +1,5 @@
+SOURCE_URL=https://github.com/sn-extensions/futura-theme/archive/1.2.2.zip
+SOURCE_SUM=900cebb84e2a794ca5cd6d62d28705e18181ae6cac76c2d8fa6d109a24386e94
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=zip
+SOURCE_IN_SUBDIR=true

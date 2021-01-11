@@ -1,0 +1,11 @@
+{
+  "identifier": "org.standardnotes.markdown-pro",
+  "name": "Markdown Pro",
+  "content_type": "SN|Component",
+  "area": "editor-editor",
+  "version": "1.3.9",
+  "description": "A fully featured Markdown editor that supports live preview, a styling toolbar, and split pane support.",
+  "url": "https://__DOMAIN__PATH__/extensions/src/markdown-pro/index.html", 
+  "download_url": "https://github.com/standardnotes/markdown-pro/archive/1.3.9.zip",
+  "latest_url": "https://__DOMAIN__PATH__/extensions/src/markdown-pro.json"
+}

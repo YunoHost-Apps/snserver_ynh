@@ -1,0 +1,5 @@
+SOURCE_URL=https://github.com/sn-extensions/focus-theme/archive/1.2.3.zip
+SOURCE_SUM=371a48128bc0e95f2298053dc39c333454a2c11962a28e9a7749435da0e85340
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=zip
+SOURCE_IN_SUBDIR=true

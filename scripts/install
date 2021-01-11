@@ -154,7 +154,7 @@ pushd "$final_path/live"
     exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set with 'development'
     exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle install
     exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:create db:migrate --quiet
-    exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails assets:precompile --quiet
+#    exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails assets:precompile --quiet
 popd
 
 #=================================================
@@ -164,7 +164,25 @@ if [ $install_extensions ]
 then
     ynh_script_progression --message="Installing Standard Notes - Extensions..."  --weight=1
 
-    ynh_replace_string --match_string="RAILS_SERVE_STATIC_FILES=false" --replace_string="RAILS_SERVE_STATIC_FILES=$install_extensions" --target_file="$config_file"
+    ynh_replace_string --match_string="RAILS_SERVE_STATIC_FILES=" --replace_string="RAILS_SERVE_STATIC_FILES=true" --target_file="$config_file"
+    
+    if [ $path_url = "/" ]
+    then
+        path=""
+    else
+        path=$path_url
+    fi
+    
+    find "$final_path/live/public/extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
+    do
+        ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$file"
+    done
+
+    find "../conf/" -name "ext_*.src" -print0 | while read -d $'\0' file
+    do
+		basename=$(basename -as .src $file)
+        ynh_setup_source  --dest_dir="$final_path/live/public/extensions/src/${basename#'ext_'}" --source_id="$basename"
+    done
 fi
 
 #=================================================

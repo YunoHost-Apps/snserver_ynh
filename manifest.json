@@ -55,6 +55,28 @@
             "de": "Ist die Application Öffendlich?"
                 },
                 "default": true
+            },
+            {
+                "name": "install_extensions",
+                "type": "boolean",
+                "help": {
+                    "en": "Once you've installed the extensions, you cannot change the domain without the users having to reinstall the extensions"
+                },
+                "ask": {
+                    "en": "Do you want to install the Standard Notes Extensions?",
+            "de": "Willst du die Standard Notes Extensions installieren?"
+                },
+                "default": true
+            },
+            {
+                "name": "access_domain",
+                "type": "string",
+                "ask": {
+                    "en": "Choose a domain which has access to the extensions. E.g. the Standard-Notes web app."
+                },
+				"optional": true,
+                "example": "example.tld",
+                "default": ""
             }
         ]
     }
