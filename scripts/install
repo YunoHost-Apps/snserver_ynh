@@ -180,7 +180,7 @@ then
 
     find "../conf/" -name "ext_*.src" -print0 | while read -d $'\0' file
     do
-		basename=$(basename -as .src $file)
+    basename=$(basename -as .src $file)
         ynh_setup_source  --dest_dir="$final_path/live/public/extensions/src/${basename#'ext_'}" --source_id="$basename"
     done
 fi
