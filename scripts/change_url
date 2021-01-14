@@ -29,6 +29,8 @@ ynh_script_progression --message="Loading installation settings..." --weight=1
 # Needed for helper "ynh_add_nginx_config"
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 port=$(ynh_app_setting_get --app=$app --key=port)
+install_extensions=$(ynh_app_setting_get --app=$app --key=install_extensions)
+access_domain=$(ynh_app_setting_get --app=$app --key=access_domain)
 
 # Add settings here as needed by your application
 #db_name=$(ynh_app_setting_get --app=$app --key=db_name)
@@ -93,7 +95,7 @@ then
     domain="$old_domain"
     path_url="$new_path"
     # Create a dedicated nginx config
-    ynh_add_nginx_config "port"
+    ynh_add_nginx_config "port access_domain"
 fi
 
 # Change the domain for nginx
@@ -113,6 +115,26 @@ ynh_script_progression --message="Modifying a config file..." --weight=1
 
 config_file="$final_path/live/.env"
 ynh_replace_string --match_string="RAILS_RELATIVE_URL_ROOT=$old_path" --replace_string="RAILS_RELATIVE_URL_ROOT=$new_path" --target_file="$config_file"
+
+#=================================================
+# Modify Standard Notes - Extensions
+#=================================================
+if [ $install_extensions ]
+then
+    ynh_script_progression --message="Modify Standard Notes - Extensions..."  --weight=1
+
+    if [ $new_path = "/" ]
+    then
+        path=""
+    else
+        path=$new_path
+    fi
+
+    find "$final_path/live/public/extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
+    do
+        ynh_replace_string --match_string='"url": "https://.*/extensions/src/' --replace_string='"url": "https://$domain$path/extensions/src/' --target_file="$file"
+    done
+fi
 
 #=================================================
 # SETUP FAIL2BAN
