@@ -280,6 +280,34 @@ ynh_script_progression --message="Reloading nginx web server..."  --weight=1
 ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
+# SEND A README FOR THE ADMIN
+#=================================================
+ynh_script_progression --message="Sending a readme for the admin..."
+
+message_extensions="To install extensions open this page: https://$domain$path_url/extensions/\
+If you want to change the url of the syncing server all extensions from here have to be reinstalled be the users."
+message_no_extensions="You have no extensions installed.\
+You can configure this app by using the config-panel"
+
+admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
+config_panel="You can configure this app by using the experimental __URL_TAG1__config-panel feature__URL_TAG2__$admin_panel/config-panel__URL_TAG3__"
+
+ynh_replace_string --match_string="__TYPE__" --replace_string="installed" --target_file="../conf/message"
+ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="../conf/message"
+ynh_replace_string --match_string="__PATH_URL__" --replace_string="$path_url" --target_file="../conf/message"
+
+if [ $install_extensions ]
+then
+    ynh_replace_string --match_string="__EXTENSIONS__" --replace_string="$message_extensions" --target_file="../conf/message"
+else
+    ynh_replace_string --match_string="__EXTENSIONS__" --replace_string="$message_no_extensions" --target_file="../conf/message"
+fi
+ynh_replace_string --match_string="__CONFIG_PANEL__" --replace_string="$config_panel" --target_file="../conf/message"
+
+ynh_send_readme_to_admin --app_message="../conf/message" --type='install'
+
+echo ../conf/message
+#=================================================
 # END OF SCRIPT
 #=================================================
 
