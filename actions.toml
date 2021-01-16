@@ -1,0 +1,10 @@
+[install_extensions]
+name = "Install Extensions"
+description = "Intall Standard Notes - Extensions"
+command = "/bin/bash actions/install_extensions"
+cwd = "/etc/yunohost/apps/$app/scripts"
+
+[remove_extensions]
+name = "Remove Extensions"
+description = "Remove Standard Notes - Extensions"
+command = "/bin/bash scripts/actions/remove_extensions"
