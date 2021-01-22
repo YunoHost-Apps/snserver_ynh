@@ -34,7 +34,7 @@ if [[ ! -f $config_file || \
       ! -d "$final_path/live/public/extensions/" || \
       ! -d "$final_path/live/public/extensions/src/" ]]
 then
-    ynh_die --message="Standard Notes - Extensions can not be installed." --ret_code=1
+    ynh_die --message="Standard Notes - Extensions can not be installed. Please upgrade snserver" --ret_code=1
 fi
 
 #=================================================

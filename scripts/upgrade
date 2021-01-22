@@ -25,8 +25,8 @@ db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
 db_pwd=$(ynh_app_setting_get --app=$app --key=mysqlpwd)
 port=$(ynh_app_setting_get --app=$app --key=port)
-install_extensions=(ynh_app_setting_get --app=$app --key=install_extensions)
-access_domain=(ynh_app_setting_get --app=$app --key=access_domain)
+install_extensions=$(ynh_app_setting_get --app=$app --key=install_extensions)
+access_domain=$(ynh_app_setting_get --app=$app --key=access_domain)
 
 #=================================================
 # CHECK VERSION
@@ -64,6 +64,27 @@ fi
 if [ -z "$final_path" ]; then
     final_path=/opt/yunohost/$app
     ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+fi
+
+# If install_extensions doesn't exist, create it
+if [ -z "$install_extensions" ]; then
+    install_extensions=0
+    ynh_app_setting_set --app=$app --key=install_extensions --value=$install_extensions
+fi
+
+# If access_domain doesn't exist, create it
+if [ -z "$access_domain" ]; then
+    access_domain=$domain
+    ynh_app_setting_set --app=$app --key=access_domain --value=$access_domain
+fi
+
+if [[ ! -d "$final_path/live/public/extensions/" || \
+      ! -d "$final_path/live/public/extensions/src/" ]]
+then
+    if test -e "$../sources/extra_files/app"
+    then
+        cp -a $../sources/extra_files/app/. "$final_path/"
+    fi
 fi
 
 #=================================================
@@ -118,8 +139,10 @@ fi
 ynh_script_progression --message="Upgrading nginx web server configuration..." --weight=1
 
 # Create a dedicated nginx config
-ynh_add_nginx_config "port"
-
+ynh_add_nginx_config "\
+    port \
+    acess_domain
+    "
 
 #=================================================
 # UPGRADE DEPENDENCIES
