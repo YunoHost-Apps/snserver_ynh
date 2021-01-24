@@ -1,127 +1,127 @@
 [
     {
         "name": "Autobiography Theme",
-        "url": "extensions/src/autobiography-theme.json",
+        "url": "src/autobiography-theme.json",
         "extension": "theme"
     },
     {
         "name": "Focus Theme",
-        "url": "extensions/src/focus-theme.json",
+        "url": "src/focus-theme.json",
         "extension": "theme"
     },
     {
         "name": "Futura Theme",
-        "url": "extensions/src/futura-theme.json",
+        "url": "src/futura-theme.json",
         "extension": "theme"
     },
     {
         "name": "Midnight Theme",
-        "url": "extensions/src/midnight-theme.json",
+        "url": "src/midnight-theme.json",
         "extension": "theme"
     },
     {
         "name": "Solarized Dark Theme",
-        "url": "extensions/src/solarized-dark-theme.json",
+        "url": "src/solarized-dark-theme.json",
         "extension": "theme"
     },
     {
         "name": "Titanium Theme",
-        "url": "extensions/src/titanium-theme.json",
+        "url": "src/titanium-theme.json",
         "extension": "theme"
     },
     {
         "name": "Dynamic Theme",
-        "url": "extensions/src/dynamic-theme.json",
+        "url": "src/dynamic-theme.json",
         "extension": "theme"
     },
     {
         "name": "No Distraction Theme",
-        "url": "extensions/src/no-distraction-theme.json",
+        "url": "src/no-distraction-theme.json",
         "extension": "theme"
     },
     {
         "name": "Bold Editor",
-        "url": "extensions/src/bold-editor.json",
+        "url": "src/bold-editor.json",
         "extension": "editor"
     },
     {
         "name": "Code Editor",
-        "url": "extensions/src/code-editor.json",
+        "url": "src/code-editor.json",
         "extension": "editor"
     },
     {
         "name": "Markdown Basic",
-        "url": "extensions/src/markdown-basic.json",
+        "url": "src/markdown-basic.json",
         "extension": "editor"
     },
     {
         "name": "Markdown Pro",
-        "url": "extensions/src/markdown-pro.json",
+        "url": "src/markdown-pro.json",
         "extension": "editor"
     },
     {
         "name": "Math Editor",
-        "url": "extensions/src/math-editor.json",
+        "url": "src/math-editor.json",
         "extension": "editor"
     },
     {
         "name": "Minimal Markdown Editor",
-        "url": "extensions/src/minimal-markdown-editor.json",
+        "url": "src/minimal-markdown-editor.json",
         "extension": "editor"
     },
     {
         "name": "Plus Editor",
-        "url": "extensions/src/plus-editor.json",
+        "url": "src/plus-editor.json",
         "extension": "editor"
     },
     {
         "name": "Secure Spreadsheet",
-        "url": "extensions/src/secure-spreadsheets.json",
+        "url": "src/secure-spreadsheets.json",
         "extension": "editor"
     },
     {
         "name": "Simple Task Editor",
-        "url": "extensions/src/simple-task-editor.json",
+        "url": "src/simple-task-editor.json",
         "extension": "editor"
     },
     {
         "name": "Token Vault",
-        "url": "extensions/src/token-vault.json",
+        "url": "src/token-vault.json",
         "extension": "editor"
     },
     {
         "name": "Vim Editor",
-        "url": "extensions/src/vim-editor.json",
+        "url": "src/vim-editor.json",
         "extension": "editor"
     },
     {
         "name": "Action Bar",
-        "url": "extensions/src/action-bar.json",
+        "url": "src/action-bar.json",
         "extension": "component"
     },
     {
         "name": "FileSafe Bar",
-        "url": "extensions/src/filesafe-bar.json",
+        "url": "src/filesafe-bar.json",
         "extension": "component"
     },
     {
         "name": "Folders Component",
-        "url": "extensions/src/folders-component.json",
+        "url": "src/folders-component.json",
         "extension": "component"
     },
     {
         "name": "Github Push",
-        "url": "extensions/src/github-push.json",
+        "url": "src/github-push.json",
         "extension": "component"
     },
     {
         "name": "MFA Link",
-        "url": "extensions/src/mfa-link.json",
+        "url": "src/mfa-link.json",
         "extension": "component"
     },
     {
         "name": "Quick Tags",
-        "url": "extensions/src/quick-tags.json",
+        "url": "src/quick-tags.json",
         "extension": "component"
     }
 ]

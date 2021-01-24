@@ -5,7 +5,7 @@
   "area": "theme",
   "version": "1.2.1",
   "description": "The perfect theme for any time.",
-  "url": "https://__DOMAIN__PATH__/extensions/src/solarized-dark-theme/dist/dist.css", 
+  "url": "https://__DOMAIN__PATH__/extensions/src/solarized-theme/dist/dist.css",
   "download_url": "https://github.com/sn-extensions/solarized-dark-theme/archive/1.2.1.zip",
   "latest_url": "https://__DOMAIN__PATH__/extensions/src/solarized-dark-theme.json",
   "dock_icon":{
