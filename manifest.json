@@ -10,7 +10,7 @@
     "license": "AGPL-3.0-or-later",
     "maintainer": {
         "name": "Fabian Wilkens",
-        "email": "46000361+FabianWilkens@users.noreply.github.com",
+        "email": "46000361+FabianWilkens@users.noreply.github.com"
     },
     "requirements": {
         "yunohost": ">= 4.1.0"
