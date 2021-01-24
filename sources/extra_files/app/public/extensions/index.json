@@ -1,0 +1,117 @@
+[
+    {
+        "name": "Autobiography Theme",
+        "url": "src/autobiography-theme.json",
+        "extension": "theme"
+    },
+    {
+        "name": "Focus Theme",
+        "url": "src/focus-theme.json",
+        "extension": "theme"
+    },
+    {
+        "name": "Futura Theme",
+        "url": "src/futura-theme.json",
+        "extension": "theme"
+    },
+    {
+        "name": "Midnight Theme",
+        "url": "src/midnight-theme.json",
+        "extension": "theme"
+    },
+    {
+        "name": "Solarized Dark Theme",
+        "url": "src/solarized-dark-theme.json",
+        "extension": "theme"
+    },
+    {
+        "name": "Titanium Theme",
+        "url": "src/titanium-theme.json",
+        "extension": "theme"
+    },
+    {
+        "name": "Dynamic Theme",
+        "url": "src/dynamic-theme.json",
+        "extension": "theme"
+    },
+    {
+        "name": "No Distraction Theme",
+        "url": "src/no-distraction-theme.json",
+        "extension": "theme"
+    },
+    {
+        "name": "Bold Editor",
+        "url": "src/bold-editor.json",
+        "extension": "editor"
+    },
+    {
+        "name": "Code Editor",
+        "url": "src/code-editor.json",
+        "extension": "editor"
+    },
+    {
+        "name": "Markdown Basic",
+        "url": "src/markdown-basic.json",
+        "extension": "editor"
+    },
+    {
+        "name": "Markdown Pro",
+        "url": "src/markdown-pro.json",
+        "extension": "editor"
+    },
+    {
+        "name": "Math Editor",
+        "url": "src/math-editor.json",
+        "extension": "editor"
+    },
+    {
+        "name": "Minimal Markdown Editor",
+        "url": "src/minimal-markdown-editor.json",
+        "extension": "editor"
+    },
+    {
+        "name": "Plus Editor",
+        "url": "src/plus-editor.json",
+        "extension": "editor"
+    },
+    {
+        "name": "Simple Task Editor",
+        "url": "src/simple-task-editor.json",
+        "extension": "editor"
+    },
+    {
+        "name": "Token Vault",
+        "url": "src/token-vault.json",
+        "extension": "editor"
+    },
+    {
+        "name": "Vim Editor",
+        "url": "src/vim-editor.json",
+        "extension": "editor"
+    },
+    {
+        "name": "Action Bar",
+        "url": "src/action-bar.json",
+        "extension": "component"
+    },
+    {
+        "name": "Folders Component",
+        "url": "src/folders-component.json",
+        "extension": "component"
+    },
+    {
+        "name": "Github Push",
+        "url": "src/github-push.json",
+        "extension": "component"
+    },
+    {
+        "name": "MFA Link",
+        "url": "src/mfa-link.json",
+        "extension": "component"
+    },
+    {
+        "name": "Quick Tags",
+        "url": "src/quick-tags.json",
+        "extension": "component"
+    }
+]

@@ -1,0 +1,5 @@
+SOURCE_URL=https://github.com/sn-extensions/simple-task-editor/archive/1.3.5.zip
+SOURCE_SUM=2cb836e9932a8e39b41397fc6f9ef721c894e422a3f898db66cb340d9cbf931b
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=zip
+SOURCE_IN_SUBDIR=true

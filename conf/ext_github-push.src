@@ -1,0 +1,5 @@
+SOURCE_URL=https://github.com/sn-extensions/github-push/archive/1.2.2.zip
+SOURCE_SUM=9b64cd9797254120b82b9e43bee7bb0d65b950d8cfeab1b16311a96eedd93527
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=zip
+SOURCE_IN_SUBDIR=true

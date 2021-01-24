@@ -29,6 +29,8 @@ ynh_script_progression --message="Loading installation settings..." --weight=1
 # Needed for helper "ynh_add_nginx_config"
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 port=$(ynh_app_setting_get --app=$app --key=port)
+install_extensions=$(ynh_app_setting_get --app=$app --key=install_extensions)
+access_domain=$(ynh_app_setting_get --app=$app --key=access_domain)
 
 # Add settings here as needed by your application
 #db_name=$(ynh_app_setting_get --app=$app --key=db_name)
@@ -93,7 +95,10 @@ then
     domain="$old_domain"
     path_url="$new_path"
     # Create a dedicated nginx config
-    ynh_add_nginx_config "port"
+    ynh_add_nginx_config "\
+        port \
+        access_domain\
+        "
 fi
 
 # Change the domain for nginx
@@ -115,6 +120,26 @@ config_file="$final_path/live/.env"
 ynh_replace_string --match_string="RAILS_RELATIVE_URL_ROOT=$old_path" --replace_string="RAILS_RELATIVE_URL_ROOT=$new_path" --target_file="$config_file"
 
 #=================================================
+# Modify Standard Notes - Extensions
+#=================================================
+if [ $install_extensions -eq 1 ]
+then
+    ynh_script_progression --message="Modify Standard Notes - Extensions..."  --weight=1
+
+    if [ $new_path = "/" ]
+    then
+        path=""
+    else
+        path=$new_path
+    fi
+
+    find "$final_path/live/public/extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
+    do
+        ynh_replace_string --match_string='"url": "https://.*/extensions/src/' --replace_string='"url": "https://$domain$path/extensions/src/' --target_file="$file"
+    done
+fi
+
+#=================================================
 # SETUP FAIL2BAN
 #=================================================
 ynh_script_progression --message="Configuring fail2ban..." --weight=1
@@ -124,9 +149,9 @@ path_url=$new_path
 # Create a dedicated fail2ban config
 touch "/var/log/$app/$app.log"
 ynh_add_fail2ban_config --use_template --others_var="\
-	domain \
-	path_url \
-	"
+    domain \
+    path_url \
+    "
 
 #=================================================
 # GENERIC FINALISATION
@@ -144,6 +169,33 @@ curl --silent --insecure --resolve $domain:443:127.0.0.1 https://$domain$path_ur
 ynh_script_progression --message="Reloading nginx web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# SEND A README FOR THE ADMIN
+#=================================================
+ynh_script_progression --message="Sending a readme for the admin..."
+
+admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
+
+message_extensions="To install extensions open this page: https://$domain$path_url/extensions/\n\
+You changed the url of the syncing server. All extensions installed from here must be reinstalled by the users."
+action="You can find some specific actions for this app by using the experimental __URL_TAG1__action feature__URL_TAG2__$admin_panel/actions__URL_TAG3__"
+config_panel="You can find some specific configurations for this app by using the experimental __URL_TAG1__config-panel feature__URL_TAG2__$admin_panel/config-panel__URL_TAG3__"
+
+ynh_replace_string --match_string="__TYPE__" --replace_string="changed the url" --target_file="../conf/message"
+ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="../conf/message"
+ynh_replace_string --match_string="__PATH_URL__" --replace_string="$path_url" --target_file="../conf/message"
+
+if [ $install_extensions -eq 1 ]
+then
+    ynh_replace_string --match_string="__EXTENSIONS__" --replace_string="$message_extensions" --target_file="../conf/message"
+else
+    ynh_replace_string --match_string="__EXTENSIONS__" --replace_string="" --target_file="../conf/message"
+fi
+ynh_replace_string --match_string="__ACTION__" --replace_string="$action" --target_file="../conf/message"
+ynh_replace_string --match_string="__CONFIG_PANEL__" --replace_string="$config_panel" --target_file="../conf/message"
+
+ynh_send_readme_to_admin --app_message="../conf/message" --type='upgrade'
 
 #=================================================
 # END OF SCRIPT

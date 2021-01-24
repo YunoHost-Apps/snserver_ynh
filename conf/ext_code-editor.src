@@ -1,0 +1,5 @@
+SOURCE_URL=https://github.com/standardnotes/code-editor/archive/1.3.5.zip
+SOURCE_SUM=e928b1e474e5c391d5ac2654982177238081e3cd11a6e318d7805c36030bd879
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=zip
+SOURCE_IN_SUBDIR=true

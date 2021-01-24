@@ -25,6 +25,8 @@ db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
 db_pwd=$(ynh_app_setting_get --app=$app --key=mysqlpwd)
 port=$(ynh_app_setting_get --app=$app --key=port)
+install_extensions=$(ynh_app_setting_get --app=$app --key=install_extensions)
+access_domain=$(ynh_app_setting_get --app=$app --key=access_domain)
 
 #=================================================
 # CHECK VERSION
@@ -62,6 +64,27 @@ fi
 if [ -z "$final_path" ]; then
     final_path=/opt/yunohost/$app
     ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+fi
+
+# If install_extensions doesn't exist, create it
+if [ -z "$install_extensions" ]; then
+    install_extensions=0
+    ynh_app_setting_set --app=$app --key=install_extensions --value=$install_extensions
+fi
+
+# If access_domain doesn't exist, create it
+if [ -z "$access_domain" ]; then
+    access_domain=$domain
+    ynh_app_setting_set --app=$app --key=access_domain --value=$access_domain
+fi
+
+if [[ ! -d "$final_path/live/public/extensions/" || \
+      ! -d "$final_path/live/public/extensions/src/" ]]
+then
+    if test -e "../sources/extra_files/app"
+    then
+        cp -a "../sources/extra_files/app/." "$final_path/live"
+    fi
 fi
 
 #=================================================
@@ -116,8 +139,10 @@ fi
 ynh_script_progression --message="Upgrading nginx web server configuration..." --weight=1
 
 # Create a dedicated nginx config
-ynh_add_nginx_config "port"
-
+ynh_add_nginx_config "\
+    port \
+    access_domain \
+    "
 
 #=================================================
 # UPGRADE DEPENDENCIES
@@ -149,22 +174,20 @@ ynh_system_user_create --username=$app --home_dir=$final_path
 # MODIFY A CONFIG FILE
 #=================================================
 config_file="$final_path/live/.env"
-if [ "$upgrade_type" == "UPGRADE_APP" ]
-then
-    ynh_script_progression --message="Modifying a config file..."  --weight=2
+ynh_script_progression --message="Modifying a config file..."  --weight=2
 
-    cp -f ../conf/env.sample $config_file
-    ynh_replace_string --match_string="EXPOSED_PORT=3000" --replace_string="EXPOSED_PORT=$port" --target_file="$config_file"
-    secret_key=$(ynh_string_random --length=48 | base64)
-    ynh_replace_string --match_string="SECRET_KEY_BASE=changeme123" --replace_string="SECRET_KEY_BASE=$secret_key" --target_file="$config_file"
-    pseudo_key=$(ynh_string_random --length=48 | base64)
-    ynh_replace_string --match_string="PSEUDO_KEY_PARAMS_KEY=changeme456" --replace_string="PSEUDO_KEY_PARAMS_KEY=$pseudo_key" --target_file="$config_file"
-    ynh_replace_string --match_string="RAILS_ENV=development" --replace_string="RAILS_ENV=production" --target_file="$config_file"
-    ynh_replace_string --match_string="DB_DATABASE=standard_notes_db" --replace_string="DB_DATABASE=$db_name" --target_file="$config_file"
-    ynh_replace_string --match_string="DB_USERNAME=std_notes_user" --replace_string="DB_USERNAME=$db_user" --target_file="$config_file"
-    ynh_replace_string --match_string="DB_PASSWORD=changeme123" --replace_string="DB_PASSWORD=$db_pwd" --target_file="$config_file"
-    ynh_replace_string --match_string="RAILS_RELATIVE_URL_ROOT=/" --replace_string="RAILS_RELATIVE_URL_ROOT=$path_url" --target_file="$config_file"
-fi
+cp -f ../conf/env.sample $config_file
+ynh_replace_string --match_string="EXPOSED_PORT=3000" --replace_string="EXPOSED_PORT=$port" --target_file="$config_file"
+secret_key=$(ynh_string_random --length=48 | base64)
+ynh_replace_string --match_string="SECRET_KEY_BASE=changeme123" --replace_string="SECRET_KEY_BASE=$secret_key" --target_file="$config_file"
+pseudo_key=$(ynh_string_random --length=48 | base64)
+ynh_replace_string --match_string="PSEUDO_KEY_PARAMS_KEY=changeme456" --replace_string="PSEUDO_KEY_PARAMS_KEY=$pseudo_key" --target_file="$config_file"
+ynh_replace_string --match_string="RAILS_ENV=development" --replace_string="RAILS_ENV=production" --target_file="$config_file"
+ynh_replace_string --match_string="DB_DATABASE=standard_notes_db" --replace_string="DB_DATABASE=$db_name" --target_file="$config_file"
+ynh_replace_string --match_string="DB_USERNAME=std_notes_user" --replace_string="DB_USERNAME=$db_user" --target_file="$config_file"
+ynh_replace_string --match_string="DB_PASSWORD=changeme123" --replace_string="DB_PASSWORD=$db_pwd" --target_file="$config_file"
+ynh_replace_string --match_string="RAILS_RELATIVE_URL_ROOT=/" --replace_string="RAILS_RELATIVE_URL_ROOT=$path_url" --target_file="$config_file"
+
 #=================================================
 # INSTALLING Standard Notes - Synicing Server 
 #=================================================
@@ -179,7 +202,36 @@ then
         exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set with 'development'
         exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle install
         exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:create db:migrate --quiet
+#        exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails assets:precompile --quiet
     popd
+fi
+
+#=================================================
+# INSTALLING Standard Notes - Extensions
+#=================================================
+if [ $install_extensions -eq 1 ]
+then
+    ynh_script_progression --message="Reinstalling Standard Notes - Extensions..."  --weight=1
+
+    ynh_replace_string --match_string="^RAILS_SERVE_STATIC_FILES=.*$" --replace_string="RAILS_SERVE_STATIC_FILES=true" --target_file="$config_file"
+
+    if [ $path_url = "/" ]
+    then
+        path=""
+    else
+        path=$path_url
+    fi
+
+    find "$final_path/live/public/extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
+    do
+        ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$file"
+    done
+
+    find "../conf/" -name "ext_*.src" -print0 | while read -d $'\0' file
+    do
+    basename=$(basename -as .src $file)
+        ynh_setup_source  --dest_dir="$final_path/live/public/extensions/src/${basename#'ext_'}" --source_id="$basename"
+    done
 fi
 
 #=================================================
@@ -242,9 +294,9 @@ ynh_script_progression --message="Reconfiguring fail2ban..." --weight=1
 # Create a dedicated fail2ban config
 touch "/var/log/$app/$app.log"
 ynh_add_fail2ban_config --use_template --others_var="\
-	domain \
-	path_url \
-	"
+    domain \
+    path_url \
+    "
 
 #=================================================
 # SETUP SSOWAT
@@ -274,6 +326,35 @@ curl --silent --insecure --resolve $domain:443:127.0.0.1 https://$domain$path_ur
 ynh_script_progression --message="Reloading nginx web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# SEND A README FOR THE ADMIN
+#=================================================
+ynh_script_progression --message="Sending a readme for the admin..."
+
+message_extensions="To install extensions open this page: https://$domain$path_url/extensions/\n\
+If you want to change the url of the syncing server all extensions from here have to be reinstalled be the users."
+message_no_extensions="You have no extensions installed.\n\
+You can configure this app by using the config-panel"
+
+admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
+action="You can find some specific actions for this app by using the experimental __URL_TAG1__action feature__URL_TAG2__$admin_panel/actions__URL_TAG3__"
+config_panel="You can find some specific configurations for this app by using the experimental __URL_TAG1__config-panel feature__URL_TAG2__$admin_panel/config-panel__URL_TAG3__"
+
+ynh_replace_string --match_string="__TYPE__" --replace_string="installed" --target_file="../conf/message"
+ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="../conf/message"
+ynh_replace_string --match_string="__PATH_URL__" --replace_string="$path_url" --target_file="../conf/message"
+
+if [ $install_extensions -eq 1 ]
+then
+    ynh_replace_string --match_string="__EXTENSIONS__" --replace_string="$message_extensions" --target_file="../conf/message"
+else
+    ynh_replace_string --match_string="__EXTENSIONS__" --replace_string="$message_no_extensions" --target_file="../conf/message"
+fi
+ynh_replace_string --match_string="__ACTION__" --replace_string="$action" --target_file="../conf/message"
+ynh_replace_string --match_string="__CONFIG_PANEL__" --replace_string="$config_panel" --target_file="../conf/message"
+
+ynh_send_readme_to_admin --app_message="../conf/message" --type='upgrade'
 
 #=================================================
 # END OF SCRIPT

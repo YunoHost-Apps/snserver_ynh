@@ -1,0 +1,11 @@
+{
+  "identifier": "org.standardnotes.markdown-basic-editor",
+  "name": "Markdown Basic",
+  "content_type": "SN|Component",
+  "area": "editor-editor",
+  "version": "1.3.6",
+  "description": "A Markdown editor with dynamic split-pane preview.",
+  "url": "https://__DOMAIN__PATH__/extensions/src/markdown-basic/dist/index.html", 
+  "download_url": "https://github.com/standardnotes/markdown-basic/archive/1.3.6.zip",
+  "latest_url": "https://__DOMAIN__PATH__/extensions/src/markdown-basic.json"
+}

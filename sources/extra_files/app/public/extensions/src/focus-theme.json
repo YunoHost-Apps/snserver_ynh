@@ -1,0 +1,17 @@
+{
+  "identifier": "org.stndardnotes.focus-theme",
+  "name": "Focus Theme",
+  "content_type": "SN|Theme",
+  "area": "theme",
+  "version": "1.2.3",
+  "description": "Light on the eyes, heavy on the spirit.",
+  "url": "https://__DOMAIN__PATH__/extensions/src/focus-theme/dist/dist.css", 
+  "download_url": "https://github.com/sn-extensions/focus-theme/archive/1.2.3.zip",
+  "latest_url": "https://__DOMAIN__PATH__/extensions/src/focus-theme.json",
+  "dock_icon":{
+    "type":"circle",
+    "background_color":"#a464c2",
+    "foreground_color":"#ffffff",
+    "border_color":"#a464c2"
+  }
+}

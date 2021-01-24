@@ -1,9 +1,12 @@
 # Standard Notes Syncing Server for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/snserver.svg)](https://dash.yunohost.org/appci/app/snserver)  
+[![Integration level](https://dash.yunohost.org/integration/snserver.svg)](https://dash.yunohost.org/appci/app/snserver)
+![Status](https://ci-apps.yunohost.org/ci/badges/snserver.status.svg)
+![Maintained](https://ci-apps.yunohost.org/ci/badges/snserver.maintain.svg)
+
 [![Install SNServer with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=snserver)
 
-> *This package allow you to install snserver quickly and simply on a YunoHost server.  
+> *This package allow you to install snserver quickly and simply on a YunoHost server.
 If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to know how to install and enjoy it.*
 
 ## Overview
@@ -13,7 +16,7 @@ Standard Notes syncing server
 You can run your own Standard Notes server and use it with any Standard Notes app. This allows you to have 100% control of your data.
 
 **Shipped version:** 3.13.6
-* Apps available for free. https://standardnotes.org/ 
+* Apps available for free. https://standardnotes.org/
 * Desktop (Windows, Mac, Linux)
 * Mobile (Android and iOS)
 * Web https://app.standardnotes.org/
@@ -32,8 +35,10 @@ Extensions, Editors, Themes: https://standardnotes.org/extensions
 
 ## Configuration
 
-How to configure this app: 
+How to configure this app:
 * The config-file is stored under "/opt/yunohost/$app/live/.env"
+* You can find additional config features under https://your-domain.tld/yunohost/admin/#/apps/$app/config-panel
+* You can find additional action feutures unter https://your-domain.tld/yunohost/admin/#/apps/$app/actions
 
 ## Documentation
 
@@ -53,14 +58,7 @@ How to configure this app:
 
 ## Limitations
 
-* Any known limitations.
-
-## Additional information
-
-* Other information you would add about this application
-
-**More information on the documentation page:**  
-https://yunohost.org/packaging_apps
+* If users have installed the extensions included in this package. The URL of the server should not be changed anymore. Otherwise the users will have to reinstall the extensions.
 
 ## Links
 
