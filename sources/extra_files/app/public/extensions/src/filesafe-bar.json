@@ -7,5 +7,5 @@
   "description": "FileSafe Bar",
   "url": "https://__DOMAIN__PATH__/extensions/src/filesafe-bar/app/index.html", 
   "download_url": "https://github.com/standardnotes/filesafe-bar/archive/2.0.10.zip",
-  "latest_url": "https://__DOMAIN__PATH__/extensions/src/comonents/filesafe-bar.json"
+  "latest_url": "https://__DOMAIN__PATH__/extensions/src/filesafe-bar.json"
 }
