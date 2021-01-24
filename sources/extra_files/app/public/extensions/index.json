@@ -75,11 +75,6 @@
         "extension": "editor"
     },
     {
-        "name": "Secure Spreadsheet",
-        "url": "src/secure-spreadsheets.json",
-        "extension": "editor"
-    },
-    {
         "name": "Simple Task Editor",
         "url": "src/simple-task-editor.json",
         "extension": "editor"
@@ -97,11 +92,6 @@
     {
         "name": "Action Bar",
         "url": "src/action-bar.json",
-        "extension": "component"
-    },
-    {
-        "name": "FileSafe Bar",
-        "url": "src/filesafe-bar.json",
         "extension": "component"
     },
     {
