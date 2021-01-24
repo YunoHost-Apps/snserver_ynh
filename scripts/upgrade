@@ -81,9 +81,9 @@ fi
 if [[ ! -d "$final_path/live/public/extensions/" || \
       ! -d "$final_path/live/public/extensions/src/" ]]
 then
-    if test -e "$../sources/extra_files/app"
+    if test -e "../sources/extra_files/app"
     then
-        cp -a $../sources/extra_files/app/. "$final_path/"
+        cp -a "../sources/extra_files/app/." "$final_path/live"
     fi
 fi
 
@@ -174,22 +174,20 @@ ynh_system_user_create --username=$app --home_dir=$final_path
 # MODIFY A CONFIG FILE
 #=================================================
 config_file="$final_path/live/.env"
-if [ "$upgrade_type" == "UPGRADE_APP" ]
-then
-    ynh_script_progression --message="Modifying a config file..."  --weight=2
+ynh_script_progression --message="Modifying a config file..."  --weight=2
 
-    cp -f ../conf/env.sample $config_file
-    ynh_replace_string --match_string="EXPOSED_PORT=3000" --replace_string="EXPOSED_PORT=$port" --target_file="$config_file"
-    secret_key=$(ynh_string_random --length=48 | base64)
-    ynh_replace_string --match_string="SECRET_KEY_BASE=changeme123" --replace_string="SECRET_KEY_BASE=$secret_key" --target_file="$config_file"
-    pseudo_key=$(ynh_string_random --length=48 | base64)
-    ynh_replace_string --match_string="PSEUDO_KEY_PARAMS_KEY=changeme456" --replace_string="PSEUDO_KEY_PARAMS_KEY=$pseudo_key" --target_file="$config_file"
-    ynh_replace_string --match_string="RAILS_ENV=development" --replace_string="RAILS_ENV=production" --target_file="$config_file"
-    ynh_replace_string --match_string="DB_DATABASE=standard_notes_db" --replace_string="DB_DATABASE=$db_name" --target_file="$config_file"
-    ynh_replace_string --match_string="DB_USERNAME=std_notes_user" --replace_string="DB_USERNAME=$db_user" --target_file="$config_file"
-    ynh_replace_string --match_string="DB_PASSWORD=changeme123" --replace_string="DB_PASSWORD=$db_pwd" --target_file="$config_file"
-    ynh_replace_string --match_string="RAILS_RELATIVE_URL_ROOT=/" --replace_string="RAILS_RELATIVE_URL_ROOT=$path_url" --target_file="$config_file"
-fi
+cp -f ../conf/env.sample $config_file
+ynh_replace_string --match_string="EXPOSED_PORT=3000" --replace_string="EXPOSED_PORT=$port" --target_file="$config_file"
+secret_key=$(ynh_string_random --length=48 | base64)
+ynh_replace_string --match_string="SECRET_KEY_BASE=changeme123" --replace_string="SECRET_KEY_BASE=$secret_key" --target_file="$config_file"
+pseudo_key=$(ynh_string_random --length=48 | base64)
+ynh_replace_string --match_string="PSEUDO_KEY_PARAMS_KEY=changeme456" --replace_string="PSEUDO_KEY_PARAMS_KEY=$pseudo_key" --target_file="$config_file"
+ynh_replace_string --match_string="RAILS_ENV=development" --replace_string="RAILS_ENV=production" --target_file="$config_file"
+ynh_replace_string --match_string="DB_DATABASE=standard_notes_db" --replace_string="DB_DATABASE=$db_name" --target_file="$config_file"
+ynh_replace_string --match_string="DB_USERNAME=std_notes_user" --replace_string="DB_USERNAME=$db_user" --target_file="$config_file"
+ynh_replace_string --match_string="DB_PASSWORD=changeme123" --replace_string="DB_PASSWORD=$db_pwd" --target_file="$config_file"
+ynh_replace_string --match_string="RAILS_RELATIVE_URL_ROOT=/" --replace_string="RAILS_RELATIVE_URL_ROOT=$path_url" --target_file="$config_file"
+
 #=================================================
 # INSTALLING Standard Notes - Synicing Server 
 #=================================================
