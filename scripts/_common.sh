@@ -39,6 +39,19 @@ exec_as() {
     fi
 }
 
+# Check if service is ready
+is_service_ready() {
+    for ((i = 0 ; i < 15 ; i++))
+    do
+        if [ "200" -eq $(curl --silent --insecure --resolve $domain:443:127.0.0.1 https://$domain$path_url/ -o /dev/null --write-out "%{http_code}") ]
+        then
+            break
+        else
+            sleep 2
+        fi
+    done
+}
+
 #================================================
 # EXPERIMENTAL HELPERS
 #=================================================
