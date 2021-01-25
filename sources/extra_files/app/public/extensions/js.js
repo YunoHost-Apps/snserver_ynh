@@ -1,4 +1,4 @@
-loadJSON("index.json");
+loadJSON("extensions/index.json");
 function loadJSON(file){
   fetch(file)
   .then(function (response) {
