@@ -34,7 +34,7 @@ then
     access_domain=$domain
 else
     access_domain=$YNH_APP_ARG_ACCESS_DOMAIN
-    if [ -z $access_domain ]
+    if [ -z "$access_domain" ]
     then
         access_domain=$domain
     fi
