@@ -23,6 +23,7 @@ ynh_abort_if_errors
 app=$YNH_APP_INSTANCE_NAME
 path_url=$(ynh_app_setting_get --app=$app --key=path)
 domain=$(ynh_app_setting_get --app=$app --key=domain)
+access_domain=$(ynh_app_setting_get --app=$app --key=access_domain)
 
 #=================================================
 # CHECK IF ARGUMENTS ARE CORRECT
@@ -96,6 +97,16 @@ ynh_systemd_action --service_name=$app --action=restart
 ynh_script_progression --message="Waiting for service..."  --weight=1
 
 is_service_ready
+
+#=================================================
+# CONFIG INFORMATION
+#=================================================
+ynh_script_progression --message="Configuration Informations"  --weight=1
+
+admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
+
+ynh_print_info "You need to set the access_domain in the <a href=\"$admin_panel/config-panel\">config-panel</a> to be able to access the extentions via the Standard Notes web app."
+ynh_print_info "access_domain is currently set to: $(echo $access_domain | sed "s@;@ @g")"
 
 #=================================================
 # END OF SCRIPT

@@ -185,6 +185,8 @@ admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)
 
 message_extensions="To install extensions open this page: https://$domain$path_url/extensions/\n\
 You changed the url of the syncing server. All extensions installed from here must be reinstalled by the users."
+message_no_extensions="You have no extensions installed.\n\
+You can install the extensions by using the actions feature."
 action="You can find some specific actions for this app by using the experimental __URL_TAG1__action feature__URL_TAG2__$admin_panel/actions__URL_TAG3__"
 config_panel="You can find some specific configurations for this app by using the experimental __URL_TAG1__config-panel feature__URL_TAG2__$admin_panel/config-panel__URL_TAG3__"
 
@@ -196,12 +198,12 @@ if [ $install_extensions -eq 1 ]
 then
     ynh_replace_string --match_string="__EXTENSIONS__" --replace_string="$message_extensions" --target_file="../conf/message"
 else
-    ynh_replace_string --match_string="__EXTENSIONS__" --replace_string="" --target_file="../conf/message"
+    ynh_replace_string --match_string="__EXTENSIONS__" --replace_string="$message_no_extensions" --target_file="../conf/message"
 fi
 ynh_replace_string --match_string="__ACTION__" --replace_string="$action" --target_file="../conf/message"
 ynh_replace_string --match_string="__CONFIG_PANEL__" --replace_string="$config_panel" --target_file="../conf/message"
 
-ynh_send_readme_to_admin --app_message="../conf/message" --type='upgrade'
+ynh_send_readme_to_admin --app_message="../conf/message" --type='change_url'
 
 #=================================================
 # END OF SCRIPT

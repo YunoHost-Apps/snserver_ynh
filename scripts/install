@@ -302,7 +302,7 @@ ynh_script_progression --message="Sending a readme for the admin..."
 message_extensions="To install extensions open this page: https://$domain$path_url/extensions/\n\
 If you want to change the url of the syncing server all extensions from here have to be reinstalled be the users."
 message_no_extensions="You have no extensions installed.\n\
-You can configure this app by using the config-panel"
+You can install the extensions by using the actions feature."
 
 admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
 action="You can find some specific actions for this app by using the experimental __URL_TAG1__action feature__URL_TAG2__$admin_panel/actions__URL_TAG3__"
