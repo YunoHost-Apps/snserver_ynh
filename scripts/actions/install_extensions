@@ -66,6 +66,8 @@ else
     path=$path_url
 fi
 
+ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$final_path/live/public/extensions/repo.json"
+
 find "$final_path/live/public/extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
 do
     ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$file"
