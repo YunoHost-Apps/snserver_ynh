@@ -2,14 +2,14 @@ body {
   padding-left: 50px;
 }
 td {
-  border: 1px solid #999;
+  /*border: 1px solid #999;*/
   padding: 0.25rem;
 }
 td#id {
   width: 20px;
 }
 td#name {
-  width: 200px;
+  width: 250px;
 }
 td#url {
   width: 300px;

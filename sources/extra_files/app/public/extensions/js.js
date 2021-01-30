@@ -17,7 +17,7 @@ function appendData(data) {
     var tr = document.createElement("tr");
     tr.innerHTML = 
       "<td id='name'>" + data[i].name + "</td>" +
-      "<td id='url'><a href=" + data[i].url + ">" + data[i].url + "</a></td>"
+      "<td id='url'><a href=" + data[i].url + ">" + data[i].url.substr(15) + "</a></td>"
     mainContainer.appendChild(tr);
   }
 }

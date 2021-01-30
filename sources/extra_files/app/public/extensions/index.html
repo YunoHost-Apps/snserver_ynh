@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="utf-8">
   <title>StandardNotes Extensions</title>
   <script type="text/javascript" src="extensions/js.js"></script>
   <link rel="stylesheet" href="extensions/css.css">
@@ -18,21 +19,38 @@
     <h3>Install Instructions</h3>
     <ul>
       <li>Open StandardNotes Web or Desktop App</li>
-      <li>Press "Extensions" in the button left corner</li>
-      <li>Press on "Import Extensions" in the button right corner of the new window.</li>
-      <li>Enter one of the Extension Links from below.</li>
-      <li>Press "Enter" on your keyboard.</li>
-      <li>Press on "Install"</li>
+      <li>Press on <strong>Extensions</strong> in the button left corner</li>
+      <li>Press on <strong>Import Extensions</strong> in the button right corner of the new window.</li>
+      <li>Insert one of the Extension Links from below.</li>
+      <li>Press <strong>Enter</strong> on your keyboard.</li>
+      <li>Press on <strong>Install</strong></li>
     </ul>
   </div>
-  <div id="themesData">
+  <div id="repos">
+    <h3>Repo</h3>
+    <table id="reposData">
+      <tr>
+        <td id="name">Extensions Repo</br>(Includes all Extentions from below)</td>
+        <td id="url">
+          <a href="extensions/repo.json">repo.json</a>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div id="themes">
     <h3>Themes</h3>
+    <table id="themesData">
+    </table>
   </div>
-  <div id="editorsData">
+  <div id="editors">
     <h3>Editors</h3>
+    <table id="editorsData">
+    </table>
   </div>
-  <div id="componentsData">
+  <div id="components">
     <h3>Components</h3>
+    <table id="componentsData">
+    </table>
   </div>
 </body>
 </html>
