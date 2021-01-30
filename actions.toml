@@ -7,4 +7,5 @@ cwd = "/etc/yunohost/apps/$app/scripts"
 [remove_extensions]
 name = "Remove Extensions"
 description = "Remove Standard Notes - Extensions"
-command = "/bin/bash scripts/actions/remove_extensions"
+command = "/bin/bash actions/remove_extensions"
+cwd = "/etc/yunohost/apps/$app/scripts"
