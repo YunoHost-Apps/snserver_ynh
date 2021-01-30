@@ -97,7 +97,7 @@ ynh_install_ruby () {
   CONFIGURE_OPTS="--disable-install-doc --with-jemalloc" MAKE_OPTS="-j2" rbenv install --skip-existing $ruby_version
 
   # Store the ID of this app and the version of ruby requested for it
-  echo "$YNH_APP_ID:$ruby_version" | tee --append "$rbenv_install_dir/ynh_app_version"
+  echo "$YNH_APP_INSTANCE_NAME:$ruby_version" | tee --append "$rbenv_install_dir/ynh_app_version"
 
   # Store ruby_version into the config of this app
   ynh_app_setting_set $app ruby_version $ruby_version
@@ -127,7 +127,7 @@ ynh_remove_ruby () {
   ruby_version=$(ynh_app_setting_get $app ruby_version)
 
   # Remove the line for this app
-  sed --in-place "/$YNH_APP_ID:$ruby_version/d" "$rbenv_install_dir/ynh_app_version"
+  sed --in-place "/$YNH_APP_INSTANCE_NAME:$ruby_version/d" "$rbenv_install_dir/ynh_app_version"
 
   # If no other app uses this version of ruby, remove it.
   if ! grep --quiet "$ruby_version" "$rbenv_install_dir/ynh_app_version"
