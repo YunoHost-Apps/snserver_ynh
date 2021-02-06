@@ -38,7 +38,6 @@ Extensions, Editors, Themes: https://standardnotes.org/extensions
 How to configure this app:
 * The config-file is stored under "/opt/yunohost/$app/live/.env"
 * You can find additional config features under https://your-domain.tld/yunohost/admin/#/apps/$app/config-panel
-* You can find additional action feutures unter https://your-domain.tld/yunohost/admin/#/apps/$app/actions
 
 ## Documentation
 
