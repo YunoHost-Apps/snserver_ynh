@@ -146,7 +146,7 @@ ynh_replace_string --match_string="RAILS_RELATIVE_URL_ROOT=.*$" --replace_string
 ynh_replace_string --match_string="SMTP_HOST=.*$" --replace_string="SMTP_HOST=localhost" --target_file="$config_file"
 ynh_replace_string --match_string="SMTP_PORT=.*$" --replace_string="SMTP_PORT=25" --target_file="$config_file"
 ynh_replace_string --match_string="SMTP_DOMAIN=.*$" --replace_string="SMTP_DOMAIN=localhost" --target_file="$config_file"
-ynh_replace_string --match_string="SMTP_STARTTLS=.*$" --replace_string="SMTP_STARTTLS="" --target_file="$config_file"
+ynh_replace_string --match_string="SMTP_STARTTLS=.*$" --replace_string="SMTP_STARTTLS=" --target_file="$config_file"
 ynh_replace_string --match_string="RAILS_SERVE_STATIC_FILES=.*$" --replace_string="RAILS_SERVE_STATIC_FILES=true" --target_file="$config_file"
 
 ynh_replace_string --match_string="__MAIL__" --replace_string="$mail" --target_file="$final_path/live/app/mailers/application_mailer.rb"
