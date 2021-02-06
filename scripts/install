@@ -194,9 +194,6 @@ basename=$(basename -as .src $file)
     ynh_setup_source  --dest_dir="$final_path/live/public/extensions/src/${basename#'ext_'}" --source_id="$basename"
 done
 
-install_extensions=1
-ynh_app_setting_set --app=$app --key=install_extensions --value=$install_extensions
-
 #=================================================
 # SETUP SYSTEMD
 #=================================================

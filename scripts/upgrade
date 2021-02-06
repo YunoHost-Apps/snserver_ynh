@@ -25,7 +25,6 @@ db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
 db_pwd=$(ynh_app_setting_get --app=$app --key=mysqlpwd)
 port=$(ynh_app_setting_get --app=$app --key=port)
-install_extensions=$(ynh_app_setting_get --app=$app --key=install_extensions)
 access_domain=$(ynh_app_setting_get --app=$app --key=access_domain)
 mail=$(ynh_app_setting_get --app=$app --key=mail)
 
@@ -81,12 +80,6 @@ if [ -z "$final_path" ]; then
     ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 fi
 
-# If install_extensions doesn't exist, create it
-if [ -z "$install_extensions" ]; then
-    install_extensions=0
-    ynh_app_setting_set --app=$app --key=install_extensions --value=$install_extensions
-fi
-
 # If access_domain doesn't exist, create it
 if [ -z "$access_domain" ]; then
     access_domain=$domain
@@ -97,15 +90,6 @@ fi
 if [ -z "$mail" ]; then
     mail="$app@$domain"
     ynh_app_setting_set --app=$app --key=mail --value=$mail
-fi
-
-if [[ ! -d "$final_path/live/public/extensions/" || \
-      ! -d "$final_path/live/public/extensions/src/" ]]
-then
-    if test -e "../sources/extra_files/app"
-    then
-        cp -a "../sources/extra_files/app/." "$final_path/live"
-    fi
 fi
 
 if ynh_compare_current_package_version --comparison lt --version "3.13.6~ynh4"
@@ -140,10 +124,9 @@ ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
+ynh_script_progression --message="Upgrading source files..." --weight=1
 if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
-    ynh_script_progression --message="Upgrading source files..." --weight=1
-
     # Backup files to keep
     tmpdir=$(mktemp -d)
     if [ -d "$final_path/live/.env" ] ; then
@@ -162,6 +145,20 @@ then
     fi
     if [ -d "$tmpdir/log" ] ; then
         cp -Rp "$tmpdir/log" "$final_path/live"
+    fi
+fi
+
+if [ "$upgrade_type" == "UPGRADE_PACKAGE" ]
+then
+    ynh_secure_remove --file="$final_path/live/public/extensions"
+fi
+
+if [[ ! -d "$final_path/live/public/extensions/" || \
+      ! -d "$final_path/live/public/extensions/src/" ]]
+then
+    if test -e "../sources/extra_files/app"
+    then
+        cp -a "../sources/extra_files/app/." "$final_path/live"
     fi
 fi
 
@@ -244,7 +241,7 @@ fi
 #=================================================
 # INSTALLING Standard Notes - Extensions
 #=================================================
-ynh_script_progression --message="Reinstalling Standard Notes - Extensions..."  --weight=1
+ynh_script_progression --message="Installing Standard Notes - Extensions..."  --weight=1
 
 if [ $path_url = "/" ]
 then
@@ -265,10 +262,6 @@ do
     basename=$(basename -as .src $file)
     ynh_setup_source  --dest_dir="$final_path/live/public/extensions/src/${basename#'ext_'}" --source_id="$basename"
 done
-
-install_extensions=1
-ynh_app_setting_set --app=$app --key=install_extensions --value=$install_extensions
-
 
 #=================================================
 # SETUP SYSTEMD

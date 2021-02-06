@@ -29,7 +29,6 @@ ynh_script_progression --message="Loading installation settings..." --weight=1
 # Needed for helper "ynh_add_nginx_config"
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 port=$(ynh_app_setting_get --app=$app --key=port)
-install_extensions=$(ynh_app_setting_get --app=$app --key=install_extensions)
 access_domain=$(ynh_app_setting_get --app=$app --key=access_domain)
 
 # Add settings here as needed by your application
