@@ -79,12 +79,37 @@ if [ -z "$access_domain" ]; then
     ynh_app_setting_set --app=$app --key=access_domain --value=$access_domain
 fi
 
+# If mail doesn't exist, create it
+if [ -z "$mail" ]; then
+    mail="$app@$domain"
+    ynh_app_setting_set --app=$app --key=mail --value=$mail
+fi
+
 if [[ ! -d "$final_path/live/public/extensions/" || \
       ! -d "$final_path/live/public/extensions/src/" ]]
 then
     if test -e "../sources/extra_files/app"
     then
         cp -a "../sources/extra_files/app/." "$final_path/live"
+    fi
+fi
+
+if ynh_compare_current_package_version --comparison lt --version "3.13.6~ynh4"
+then
+    # Add Variables to .env config file
+    echo -e "\
+        \n# Public file server\
+        \n# Empty is disabled\
+        \n# Any value is enabled\
+        \nRAILS_SERVE_STATIC_FILES=\
+        " >> "$final_path/live/.env"
+
+    # Apply Patch
+    if [ -f "$YNH_CWD/../sources/patches/app-01-add-mail.patch" ]
+    then
+        pushd "$final_path/live"
+            patch --strip=1 < "$YNH_CWD/../sources/patches/app-01-add-mail.patch"
+        popd
     fi
 fi
 
@@ -187,7 +212,11 @@ if ynh_compare_current_package_version --comparison lt --version "3.13.6~ynh4"
 then
     ynh_replace_string --match_string="SMTP_HOST=.*$" --replace_string="SMTP_HOST=localhost" --target_file="$config_file"
     ynh_replace_string --match_string="SMTP_PORT=.*$" --replace_string="SMTP_PORT=25" --target_file="$config_file"
-    ynh_replace_string --match_string="SMTP_DOMAIN=.*$" --replace_string="SMTP_DOAMIN=localhost" --target_file="$config_file"
+    ynh_replace_string --match_string="SMTP_USERNAME=.*$" --replace_string="#&" --target_file="$config_file"
+    ynh_replace_string --match_string="SMTP_PASSWORD=.*$" --replace_string="#&" --target_file="$config_file"
+    ynh_replace_string --match_string="SMTP_DOMAIN=.*$" --replace_string="SMTP_DOMAIN=localhost" --target_file="$config_file"
+    ynh_replace_string --match_string="SMTP_DOMAIN=.*$" --replace_string="&\n# Enable STARTTLS\n# Empty is disabled\n# Any value is enabled\nSMTP_STARTTLS=" --target_file="$config_file"
+    ynh_replace_string --match_string="RAILS_SERVE_STATIC_FILES=.*$" --replace_string="RAILS_SERVE_STATIC_FILES=true" --target_file="$config_file"
 fi
 
 ynh_replace_string --match_string="__MAIL__" --replace_string="$mail" --target_file="$final_path/live/app/mailers/application_mailer.rb"

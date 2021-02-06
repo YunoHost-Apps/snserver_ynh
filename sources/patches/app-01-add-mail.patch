@@ -24,10 +24,10 @@ index 6bbbb11..ac7f55e 100644
  end
 diff --git a/app/views/user_mailer/welcome.html.erb b/app/views/user_mailer/welcome.html.erb
 new file mode 100644
-index 0000000..fa4ba56
+index 0000000..4f156f4
 --- /dev/null
 +++ b/app/views/user_mailer/welcome.html.erb
-@@ -0,0 +1,226 @@
+@@ -0,0 +1,223 @@
 +<!DOCTYPE html>
 +<html style="font-family: sans-serif; line-height: 1.3 !important; font-size: 18px; color: black !important; box-sizing: border-box; margin: 0; padding: 0;">
 +  <head>
@@ -199,9 +199,6 @@ index 0000000..fa4ba56
 +      Press <strong>Enter</strong> on your keyboard.
 +    </li>
 +    <li style="line-height: 1.3; margin-bottom: 10px; box-sizing: border-box;">
-+      Press on <strong>Install</strong>
-+    </li>
-+    <li style="line-height: 1.3; margin-bottom: 10px; box-sizing: border-box;">
 +      Now you can see Editors, Themes and Components which you can install
 +    </li>
 +  </ol>
@@ -254,6 +251,19 @@ index 0000000..fa4ba56
 +    </div>
 +  </body>
 +</html>
+diff --git a/config/application.rb b/config/application.rb
+index 3c749e2..feff27c 100644
+--- a/config/application.rb
++++ b/config/application.rb
+@@ -79,7 +79,7 @@ module SyncingServer
+       :user_name => ENV['SMTP_USERNAME'],
+       :password => ENV['SMTP_PASSWORD'],
+       :authentication => 'login',
+-      :enable_starttls_auto => true # detects and uses STARTTLS
++      :enable_starttls_auto => ENV['SMTP_STARTTLS'].present? # detects and uses STARTTLS
+     }
+
+     # Custom configuration
 diff --git a/lib/sync_engine/abstract/user_manager.rb b/lib/sync_engine/abstract/user_manager.rb
 index 26a549a..af92835 100644
 --- a/lib/sync_engine/abstract/user_manager.rb
