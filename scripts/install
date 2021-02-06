@@ -39,6 +39,7 @@ else
         access_domain=$domain
     fi
 fi
+mail=$app$domain
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
@@ -59,6 +60,7 @@ ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 ynh_app_setting_set --app=$app --key=install_extensions --value=$install_extensions
 ynh_app_setting_set --app=$app --key=access_domain --value=$access_domain
+ynh_app_setting_set --app=$app --key=mail --value=$mail
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -148,6 +150,13 @@ ynh_replace_string --match_string="DB_DATABASE=standard_notes_db" --replace_stri
 ynh_replace_string --match_string="DB_USERNAME=std_notes_user" --replace_string="DB_USERNAME=$db_user" --target_file="$config_file"
 ynh_replace_string --match_string="DB_PASSWORD=changeme123" --replace_string="DB_PASSWORD=$db_pwd" --target_file="$config_file"
 ynh_replace_string --match_string="RAILS_RELATIVE_URL_ROOT=/" --replace_string="RAILS_RELATIVE_URL_ROOT=$path_url" --target_file="$config_file"
+ynh_replace_string --match_string="SMTP_HOST=.*$" --replace_string="SMTP_HOST=localhost" --target_file="$config_file"
+ynh_replace_string --match_string="SMTP_PORT=.*$" --replace_string="SMTP_PORT=25" --target_file="$config_file"
+ynh_replace_string --match_string="SMTP_DOMAIN=.*$" --replace_string="SMTP_DOAMIN=localhost" --target_file="$config_file"
+
+ynh_replace_string --match_string="__MAIL__" --replace_string="$mail" --target_file="$final_path/live/app/mailers/application_mailer.rb"
+ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
+ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
 
 #=================================================
 # INSTALLING Standard Notes - Synicing Server
