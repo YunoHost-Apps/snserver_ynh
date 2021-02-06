@@ -28,16 +28,10 @@ domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
 is_public=$YNH_APP_ARG_IS_PUBLIC
 app=$YNH_APP_INSTANCE_NAME
-install_extensions=$YNH_APP_ARG_INSTALL_EXTENSIONS
-if [ $install_extensions -eq 0 ]
+access_domain=$YNH_APP_ARG_ACCESS_DOMAIN
+if [ -z "$access_domain" ]
 then
     access_domain=$domain
-else
-    access_domain=$YNH_APP_ARG_ACCESS_DOMAIN
-    if [ -z "$access_domain" ]
-    then
-        access_domain=$domain
-    fi
 fi
 mail=$app$domain
 
@@ -58,7 +52,6 @@ ynh_script_progression --message="Storing installation settings..."  --weight=3
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=is_public --value=$is_public
-ynh_app_setting_set --app=$app --key=install_extensions --value=$install_extensions
 ynh_app_setting_set --app=$app --key=access_domain --value=$access_domain
 ynh_app_setting_set --app=$app --key=mail --value=$mail
 
@@ -176,32 +169,32 @@ popd
 #=================================================
 # INSTALLING Standard Notes - Extensions
 #=================================================
-if [ $install_extensions -eq 1 ]
+ynh_script_progression --message="Installing Standard Notes - Extensions..."  --weight=1
+
+ynh_replace_string --match_string="^RAILS_SERVE_STATIC_FILES=.*$" --replace_string="RAILS_SERVE_STATIC_FILES=true" --target_file="$config_file"
+
+if [ $path_url = "/" ]
 then
-    ynh_script_progression --message="Installing Standard Notes - Extensions..."  --weight=1
-
-    ynh_replace_string --match_string="^RAILS_SERVE_STATIC_FILES=.*$" --replace_string="RAILS_SERVE_STATIC_FILES=true" --target_file="$config_file"
-
-    if [ $path_url = "/" ]
-    then
-        path=""
-    else
-        path=$path_url
-    fi
-
-    ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$final_path/live/public/extensions/repo.json"
-
-    find "$final_path/live/public/extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
-    do
-        ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$file"
-    done
-
-    find "../conf/" -name "ext_*.src" -print0 | while read -d $'\0' file
-    do
-    basename=$(basename -as .src $file)
-        ynh_setup_source  --dest_dir="$final_path/live/public/extensions/src/${basename#'ext_'}" --source_id="$basename"
-    done
+    path=""
+else
+    path=$path_url
 fi
+
+ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$final_path/live/public/extensions/repo.json"
+
+find "$final_path/live/public/extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
+do
+    ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$file"
+done
+
+find "../conf/" -name "ext_*.src" -print0 | while read -d $'\0' file
+do
+basename=$(basename -as .src $file)
+    ynh_setup_source  --dest_dir="$final_path/live/public/extensions/src/${basename#'ext_'}" --source_id="$basename"
+done
+
+install_extensions=1
+ynh_app_setting_set --app=$app --key=install_extensions --value=$install_extensions
 
 #=================================================
 # SETUP SYSTEMD
@@ -308,26 +301,13 @@ is_service_ready
 #=================================================
 ynh_script_progression --message="Sending a readme for the admin..."
 
-message_extensions="To install extensions open this page: https://$domain$path_url/extensions/\n\
-If you want to change the url of the syncing server all extensions from here have to be reinstalled be the users."
-message_no_extensions="You have no extensions installed.\n\
-You can install the extensions by using the actions feature."
-
 admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
-action="You can find some specific actions for this app by using the experimental __URL_TAG1__action feature__URL_TAG2__$admin_panel/actions__URL_TAG3__"
 config_panel="You can find some specific configurations for this app by using the experimental __URL_TAG1__config-panel feature__URL_TAG2__$admin_panel/config-panel__URL_TAG3__"
 
 ynh_replace_string --match_string="__TYPE__" --replace_string="installed" --target_file="../conf/message"
 ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="../conf/message"
 ynh_replace_string --match_string="__PATH_URL__" --replace_string="$path_url" --target_file="../conf/message"
 
-if [ $install_extensions -eq 1 ]
-then
-    ynh_replace_string --match_string="__EXTENSIONS__" --replace_string="$message_extensions" --target_file="../conf/message"
-else
-    ynh_replace_string --match_string="__EXTENSIONS__" --replace_string="$message_no_extensions" --target_file="../conf/message"
-fi
-ynh_replace_string --match_string="__ACTION__" --replace_string="$action" --target_file="../conf/message"
 ynh_replace_string --match_string="__CONFIG_PANEL__" --replace_string="$config_panel" --target_file="../conf/message"
 
 ynh_send_readme_to_admin --app_message="../conf/message" --type='install'
