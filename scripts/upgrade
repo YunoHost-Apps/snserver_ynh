@@ -121,16 +121,22 @@ then
 
     # Backup files to keep
     tmpdir=$(mktemp -d)
-    if [ -d $final_path/live/log ] ; then
-        cp -Rp $final_path/live/log $tmpdir
+    if [ -d "$final_path/live/.env" ] ; then
+        cp -Rp "$final_path/live/.env" "$tmpdir"
+    fi
+    if [ -d "$final_path/live/log" ] ; then
+        cp -Rp "$final_path/live/log" "$tmpdir"
     fi
     # Remove destination directory
-    ynh_secure_remove --file=$final_path
+    ynh_secure_remove --file="$final_path/live"
     # Download, check integrity, uncompress and patch the source from app.src
-    mkdir -p $final_path
+    mkdir -p "$final_path"
     ynh_setup_source --dest_dir="$final_path/live"
-    if [ -d $tmpdir/log ] ; then
-        cp -Rp $tmpdir/log $final_path/live
+    if [ -d "$tmpdir/.env" ] ; then
+        cp -Rp "$tmpdir/.env" "$final_path/live"
+    fi
+    if [ -d "$tmpdir/log" ] ; then
+        cp -Rp "$tmpdir/log" "$final_path/live"
     fi
 fi
 
@@ -177,20 +183,12 @@ ynh_system_user_create --username=$app --home_dir=$final_path
 config_file="$final_path/live/.env"
 ynh_script_progression --message="Modifying a config file..."  --weight=2
 
-cp -f ../conf/env.sample $config_file
-ynh_replace_string --match_string="EXPOSED_PORT=3000" --replace_string="EXPOSED_PORT=$port" --target_file="$config_file"
-secret_key=$(ynh_string_random --length=48 | base64)
-ynh_replace_string --match_string="SECRET_KEY_BASE=changeme123" --replace_string="SECRET_KEY_BASE=$secret_key" --target_file="$config_file"
-pseudo_key=$(ynh_string_random --length=48 | base64)
-ynh_replace_string --match_string="PSEUDO_KEY_PARAMS_KEY=changeme456" --replace_string="PSEUDO_KEY_PARAMS_KEY=$pseudo_key" --target_file="$config_file"
-ynh_replace_string --match_string="RAILS_ENV=development" --replace_string="RAILS_ENV=production" --target_file="$config_file"
-ynh_replace_string --match_string="DB_DATABASE=standard_notes_db" --replace_string="DB_DATABASE=$db_name" --target_file="$config_file"
-ynh_replace_string --match_string="DB_USERNAME=std_notes_user" --replace_string="DB_USERNAME=$db_user" --target_file="$config_file"
-ynh_replace_string --match_string="DB_PASSWORD=changeme123" --replace_string="DB_PASSWORD=$db_pwd" --target_file="$config_file"
-ynh_replace_string --match_string="RAILS_RELATIVE_URL_ROOT=/" --replace_string="RAILS_RELATIVE_URL_ROOT=$path_url" --target_file="$config_file"
-ynh_replace_string --match_string="SMTP_HOST=$" --replace_string="SMTP_HOST=localhost" --target_file="$config_file"
-ynh_replace_string --match_string="SMTP_PORT=$" --replace_string="SMTP_PORT=25" --target_file="$config_file"
-ynh_replace_string --match_string="SMTP_DOMAIN=$" --replace_string="SMTP_DOAMIN=localhost" --target_file="$config_file"
+if ynh_compare_current_package_version --comparison lt --version "3.13.6~ynh4"
+then
+    ynh_replace_string --match_string="SMTP_HOST=.*$" --replace_string="SMTP_HOST=localhost" --target_file="$config_file"
+    ynh_replace_string --match_string="SMTP_PORT=.*$" --replace_string="SMTP_PORT=25" --target_file="$config_file"
+    ynh_replace_string --match_string="SMTP_DOMAIN=.*$" --replace_string="SMTP_DOAMIN=localhost" --target_file="$config_file"
+fi
 
 ynh_replace_string --match_string="__MAIL__" --replace_string="$mail" --target_file="$final_path/live/app/mailers/application_mailer.rb"
 ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
@@ -217,32 +215,31 @@ fi
 #=================================================
 # INSTALLING Standard Notes - Extensions
 #=================================================
-if [ $install_extensions -eq 1 ]
+ynh_script_progression --message="Reinstalling Standard Notes - Extensions..."  --weight=1
+
+if [ $path_url = "/" ]
 then
-    ynh_script_progression --message="Reinstalling Standard Notes - Extensions..."  --weight=1
-
-    ynh_replace_string --match_string="^RAILS_SERVE_STATIC_FILES=.*$" --replace_string="RAILS_SERVE_STATIC_FILES=true" --target_file="$config_file"
-
-    if [ $path_url = "/" ]
-    then
-        path=""
-    else
-        path=$path_url
-    fi
-
-    ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$final_path/live/public/extensions/repo.json"
-
-    find "$final_path/live/public/extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
-    do
-        ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$file"
-    done
-
-    find "../conf/" -name "ext_*.src" -print0 | while read -d $'\0' file
-    do
-    basename=$(basename -as .src $file)
-        ynh_setup_source  --dest_dir="$final_path/live/public/extensions/src/${basename#'ext_'}" --source_id="$basename"
-    done
+    path=""
+else
+    path=$path_url
 fi
+
+ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$final_path/live/public/extensions/repo.json"
+
+find "$final_path/live/public/extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
+do
+    ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$file"
+done
+
+find "../conf/" -name "ext_*.src" -print0 | while read -d $'\0' file
+do
+    basename=$(basename -as .src $file)
+    ynh_setup_source  --dest_dir="$final_path/live/public/extensions/src/${basename#'ext_'}" --source_id="$basename"
+done
+
+install_extensions=1
+ynh_app_setting_set --app=$app --key=install_extensions --value=$install_extensions
+
 
 #=================================================
 # SETUP SYSTEMD

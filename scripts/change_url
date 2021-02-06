@@ -133,22 +133,19 @@ fi
 #=================================================
 # Modify Standard Notes - Extensions
 #=================================================
-if [ $install_extensions -eq 1 ]
+ynh_script_progression --message="Modify Standard Notes - Extensions..."  --weight=1
+
+if [ $new_path = "/" ]
 then
-    ynh_script_progression --message="Modify Standard Notes - Extensions..."  --weight=1
-
-    if [ $new_path = "/" ]
-    then
-        path=""
-    else
-        path=$new_path
-    fi
-
-    find "$final_path/live/public/extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
-    do
-        ynh_replace_string --match_string='"url": "https://.*/extensions/src/' --replace_string='"url": "https://$domain$path/extensions/src/' --target_file="$file"
-    done
+    path=""
+else
+    path=$new_path
 fi
+
+find "$final_path/live/public/extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
+do
+    ynh_replace_string --match_string='"url": "https://.*/extensions/src/' --replace_string='"url": "https://$domain$path/extensions/src/' --target_file="$file"
+done
 
 #=================================================
 # SETUP FAIL2BAN

@@ -133,19 +133,20 @@ ynh_script_progression --message="Modifying a config file..."  --weight=2
 
 config_file="$final_path/live/.env"
 cp -f ../conf/env.sample $config_file
-ynh_replace_string --match_string="EXPOSED_PORT=3000" --replace_string="EXPOSED_PORT=$port" --target_file="$config_file"
+ynh_replace_string --match_string="EXPOSED_PORT=.*$" --replace_string="EXPOSED_PORT=$port" --target_file="$config_file"
 secret_key=$(ynh_string_random --length=48 | base64)
-ynh_replace_string --match_string="SECRET_KEY_BASE=changeme123" --replace_string="SECRET_KEY_BASE=$secret_key" --target_file="$config_file"
+ynh_replace_string --match_string="SECRET_KEY_BASE=.*$" --replace_string="SECRET_KEY_BASE=$secret_key" --target_file="$config_file"
 pseudo_key=$(ynh_string_random --length=48 | base64)
-ynh_replace_string --match_string="PSEUDO_KEY_PARAMS_KEY=changeme456" --replace_string="PSEUDO_KEY_PARAMS_KEY=$pseudo_key" --target_file="$config_file"
-ynh_replace_string --match_string="RAILS_ENV=development" --replace_string="RAILS_ENV=production" --target_file="$config_file"
-ynh_replace_string --match_string="DB_DATABASE=standard_notes_db" --replace_string="DB_DATABASE=$db_name" --target_file="$config_file"
-ynh_replace_string --match_string="DB_USERNAME=std_notes_user" --replace_string="DB_USERNAME=$db_user" --target_file="$config_file"
-ynh_replace_string --match_string="DB_PASSWORD=changeme123" --replace_string="DB_PASSWORD=$db_pwd" --target_file="$config_file"
-ynh_replace_string --match_string="RAILS_RELATIVE_URL_ROOT=/" --replace_string="RAILS_RELATIVE_URL_ROOT=$path_url" --target_file="$config_file"
+ynh_replace_string --match_string="PSEUDO_KEY_PARAMS_KEY=.*$" --replace_string="PSEUDO_KEY_PARAMS_KEY=$pseudo_key" --target_file="$config_file"
+ynh_replace_string --match_string="RAILS_ENV=.*$" --replace_string="RAILS_ENV=production" --target_file="$config_file"
+ynh_replace_string --match_string="DB_DATABASE=.*$" --replace_string="DB_DATABASE=$db_name" --target_file="$config_file"
+ynh_replace_string --match_string="DB_USERNAME=.*$" --replace_string="DB_USERNAME=$db_user" --target_file="$config_file"
+ynh_replace_string --match_string="DB_PASSWORD=.*$" --replace_string="DB_PASSWORD=$db_pwd" --target_file="$config_file"
+ynh_replace_string --match_string="RAILS_RELATIVE_URL_ROOT=.*$" --replace_string="RAILS_RELATIVE_URL_ROOT=$path_url" --target_file="$config_file"
 ynh_replace_string --match_string="SMTP_HOST=.*$" --replace_string="SMTP_HOST=localhost" --target_file="$config_file"
 ynh_replace_string --match_string="SMTP_PORT=.*$" --replace_string="SMTP_PORT=25" --target_file="$config_file"
 ynh_replace_string --match_string="SMTP_DOMAIN=.*$" --replace_string="SMTP_DOAMIN=localhost" --target_file="$config_file"
+ynh_replace_string --match_string="RAILS_SERVE_STATIC_FILES=.*$" --replace_string="RAILS_SERVE_STATIC_FILES=true" --target_file="$config_file"
 
 ynh_replace_string --match_string="__MAIL__" --replace_string="$mail" --target_file="$final_path/live/app/mailers/application_mailer.rb"
 ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
@@ -171,7 +172,6 @@ popd
 #=================================================
 ynh_script_progression --message="Installing Standard Notes - Extensions..."  --weight=1
 
-ynh_replace_string --match_string="^RAILS_SERVE_STATIC_FILES=.*$" --replace_string="RAILS_SERVE_STATIC_FILES=true" --target_file="$config_file"
 
 if [ $path_url = "/" ]
 then
