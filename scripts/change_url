@@ -30,6 +30,7 @@ ynh_script_progression --message="Loading installation settings..." --weight=1
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 port=$(ynh_app_setting_get --app=$app --key=port)
 access_domain=$(ynh_app_setting_get --app=$app --key=access_domain)
+mail=$(ynh_app_setting_get --app=$app --key=mail)
 
 # Add settings here as needed by your application
 #db_name=$(ynh_app_setting_get --app=$app --key=db_name)
@@ -120,13 +121,13 @@ ynh_replace_string --match_string="RAILS_RELATIVE_URL_ROOT=$old_path" --replace_
 
 if [ $change_domain -eq 1 ]
 then
-	mail_new="$app@$domain_new"
-    ynh_replace_string --match_string="$mail" --replace_string="$mail_new" --target_file="$final_path/live/app/mailers/application_mailer.rb"
-    ynh_replace_string --match_string="$domain" --replace_string="$domain_new" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
+    new_mail="$app@$new_domain"
+    ynh_replace_string --match_string="$mail" --replace_string="$new_mail" --target_file="$final_path/live/app/mailers/application_mailer.rb"
+    ynh_replace_string --match_string="$domain" --replace_string="$new_domain" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
 fi
 if [ $change_path -eq 1 ]
 then
-    ynh_replace_string --match_string="$path_url" --replace_string="$path_new" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
+    ynh_replace_string --match_string="$path_url" --replace_string="$new_path" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
 fi
 
 #=================================================

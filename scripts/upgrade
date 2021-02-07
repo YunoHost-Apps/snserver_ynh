@@ -129,7 +129,7 @@ if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
     # Backup files to keep
     tmpdir=$(mktemp -d)
-    if [ -d "$final_path/live/.env" ] ; then
+    if [ -f "$final_path/live/.env" ] ; then
         cp -Rp "$final_path/live/.env" "$tmpdir"
     fi
     if [ -d "$final_path/live/log" ] ; then
@@ -140,7 +140,7 @@ then
     # Download, check integrity, uncompress and patch the source from app.src
     mkdir -p "$final_path"
     ynh_setup_source --dest_dir="$final_path/live"
-    if [ -d "$tmpdir/.env" ] ; then
+    if [ -f "$tmpdir/.env" ] ; then
         cp -Rp "$tmpdir/.env" "$final_path/live"
     fi
     if [ -d "$tmpdir/log" ] ; then
