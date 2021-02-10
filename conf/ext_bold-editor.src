@@ -1,0 +1,5 @@
+SOURCE_URL=https://github.com/standardnotes/bold-editor/archive/1.1.0.zip
+SOURCE_SUM=a842181f1e2e0cc93a29ff1c532c4650cbcc3327742267bb3471f1018406df0f
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=zip
+SOURCE_IN_SUBDIR=true

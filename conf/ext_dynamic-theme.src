@@ -1,0 +1,5 @@
+SOURCE_URL=https://github.com/sn-extensions/dynamic-theme/archive/1.0.0.zip
+SOURCE_SUM=2be90456a6d8e90b4c6c666c797b96c72935b41fde8aa2b29a219368ce100c99
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=zip
+SOURCE_IN_SUBDIR=true

@@ -28,6 +28,12 @@ domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
 is_public=$YNH_APP_ARG_IS_PUBLIC
 app=$YNH_APP_INSTANCE_NAME
+access_domain=$YNH_APP_ARG_ACCESS_DOMAIN
+if [ -z "$access_domain" ]
+then
+    access_domain=$domain
+fi
+mail="$app@$domain"
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
@@ -46,6 +52,8 @@ ynh_script_progression --message="Storing installation settings..."  --weight=3
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=is_public --value=$is_public
+ynh_app_setting_set --app=$app --key=access_domain --value=$access_domain
+ynh_app_setting_set --app=$app --key=mail --value=$mail
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -92,7 +100,10 @@ ynh_setup_source  --dest_dir="$final_path/live"
 ynh_script_progression --message="Configuring nginx web server..."  --weight=3
 
 # Create a dedicated nginx config
-ynh_add_nginx_config "port"
+ynh_add_nginx_config "\
+    port \
+    access_domain \
+    "
 
 #=================================================
 # CREATE DEDICATED USER
@@ -122,16 +133,25 @@ ynh_script_progression --message="Modifying a config file..."  --weight=2
 
 config_file="$final_path/live/.env"
 cp -f ../conf/env.sample $config_file
-ynh_replace_string --match_string="EXPOSED_PORT=3000" --replace_string="EXPOSED_PORT=$port" --target_file="$config_file"
+ynh_replace_string --match_string="EXPOSED_PORT=.*$" --replace_string="EXPOSED_PORT=$port" --target_file="$config_file"
 secret_key=$(ynh_string_random --length=48 | base64)
-ynh_replace_string --match_string="SECRET_KEY_BASE=changeme123" --replace_string="SECRET_KEY_BASE=$secret_key" --target_file="$config_file"
+ynh_replace_string --match_string="SECRET_KEY_BASE=.*$" --replace_string="SECRET_KEY_BASE=$secret_key" --target_file="$config_file"
 pseudo_key=$(ynh_string_random --length=48 | base64)
-ynh_replace_string --match_string="PSEUDO_KEY_PARAMS_KEY=changeme456" --replace_string="PSEUDO_KEY_PARAMS_KEY=$pseudo_key" --target_file="$config_file"
-ynh_replace_string --match_string="RAILS_ENV=development" --replace_string="RAILS_ENV=production" --target_file="$config_file"
-ynh_replace_string --match_string="DB_DATABASE=standard_notes_db" --replace_string="DB_DATABASE=$db_name" --target_file="$config_file"
-ynh_replace_string --match_string="DB_USERNAME=std_notes_user" --replace_string="DB_USERNAME=$db_user" --target_file="$config_file"
-ynh_replace_string --match_string="DB_PASSWORD=changeme123" --replace_string="DB_PASSWORD=$db_pwd" --target_file="$config_file"
-ynh_replace_string --match_string="RAILS_RELATIVE_URL_ROOT=/" --replace_string="RAILS_RELATIVE_URL_ROOT=$path_url" --target_file="$config_file"
+ynh_replace_string --match_string="PSEUDO_KEY_PARAMS_KEY=.*$" --replace_string="PSEUDO_KEY_PARAMS_KEY=$pseudo_key" --target_file="$config_file"
+ynh_replace_string --match_string="RAILS_ENV=.*$" --replace_string="RAILS_ENV=production" --target_file="$config_file"
+ynh_replace_string --match_string="DB_DATABASE=.*$" --replace_string="DB_DATABASE=$db_name" --target_file="$config_file"
+ynh_replace_string --match_string="DB_USERNAME=.*$" --replace_string="DB_USERNAME=$db_user" --target_file="$config_file"
+ynh_replace_string --match_string="DB_PASSWORD=.*$" --replace_string="DB_PASSWORD=$db_pwd" --target_file="$config_file"
+ynh_replace_string --match_string="RAILS_RELATIVE_URL_ROOT=.*$" --replace_string="RAILS_RELATIVE_URL_ROOT=$path_url" --target_file="$config_file"
+ynh_replace_string --match_string="SMTP_HOST=.*$" --replace_string="SMTP_HOST=localhost" --target_file="$config_file"
+ynh_replace_string --match_string="SMTP_PORT=.*$" --replace_string="SMTP_PORT=25" --target_file="$config_file"
+ynh_replace_string --match_string="SMTP_DOMAIN=.*$" --replace_string="SMTP_DOMAIN=localhost" --target_file="$config_file"
+ynh_replace_string --match_string="SMTP_STARTTLS=.*$" --replace_string="SMTP_STARTTLS=" --target_file="$config_file"
+ynh_replace_string --match_string="RAILS_SERVE_STATIC_FILES=.*$" --replace_string="RAILS_SERVE_STATIC_FILES=true" --target_file="$config_file"
+
+ynh_replace_string --match_string="__MAIL__" --replace_string="$mail" --target_file="$final_path/live/app/mailers/application_mailer.rb"
+ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
+ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
 
 #=================================================
 # INSTALLING Standard Notes - Synicing Server
@@ -145,7 +165,34 @@ pushd "$final_path/live"
     exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set with 'development'
     exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle install
     exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:create db:migrate --quiet
+#    exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails assets:precompile --quiet
 popd
+
+#=================================================
+# INSTALLING Standard Notes - Extensions
+#=================================================
+ynh_script_progression --message="Installing Standard Notes - Extensions..."  --weight=1
+
+
+if [ $path_url = "/" ]
+then
+    path=""
+else
+    path=$path_url
+fi
+
+ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$final_path/live/public/extensions/repo.json"
+
+find "$final_path/live/public/extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
+do
+    ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$file"
+done
+
+find "../conf/" -name "ext_*.src" -print0 | while read -d $'\0' file
+do
+basename=$(basename -as .src $file)
+    ynh_setup_source  --dest_dir="$final_path/live/public/extensions/src/${basename#'ext_'}" --source_id="$basename"
+done
 
 #=================================================
 # SETUP SYSTEMD
@@ -210,9 +257,9 @@ ynh_script_progression --message="Configuring fail2ban..." --weight=1
 # Create a dedicated fail2ban config
 touch "/var/log/$app/$app.log"
 ynh_add_fail2ban_config --use_template --others_var="\
-	domain \
-	path_url \
-	"
+    domain \
+    path_url \
+    "
 
 #=================================================
 # SETUP SSOWAT
@@ -232,7 +279,6 @@ ynh_script_progression --message="Starting a systemd service..."  --weight=1
 
 # Start a systemd service
 ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
-sleep 15
 
 #=================================================
 # RELOAD NGINX
@@ -240,6 +286,38 @@ sleep 15
 ynh_script_progression --message="Reloading nginx web server..."  --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# WAITING FOR SERVICE
+#=================================================
+ynh_script_progression --message="Waiting for service..."  --weight=1
+
+is_service_ready
+
+#=================================================
+# SEND A README FOR THE ADMIN
+#=================================================
+ynh_script_progression --message="Sending a readme for the admin..."
+
+admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
+config_panel="You can find some specific configurations for this app by using the experimental __URL_TAG1__config-panel feature__URL_TAG2__$admin_panel/config-panel__URL_TAG3__"
+
+admin_mail_info="\
+Standard Notes extensions are hosted with this package.\n\
+New users will get an e-mail with install instructions.\n\
+With the current SMTP settings you can not send e-mails to all e-mail providers. For example GMail will probably not recive this e-mails.\n\
+Please setup the SMTP account in this file: \"$final_path/live/.env\" under \"#Mailer settings\" if you want to fix this.\n\
+Please setup the Access-Domain for the extensions in the __URL_TAG1__config-panel__URL_TAG2__$admin_panel/config-panel__URL_TAG3__ if not already done during the installation settings.\
+"
+
+echo -e "\
+Standard Notes - Syncing Server was successfully installed.\n\
+Please configure the Standard Notes web app or mobile app to use this syning server: https://$domain$path_url/\n\
+$config_panel\n\n\
+$admin_mail_info\
+" > message
+
+ynh_send_readme_to_admin --app_message="message" --type='install'
 
 #=================================================
 # END OF SCRIPT

@@ -1,0 +1,14 @@
+version = "1.0"
+name = "SNServer configuration panel"
+
+[main]
+name = "SNserver configuration"
+
+    [main.access_domain]
+    name = "Access Domain"
+
+        [main.access_domain.access_domain]
+        ask = "Which web app can access the Standart Notes Extensions?"
+        type = "string"
+        default = ""
+        help = "Please enter the domain(s) without the path of a Standart Notes Web App, which should have access to the Standard Notes Extensions.<br>Example: domain.tld<br>Example: https://domain.tld<br>Example: domain.tld notes.domain.tld<br>Example: domain.tld https://notes.domain.tld"

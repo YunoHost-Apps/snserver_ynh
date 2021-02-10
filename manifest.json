@@ -5,16 +5,15 @@
     "description": {
         "en": "The Standard Notes syncing server. An end-to-end encrypted note-taking app."
     },
-    "version": "3.13.6~ynh2",
+    "version": "3.13.6~ynh4",
     "url": "https://github.com/standardnotes/syncing-server",
     "license": "AGPL-3.0-or-later",
     "maintainer": {
         "name": "Fabian Wilkens",
-        "email": "wilkens.fabian+github@gmail.com",
-        "url": "https://github.com/FabianWilkens/snserver_ynh"
+        "email": "46000361+FabianWilkens@users.noreply.github.com"
     },
     "requirements": {
-        "yunohost": ">= 4.0"
+        "yunohost": ">= 4.1.0"
     },
     "multi_instance": true,
     "services": [
@@ -55,6 +54,16 @@
             "de": "Ist die Application Öffendlich?"
                 },
                 "default": true
+            },
+            {
+                "name": "access_domain",
+                "type": "string",
+                "ask": {
+                    "en": "Choose a domain which has access to the extensions. E.g. the Standard-Notes web app."
+                },
+                "optional": true,
+                "example": "example.tld",
+                "default": ""
             }
         ]
     }

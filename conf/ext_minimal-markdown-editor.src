@@ -1,0 +1,5 @@
+SOURCE_URL=https://github.com/sn-extensions/minimal-markdown-editor/archive/1.3.5.zip
+SOURCE_SUM=c062db588a500e227524bc0e28335dcfebbd913badd19784e00ab607bec7abbf
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=zip
+SOURCE_IN_SUBDIR=true

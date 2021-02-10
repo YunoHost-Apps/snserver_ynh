@@ -1,0 +1,5 @@
+SOURCE_URL=https://github.com/sn-extensions/token-vault/archive/1.0.5.zip
+SOURCE_SUM=a9f4e1bafec6194499dd163fd53bdb9876689c99e7218b36a8e26dbe0c096f21
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=zip
+SOURCE_IN_SUBDIR=true
