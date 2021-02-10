@@ -302,11 +302,19 @@ ynh_script_progression --message="Sending a readme for the admin..."
 admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
 config_panel="You can find some specific configurations for this app by using the experimental __URL_TAG1__config-panel feature__URL_TAG2__$admin_panel/config-panel__URL_TAG3__"
 
+admin_mail_info="\
+Standard Notes extensions are hosted with this package.\n\
+New users will get an e-mail with install instructions.\n\
+With the current SMTP settings you can not send e-mails to all e-mail providers. For example GMail will probably not recive this e-mails.\n\
+Please setup the SMTP account in this file: \"$final_path/live/.env\" under \"#Mailer settings\" if you want to fix this.\n\
+Please setup the Access-Domain for the extensions in the __URL_TAG1__config-panel__URL_TAG2__$admin_panel/config-panel__URL_TAG3__ if not already done during the installation settings."
+
 ynh_replace_string --match_string="__TYPE__" --replace_string="installed" --target_file="../conf/message"
 ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="../conf/message"
 ynh_replace_string --match_string="__PATH_URL__" --replace_string="$path_url" --target_file="../conf/message"
 
 ynh_replace_string --match_string="__CONFIG_PANEL__" --replace_string="$config_panel" --target_file="../conf/message"
+ynh_replace_string --match_string="__ADMIN_MAIL_INFO__" --replace_string="$admin_mail_info" --target_file="../conf/message"
 
 ynh_send_readme_to_admin --app_message="../conf/message" --type='install'
 

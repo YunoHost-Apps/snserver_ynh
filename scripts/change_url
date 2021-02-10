@@ -192,12 +192,14 @@ ynh_script_progression --message="Sending a readme for the admin..."
 admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
 
 config_panel="You can find some specific configurations for this app by using the experimental __URL_TAG1__config-panel feature__URL_TAG2__$admin_panel/config-panel__URL_TAG3__"
+admin_mail_info="You changed the url of the server. All Extensions have to be reinstalled by the users. Or you can change the url back."
 
-ynh_replace_string --match_string="__TYPE__" --replace_string="changed the url" --target_file="../conf/message"
+ynh_replace_string --match_string="__TYPE__" --replace_string="updated ( Changed the url )" --target_file="../conf/message"
 ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="../conf/message"
 ynh_replace_string --match_string="__PATH_URL__" --replace_string="$path_url" --target_file="../conf/message"
 
 ynh_replace_string --match_string="__CONFIG_PANEL__" --replace_string="$config_panel" --target_file="../conf/message"
+ynh_replace_string --match_string="__ADMIN_MAIL_INFO__" --replace_string="$admin_mail_info" --target_file="../conf/message"
 
 ynh_send_readme_to_admin --app_message="../conf/message" --type='change_url'
 
