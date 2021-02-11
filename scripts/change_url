@@ -123,12 +123,8 @@ if [ $change_domain -eq 1 ]
 then
     new_mail="$app@$new_domain"
     ynh_replace_string --match_string="$mail" --replace_string="$new_mail" --target_file="$final_path/live/app/mailers/application_mailer.rb"
-    ynh_replace_string --match_string="$domain" --replace_string="$new_domain" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
 fi
-if [ $change_path -eq 1 ]
-then
-    ynh_replace_string --match_string="$path_url" --replace_string="$new_path" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
-fi
+ynh_replace_string --match_string="$old_domain$old_path" --replace_string="$new_domain$new_path" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
 
 #=================================================
 # Modify Standard Notes - Extensions
