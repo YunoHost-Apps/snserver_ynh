@@ -8,6 +8,7 @@
 
 source _common.sh
 source ynh_install_ruby
+source ynh_redis
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -51,6 +52,13 @@ ynh_script_progression --message="Removing the MySQL database..."  --weight=1
 
 # Remove a database if it exists, along with the associated user
 ynh_mysql_remove_db --db_user=$db_user --db_name=$db_name
+
+##=================================================
+## REMOVE REDIS DB
+##=================================================
+ynh_script_progression --message="Removing the Redis database..."  --weight=1
+
+ynh_redis_remove_db
 
 #=================================================
 # REMOVE DEPENDENCIES

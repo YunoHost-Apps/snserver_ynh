@@ -9,6 +9,7 @@
 #Keep this path for calling _common.sh inside the execution's context of backup and restore scripts
 source ../settings/scripts/_common.sh
 source ../settings/scripts/ynh_install_ruby
+source ../settings/scripts/ynh_redis
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -35,6 +36,11 @@ final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
 db_pwd=$(ynh_app_setting_get --app=$app --key=mysqlpwd)
+
+redis_db=$(ynh_redis_get_free_db)
+ynh_app_setting_set --app=$app --key=redis_db --value="$redis_db"
+
+config_file="$final_path/live/.env"
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
@@ -108,6 +114,13 @@ ynh_script_progression --message="Restoring the MySQL database..." --weight=2
 
 ynh_mysql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
 ynh_mysql_connect_as --user=$db_user --password=$db_pwd --database=$db_name < ./db.sql
+
+#=================================================
+# SETUP REDIS DATABASE
+#=================================================
+ynh_script_progression --message="Setup Redis database..." --weight=2
+
+ynh_replace_string --match_string=".*REDIS_URL.*$" --replace_string="REDIS_URL=redis://localhost:6379/$redis_db" --target_file="$config_file"
 
 #=================================================
 # RESTORE SYSTEMD

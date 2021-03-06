@@ -1,5 +1,5 @@
-SOURCE_URL=https://github.com/standardnotes/syncing-server/archive/3.13.6.zip
-SOURCE_SUM=9b68e74e34dba5949f740ef6ce3b88b9eee43e29a8eac8aa2d1b3987263eff72
+SOURCE_URL=https://github.com/standardnotes/syncing-server/archive/3.20.4.zip
+SOURCE_SUM=A9FEBE8D31200580D2AEC3DF407F177F7A334C837386E7DD436F1754746A4EAA
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=zip
 SOURCE_IN_SUBDIR=true
