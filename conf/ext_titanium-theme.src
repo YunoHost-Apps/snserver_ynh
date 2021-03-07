@@ -1,4 +1,4 @@
-SOURCE_URL=https://github.com/sn-extensions/titanium-theme/archive/1.2.2.zip
+SOURCE_URL=https://github.com/standardnotes/titanium-theme/archive/1.2.2.zip
 SOURCE_SUM=aa42d8911a514d454af045dc65433aef6361ecfd67ad27f1d8093b9da01bf2b3
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=zip

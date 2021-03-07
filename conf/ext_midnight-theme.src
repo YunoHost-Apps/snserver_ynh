@@ -1,4 +1,4 @@
-SOURCE_URL=https://github.com/sn-extensions/midnight-theme/archive/1.2.1.zip
+SOURCE_URL=https://github.com/standardnotes/midnight-theme/archive/1.2.1.zip
 SOURCE_SUM=f219de3cf26494a73d506139082463a06782a5fc1717290d96da9c8a54102342
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=zip

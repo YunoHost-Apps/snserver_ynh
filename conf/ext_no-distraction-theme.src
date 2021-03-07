@@ -1,4 +1,4 @@
-SOURCE_URL=https://github.com/sn-extensions/no-distraction-theme/archive/1.2.2.zip
+SOURCE_URL=https://github.com/standardnotes/no-distraction-theme/archive/1.2.2.zip
 SOURCE_SUM=c6b3116aab0e87bdba25632f6e0820c98a47c10248c4760853fb69facc860088
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=zip

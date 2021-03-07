@@ -1,5 +1,5 @@
-SOURCE_URL=https://github.com/sn-extensions//vim-editor/archive/1.3.2.zip
-SOURCE_SUM=a32fb89d63dea190302b966f0adb2e0ce3a1ef07248277b7d5abf52646585c74
+SOURCE_URL=https://github.com/standardnotes/vim-editor/archive/1.3.7.zip
+SOURCE_SUM=438AA36D64279EFFF0CF925253FC9666A3DAEBC148E49C2C70D6BC6D51BE78DE
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=zip
 SOURCE_IN_SUBDIR=true
