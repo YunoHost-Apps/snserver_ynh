@@ -15,7 +15,7 @@ Standard Notes syncing server
 
 You can run your own Standard Notes server and use it with any Standard Notes app. This allows you to have 100% control of your data.
 
-**Shipped version:** 3.13.6
+**Shipped version:** 3.20.5
 * Apps available for free. https://standardnotes.org/
 * Desktop (Windows, Mac, Linux)
 * Mobile (Android and iOS)
