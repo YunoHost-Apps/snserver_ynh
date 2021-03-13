@@ -11,7 +11,7 @@
                 "foreground_color": "#ECE4DB",
                 "type": "circle"
             },
-            "download_url": "https://github.com/sn-extensions/autobiography-theme/archive/1.0.0.zip",
+            "download_url": "https://github.com/standardnotes/autobiography-theme/archive/1.0.0.zip",
             "identifier": "org.stndardnotes.autobiography-theme",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/autobiography-theme.json",
             "name": "Autobiography Theme",
@@ -28,7 +28,7 @@
                 "foreground_color": "#ffffff",
                 "type": "circle"
             },
-            "download_url": "https://github.com/sn-extensions/focus-theme/archive/1.2.3.zip",
+            "download_url": "https://github.com/standardnotes/focus-theme/archive/1.2.3.zip",
             "identifier": "org.stndardnotes.focus-theme",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/focus-theme.json",
             "name": "Focus Theme",
@@ -45,7 +45,7 @@
                 "foreground_color": "#ffffff",
                 "type": "circle"
             },
-            "download_url": "https://github.com/sn-extensions/futura-theme/archive/1.2.2.zip",
+            "download_url": "https://github.com/standardnotes/futura-theme/archive/1.2.2.zip",
             "identifier": "org.standardnotes.futura-theme",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/futura-theme.json",
             "name": "Futura Theme",
@@ -62,7 +62,7 @@
                 "foreground_color": "#ffffff",
                 "type": "circle"
             },
-            "download_url": "https://github.com/sn-extensions/midnight-theme/archive/1.2.1.zip",
+            "download_url": "https://github.com/standardnotes/midnight-theme/archive/1.2.1.zip",
             "identifier": "org.standardnotes.midnight-theme",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/midnight-theme.json",
             "name": "Midnight Theme",
@@ -79,7 +79,7 @@
                 "foreground_color": "#ffffff",
                 "type": "circle"
             },
-            "download_url": "https://github.com/sn-extensions/solarized-dark-theme/archive/1.2.1.zip",
+            "download_url": "https://github.com/standardnotes/solarized-dark-theme/archive/1.2.1.zip",
             "identifier": "org.stndardnotes.solarized-dark-theme",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/solarized-dark-theme.json",
             "name": "Solarized Dark Theme",
@@ -96,7 +96,7 @@
                 "foreground_color": "#ffffff",
                 "type": "circle"
             },
-            "download_url": "https://github.com/sn-extensions/titanium-theme/archive/1.2.2.zip",
+            "download_url": "https://github.com/standardnotes/titanium-theme/archive/1.2.2.zip",
             "identifier": "org.stndardnotes.titanium-theme",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/titanium-theme.json",
             "name": "Titanium Theme",
@@ -107,7 +107,7 @@
             "area": "theme",
             "content_type": "SN|Theme",
             "description": "A smart theme that minimizes the tags and notes panels when they are not in use..",
-            "download_url": "https://github.com/sn-extensions/dynamic-theme/archive/1.0.0.zip",
+            "download_url": "https://github.com/standardnotes/dynamic-theme/archive/1.0.0.zip",
             "identifier": "org.standardnotes.dynamic-theme",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/dynamic-theme.json",
             "layerable": true,
@@ -124,7 +124,7 @@
                 "source": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\"><path d=\"M424 64H88c-26.6 0-48 21.6-48 48v288c0 26.4 21.4 48 48 48h336c26.4 0 48-21.6 48-48V112c0-26.4-21.4-48-48-48zm0 336H88V176h336v224z\"/></svg>",
                 "type": "svg"
             },
-            "download_url": "https://github.com/sn-extensions/no-distraction-theme/archive/1.2.2.zip",
+            "download_url": "https://github.com/standardnotes/no-distraction-theme/archive/1.2.2.zip",
             "identifier": "org.standardnotes.no-distraction",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/no-distraction-theme.json",
             "layerable": true,
@@ -148,23 +148,23 @@
             "area": "editor-editor",
             "content_type": "SN|Component",
             "description": "Syntax highlighting and convenient keyboard shortcuts for over 120 programming languages. Ideal for code snippets and procedures.",
-            "download_url": "https://github.com/standardnotes/code-editor/archive/1.3.5.zip",
+            "download_url": "https://github.com/standardnotes/code-editor/archive/1.3.8.zip",
             "identifier": "org.standardnotes.code-editor",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/code-editor.json",
             "name": "Code Editor",
             "url": "https://__DOMAIN__PATH__/extensions/src/code-editor/index.html",
-            "version": "1.3.5"
+            "version": "1.3.8"
         },
         {
             "area": "editor-editor",
             "content_type": "SN|Component",
             "description": "A Markdown editor with dynamic split-pane preview.",
-            "download_url": "https://github.com/standardnotes/markdown-basic/archive/1.3.6.zip",
+            "download_url": "https://github.com/standardnotes/markdown-basic/archive/1.3.7.zip",
             "identifier": "org.standardnotes.markdown-basic-editor",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/markdown-basic.json",
             "name": "Markdown Basic",
             "url": "https://__DOMAIN__PATH__/extensions/src/markdown-basic/dist/index.html",
-            "version": "1.3.6"
+            "version": "1.3.7"
         },
         {
             "area": "editor-editor",
@@ -181,7 +181,7 @@
             "area": "editor-editor",
             "content_type": "SN|Component",
             "description": "A beautiful split-pane Markdown editor with synced-scroll, LaTeX support, and colorful syntax.",
-            "download_url": "https://github.com/sn-extensions/math-editor/archive/1.3.4.zip",
+            "download_url": "https://github.com/standardnotes/math-editor/archive/1.3.4.zip",
             "identifier": "org.standardnotes.math-editor",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/math-editor.json",
             "name": "Math Editor",
@@ -192,7 +192,7 @@
             "area": "editor-editor",
             "content_type": "SN|Component",
             "description": "A minimal Markdown editor with inline style support.",
-            "download_url": "https://github.com/sn-extensions/minimal-markdown-editor/archive/1.3.5.zip",
+            "download_url": "https://github.com/standardnotes/minimal-markdown-editor/archive/1.3.5.zip",
             "identifier": "org.stndardnotes.minimal-markdown-editor",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/minimal-markdown-editor.json",
             "name": "Minimal Markdown Editor",
@@ -203,18 +203,18 @@
             "area": "editor-editor",
             "content_type": "SN|Component",
             "description": "From highlighting to custom font sizes and colors, to tables and lists, this editor is perfect for crafting any document. (Converts your note to an HTML format.)",
-            "download_url": "https://github.com/standardnotes/plus-editor/archive/1.4.3.zip",
+            "download_url": "https://github.com/standardnotes/plus-editor/archive/1.4.5.zip",
             "identifier": "org.standardnotes.plus-editor",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/plus-editor.json",
             "name": "Plus Editor",
             "url": "https://__DOMAIN__PATH__/extensions/src/plus-editor/index.html",
-            "version": "1.4.3"
+            "version": "1.4.5"
         },
         {
             "area": "editor-editor",
             "content_type": "SN|Component",
             "description": "A great way to manage short-term and long-term to-do's. You can mark simple-tasks as completed, change their order, and edit the text naturally in place.",
-            "download_url": "https://github.com/sn-extensions/simple-task-editor/archive/1.3.5.zip",
+            "download_url": "https://github.com/standardnotes/simple-task-editor/archive/1.3.5.zip",
             "identifier": "org.standardnotes.simple-task-editor",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/simple-task-editor.json",
             "name": "Task Editor",
@@ -225,7 +225,7 @@
             "area": "editor-editor",
             "content_type": "SN|Component",
             "description": "Use Standard Notes on both desktop and mobile as your authenticator app. TokenVault handles your 2FA secrets so that you never lose them again, or have to start over when you get a new device.",
-            "download_url": "https://github.com/sn-extensions/token-vault/archive/1.0.5.zip",
+            "download_url": "https://github.com/standardnotes/token-vault/archive/1.0.5.zip",
             "identifier": "org.stndardnotes.token-vault",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/token-vault.json",
             "name": "Token Vault",
@@ -236,12 +236,12 @@
             "area": "editor-editor",
             "content_type": "SN|Component",
             "description": "A code editor with Vim key bindings.",
-            "download_url": "https://github.com/sn-extensions/vim-editor/archive/1.3.2.zip",
+            "download_url": "https://github.com/standardnotes/vim-editor/archive/1.3.7.zip",
             "identifier": "org.stndardnotes.vim-editor",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/vim-editor.json",
             "name": "Vim Editor",
             "url": "https://__DOMAIN__PATH__/extensions/src/vim-editor/index.html",
-            "version": "1.3.2"
+            "version": "1.3.7"
         },
         {
             "area": "editor-stack",
@@ -269,18 +269,18 @@
             "area": "editor-stack",
             "content_type": "SN|Component",
             "description": "Push note changes to a public or private GitHub repository, with options for file extension and commit message.",
-            "download_url": "https://github.com/sn-extensions/github-push/archive/1.2.2.zip",
+            "download_url": "https://github.com/standardnotes/github-push/archive/1.2.4.zip",
             "identifier": "org.stndardnotes.github-push",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/github-push.json",
             "name": "Github Push",
             "url": "https://__DOMAIN__PATH__/extensions/src/github-push/index.html",
-            "version": "1.2.2"
+            "version": "1.2.4"
         },
         {
             "area": "modal",
             "content_type": "SN|Component",
             "description": "Set up 2FA to enable an extra layer of security on your private notes account.",
-            "download_url": "https://github.com/sn-extensions/mfa-link/archive/1.2.2.zip",
+            "download_url": "https://github.com/standardnotes/mfa-link/archive/1.2.2.zip",
             "identifier": "org.stndardnotes.mfa-link",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/mfa-link.json",
             "name": "MFA-Link",
