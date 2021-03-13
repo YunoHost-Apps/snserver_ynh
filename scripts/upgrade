@@ -8,6 +8,7 @@
 
 source _common.sh
 source ynh_install_ruby
+source ynh_redis
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -27,6 +28,9 @@ db_pwd=$(ynh_app_setting_get --app=$app --key=mysqlpwd)
 port=$(ynh_app_setting_get --app=$app --key=port)
 access_domain=$(ynh_app_setting_get --app=$app --key=access_domain)
 mail=$(ynh_app_setting_get --app=$app --key=mail)
+redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
+
+config_file="$final_path/live/.env"
 
 #=================================================
 # CHECK VERSION
@@ -92,15 +96,21 @@ if [ -z "$mail" ]; then
     ynh_app_setting_set --app=$app --key=mail --value=$mail
 fi
 
+# If redis_db doesn't exist, create it
+if [ -z "$redis_db" ]; then
+    redis_db=$(ynh_redis_get_free_db)
+    ynh_app_setting_set --app=$app --key=redis_db --value="$redis_db"
+fi
+
 if ynh_compare_current_package_version --comparison lt --version "3.13.6~ynh4"
 then
-    # Add Variables to .env config file
+    # Add variables to .env config file
     echo -e "\
-        \n# Public file server\
-        \n# Empty is disabled\
-        \n# Any value is enabled\
-        \nRAILS_SERVE_STATIC_FILES=\
-        " >> "$final_path/live/.env"
+\n# Public file server\
+\n# Empty is disabled\
+\n# Any value is enabled\
+\nRAILS_SERVE_STATIC_FILES=\
+" >> "$config_file"
 
     # Apply Patch
     if [ -f "$YNH_CWD/../sources/patches/app-01-add-mail.patch" ]
@@ -109,6 +119,33 @@ then
             patch --strip=1 < "$YNH_CWD/../sources/patches/app-01-add-mail.patch"
         popd
     fi
+fi
+
+if ynh_compare_current_package_version --comparison lt --version "3.20.4~ynh1"
+then
+    # Add variables to .env config file
+    echo -e "\
+\n# (Optional) Redis Cache for ephemeral sessions\
+\nREDIS_URL=redis://cache:6379\
+\n\
+\n# (Optional) Change URLs to Internal DNS\
+\n#INTERNAL_DNS_REROUTE_ENABLED=false\
+\n\
+\n# (Optional) Auth Proxy JWT Secret\
+\n#AUTH_JWT_SECRET=changeme123\
+\n\
+\n# (Optional) User Management Server - registration emails, subscriptions etc.\
+\n#USER_MANAGEMENT_SERVER=\
+" >> "$config_file"
+
+    # Change variables to .env config file
+    ynh_replace_string \
+        --match_string="RAILS_LOG_LEVEL=.*$" \
+        --replace_string='# Log Level options: "INFO" | "DEBUG" | "INFO" | "WARN" | "ERROR" | "FATAL"\nRAILS_LOG_LEVEL=INFO' \
+        --target_file="$config_file"
+
+    ynh_replace_string --match_string="REDIS_URL.*$" --replace_string="REDIS_URL=redis://localhost:6379/$redis_db" --target_file="$config_file"
+
 fi
 
 #=================================================
@@ -233,7 +270,8 @@ then
         exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set path 'vendor/bundle'
         exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set with 'development'
         exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle install
-        exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:create db:migrate --quiet
+        exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:migrate --quiet
+        exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:seed --quiet
 #        exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails assets:precompile --quiet
     popd
 fi

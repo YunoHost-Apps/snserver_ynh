@@ -8,6 +8,7 @@
 
 source _common.sh
 source ynh_install_ruby
+source ynh_redis
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -54,6 +55,8 @@ ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 ynh_app_setting_set --app=$app --key=access_domain --value=$access_domain
 ynh_app_setting_set --app=$app --key=mail --value=$mail
+redis_db=$(ynh_redis_get_free_db)
+ynh_app_setting_set --app=$app --key=redis_db --value="$redis_db"
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -148,6 +151,7 @@ ynh_replace_string --match_string="SMTP_PORT=.*$" --replace_string="SMTP_PORT=25
 ynh_replace_string --match_string="SMTP_DOMAIN=.*$" --replace_string="SMTP_DOMAIN=localhost" --target_file="$config_file"
 ynh_replace_string --match_string="SMTP_STARTTLS=.*$" --replace_string="SMTP_STARTTLS=" --target_file="$config_file"
 ynh_replace_string --match_string="RAILS_SERVE_STATIC_FILES=.*$" --replace_string="RAILS_SERVE_STATIC_FILES=true" --target_file="$config_file"
+ynh_replace_string --match_string="REDIS_URL.*$" --replace_string="REDIS_URL=redis://localhost:6379/$redis_db" --target_file="$config_file"
 
 ynh_replace_string --match_string="__MAIL__" --replace_string="$mail" --target_file="$final_path/live/app/mailers/application_mailer.rb"
 ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
@@ -164,7 +168,8 @@ pushd "$final_path/live"
     exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set path 'vendor/bundle'
     exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set with 'development'
     exec_as "$app" env PATH=$PATH /opt/rbenv/versions/$RUBY_VERSION/bin/bundle install
-    exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:create db:migrate --quiet
+    exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:migrate --quiet
+    exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:seed --quiet
 #    exec_as "$app" env PATH=$PATH RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails assets:precompile --quiet
 popd
 
