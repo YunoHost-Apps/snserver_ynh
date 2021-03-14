@@ -135,13 +135,13 @@ ynh_remove_ruby () {
     $rbenv_install_dir/bin/rbenv uninstall --force $ruby_version
   fi
 
-  # Remove rbenv environment configuration
-  rm /etc/profile.d/rbenv.sh
-
   # If no other app uses rbenv, remove rbenv and dedicated group
   if [ ! -s "$rbenv_install_dir/ynh_app_version" ]
   then
     ynh_secure_remove "$rbenv_install_dir"
+
+    # Remove rbenv environment configuration
+    rm /etc/profile.d/rbenv.sh
   fi
 }
 
