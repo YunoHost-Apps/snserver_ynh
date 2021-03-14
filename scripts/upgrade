@@ -20,7 +20,6 @@ app=$YNH_APP_INSTANCE_NAME
 
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
-is_public=$(ynh_app_setting_get --app=$app --key=is_public)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
@@ -63,13 +62,11 @@ ynh_abort_if_errors
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
 
-# Fix is_public as a boolean value
-if [ "$is_public" = "Yes" ]; then
-    ynh_app_setting_set --app=$app --key=is_public --value=1
-    is_public=1
-elif [ "$is_public" = "No" ]; then
-    ynh_app_setting_set --app=$app --key=is_public --value=0
-    is_public=0
+# Cleaning legacy permissions
+if ynh_legacy_permissions_exists; then
+    ynh_legacy_permissions_delete_all
+
+    ynh_app_setting_delete --app=$app --key=is_public
 fi
 
 # If db_name doesn't exist, create it
@@ -364,19 +361,6 @@ ynh_add_fail2ban_config --use_template --others_var="\
     domain \
     path_url \
     "
-
-#=================================================
-# SETUP SSOWAT
-#=================================================
-ynh_script_progression --message="Upgrading SSOwat configuration..." --weight=1
-# Make app public if necessary or protect it
-if [ $is_public -eq 1 ]
-then
-    # Create the visitors permission if needed
-    if ! ynh_permission_exists --permission "main"; then
-        ynh_permission_create --permission "main" --allowed "visitors"
-    fi
-fi
 
 #=================================================
 # START SYSTEMD SERVICE

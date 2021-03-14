@@ -52,7 +52,6 @@ ynh_script_progression --message="Storing installation settings..."  --weight=3
 
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
-ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 ynh_app_setting_set --app=$app --key=access_domain --value=$access_domain
 ynh_app_setting_set --app=$app --key=mail --value=$mail
 redis_db=$(ynh_redis_get_free_db)
@@ -270,11 +269,13 @@ ynh_add_fail2ban_config --use_template --others_var="\
 # SETUP SSOWAT
 #=================================================
 ynh_script_progression --message="Configuring SSOwat..."  --weight=3
-# Make app public if necessary or protect it
+
+# Make app public if necessary
 if [ $is_public -eq 1 ]
 then
-    # Create the visitors permission if needed
-    ynh_permission_update --permission "main" --add "visitors"  --remove "all_users"
+    # Everyone can access the app.
+    # The "main" permission is automatically created before the install script.
+    ynh_permission_update --permission="main" --add="visitors" --remove="all_users"
 fi
 
 #=================================================
