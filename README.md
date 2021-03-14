@@ -20,7 +20,7 @@ You can run your own Standard Notes server and use it with any Standard Notes ap
 * Desktop (Windows, Mac, Linux)
 * Mobile (Android and iOS)
 * Web https://app.standardnotes.org/
-* Self-Hosted Yunohost - Web-App https://github.com/FabianWilkens/snweb_ynh
+* Self-Hosted Yunohost - Web-App https://github.com/YunoHost-Apps/snweb_ynh
 > Change Sync Server Domain during Registation and Sign in
 
 ## Screenshots
@@ -61,7 +61,7 @@ How to configure this app:
 
 ## Links
 
- * Report a bug: https://github.com/FabianWilkens/snserver_ynh/issues
+ * Report a bug: https://github.com/YunoHost-Apps/snserver_ynh/issues
  * App website: https://standardnotes.org/
  * Upstream app repository: https://github.com/standardnotes/syncing-server
  * YunoHost website: https://yunohost.org/
@@ -72,11 +72,11 @@ Developers info
 ----------------
 
 **Only if you want to use a testing branch for coding, instead of merging directly into master.**
-Please do your pull request to the [testing branch](https://github.com/FabianWilkens/snserver_ynh/tree/testing).
+Please do your pull request to the [testing branch](https://github.com/YunoHost-Apps/snserver_ynh/tree/testing).
 
 To try the testing branch, please proceed like that.
 ```
-sudo yunohost app install https://github.com/FabianWilkens/snserver_ynh/tree/testing --debug
+sudo yunohost app install https://github.com/YunoHost-Apps/snserver_ynh/tree/testing --debug
 or
-sudo yunohost app upgrade snserver -u https://github.com/FabianWilkens/snserver_ynh/tree/testing --debug
+sudo yunohost app upgrade snserver -u https://github.com/YunoHost-Apps/snserver_ynh/tree/testing --debug
 ```
