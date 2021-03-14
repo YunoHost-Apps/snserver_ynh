@@ -36,7 +36,7 @@
 Email=
 Notification=
 ;;; Upgrade options
-    ; commit=e755357f8306805084317c81e85807ed87fdbd47
-        name=3.13.6~ynh2
+    ; commit=bdb0c5049c8eacbef68059d2821353d0e0345290
+        name=3.13.6~ynh4
         manifest_arg=domain=DOMAIN&path=PATH&is_public=1
 
