@@ -207,7 +207,7 @@
             "identifier": "org.standardnotes.plus-editor",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/plus-editor.json",
             "name": "Plus Editor",
-            "url": "https://__DOMAIN__PATH__/extensions/src/plus-editor/index.html",
+            "url": "https://__DOMAIN__PATH__/extensions/src/plus-editor/dist/index.html",
             "version": "1.4.5"
         },
         {
