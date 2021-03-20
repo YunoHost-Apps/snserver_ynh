@@ -25,20 +25,11 @@
             {
                 "name": "domain",
                 "type": "domain",
-                "ask": {
-                    "en": "Choose a domain name for snserver",
-                    "fr": "Choisissez un domaine pour Mastodon",
-                    "de": "Wähle einen Domain Namen für snserver"
-                },
                 "example": "example.com"
             },
             {
                 "name": "path",
                 "type": "path",
-                "ask": {
-                    "en": "Choose a path for ynhexample",
-                    "fr": "Choisissez un chemin pour ynhexample"
-                },
                 "example": "/example",
                 "default": "/example"
             },
@@ -47,11 +38,6 @@
                 "type": "boolean",
                 "help": {
                     "en": "The Standard Notes - Syncing Server should be public accessable if you want to connect with a desktop or mobile app."
-                },
-                "ask": {
-                    "en": "Is it a public application?",
-            "fr": "Est-ce une application publique ?",
-            "de": "Ist die Application Öffendlich?"
                 },
                 "default": true
             },
