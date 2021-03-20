@@ -106,6 +106,7 @@ ynh_script_progression --message="Installing Ruby...( This may take a while... )
 
 ynh_install_ruby --ruby_version=$RUBY_VERSION
 /opt/rbenv/versions/$RUBY_VERSION/bin/gem update --system --no-document
+/opt/rbenv/versions/$RUBY_VERSION/bin/gem install bundler --no-document
 
 #=================================================
 # RESTORE THE MYSQL DATABASE
