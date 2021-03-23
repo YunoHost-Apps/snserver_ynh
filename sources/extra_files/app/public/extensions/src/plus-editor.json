@@ -3,9 +3,9 @@
   "name": "Plus Editor",
   "content_type": "SN|Component",
   "area": "editor-editor",
-  "version": "1.4.3",
+  "version": "1.4.5",
   "description": "From highlighting to custom font sizes and colors, to tables and lists, this editor is perfect for crafting any document. (Converts your note to an HTML format.)",
-  "url": "https://__DOMAIN__PATH__/extensions/src/plus-editor/index.html", 
-  "download_url": "https://github.com/standardnotes/plus-editor/archive/1.4.3.zip",
+  "url": "https://__DOMAIN__PATH__/extensions/src/plus-editor/dist/index.html", 
+  "download_url": "https://github.com/standardnotes/plus-editor/archive/1.4.5.zip",
   "latest_url": "https://__DOMAIN__PATH__/extensions/src/plus-editor.json"
 }
