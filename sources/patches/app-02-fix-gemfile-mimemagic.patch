@@ -1,13 +1,14 @@
 diff --git a/Gemfile.lock b/Gemfile.lock
-index d209769..88702d1 100644
+index d209769..a6c9687 100644
 --- a/Gemfile.lock
 +++ b/Gemfile.lock
-@@ -132,7 +132,7 @@ GEM
+@@ -132,7 +132,8 @@ GEM
      marcel (0.3.3)
        mimemagic (~> 0.3.2)
      method_source (1.0.0)
 -    mimemagic (0.3.5)
 +    mimemagic (0.3.8)
++      nokogiri (~> 1)
      mini_mime (1.0.2)
      mini_portile2 (2.5.0)
      minitest (5.14.2)
