@@ -7,7 +7,7 @@ index d209769..88702d1 100644
        mimemagic (~> 0.3.2)
      method_source (1.0.0)
 -    mimemagic (0.3.5)
-+    mimemagic (0.3.6)
++    mimemagic (0.3.8)
      mini_mime (1.0.2)
      mini_portile2 (2.5.0)
      minitest (5.14.2)
