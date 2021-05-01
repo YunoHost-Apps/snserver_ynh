@@ -102,10 +102,7 @@ ynh_setup_source  --dest_dir="$final_path/live"
 ynh_script_progression --message="Configuring nginx web server..."  --weight=3
 
 # Create a dedicated nginx config
-ynh_add_nginx_config "\
-    port \
-    access_domain \
-    "
+ynh_add_nginx_config
 
 #=================================================
 # CREATE DEDICATED USER
@@ -205,10 +202,7 @@ done
 ynh_script_progression --message="Configuring a systemd service..."  --weight=4
 
 # Create a dedicated systemd config
-ynh_add_systemd_config --others_var="\
-    port \
-    RUBY_VERSION \
-"
+ynh_add_systemd_config
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
@@ -261,10 +255,7 @@ ynh_script_progression --message="Configuring fail2ban..." --weight=1
 
 # Create a dedicated fail2ban config
 touch "/var/log/$app/$app.log"
-ynh_add_fail2ban_config --use_template --others_var="\
-    domain \
-    path_url \
-    "
+ynh_add_fail2ban_config --use_template
 
 #=================================================
 # SETUP SSOWAT
