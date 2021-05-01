@@ -233,8 +233,7 @@ ynh_script_progression --message="Securing files and directories..." --weight=1
 # Set permissions to app files
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
-chown -R root: "$final_path"
-chown $app: "$final_path"
+chown -R $app: "$final_path"
 
 mkdir -p "$final_path/live/log"
 chown -R $app: "$final_path/live/log/"

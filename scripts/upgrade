@@ -331,8 +331,7 @@ ynh_store_file_checksum --file="/etc/nginx/conf.d/$domain.d/$app.conf"
 # Set permissions to app files
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
-chown -R root: "$final_path"
-chown $app: "$final_path"
+chown -R $app: "$final_path"
 
 mkdir -p "$final_path/live/log"
 chown -R $app: "$final_path/live/log/"
