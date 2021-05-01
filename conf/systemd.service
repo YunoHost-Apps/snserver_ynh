@@ -11,7 +11,7 @@ Group=__APP__
 WorkingDirectory=__FINALPATH__/live
 Environment=RAILS_ENV=production
 Environment="PORT=__PORT__"
-ExecStart=/opt/rbenv/versions/__RUBY_VERSION__/bin/bundle exec rails server
+ExecStart=__RBENV_ROOT__/versions/__APP__/bin/bundle exec rails server
 ExecReload=/bin/kill -SIGUSR1 $MAINPID
 StandardOutput=append:/var/log/__APP__/__APP__.log
 StandardError=append:/var/log/__APP__/__APP__.log
