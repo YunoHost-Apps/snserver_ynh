@@ -15,7 +15,7 @@ Standard Notes syncing server
 
 You can run your own Standard Notes server and use it with any Standard Notes app. This allows you to have 100% control of your data.
 
-**Shipped version:** 3.20.5
+**Shipped version:** 3.22.8
 * Apps available for free. https://standardnotes.org/
 * Desktop (Windows, Mac, Linux)
 * Mobile (Android and iOS)
@@ -52,8 +52,8 @@ How to configure this app:
 
 #### Supported architectures
 
-* x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/snserver%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/snserver/)
-* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/snserver%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/snserver/)
+* x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/snserver.svg)](https://ci-apps.yunohost.org/ci/apps/snserver/)
+* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/snserver.svg)](https://ci-apps-arm.yunohost.org/ci/apps/snserver/)
 
 ## Limitations
 
