@@ -256,11 +256,11 @@ ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --targ
 ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
 
 #=================================================
-# INSTALLING Standard Notes - Synicing Server 
+# INSTALLING Standard Notes - Syncing Server
 #=================================================
 if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
-    ynh_script_progression --message="Installing Standard Notes - Synicing Server..."  --weight=93
+    ynh_script_progression --message="Installing Standard Notes - Syncing Server..."  --weight=93
 
     chown -R $app: "$final_path"
 
@@ -397,7 +397,7 @@ Please setup the Access-Domain for the extensions in the __URL_TAG1__config-pane
 
 echo -e "\
 Standard Notes - Syncing Server was successfully upgraded.\n\
-Please configure the Standard Notes web app or mobile app to use this syning server: https://$domain$path_url/\n\
+Please configure the Standard Notes web app or mobile app to use this syncing server: https://$domain$path_url/\n\
 $config_panel\n\n\
 $admin_mail_info\
 " > message
