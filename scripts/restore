@@ -8,7 +8,7 @@
 
 #Keep this path for calling _common.sh inside the execution's context of backup and restore scripts
 source ../settings/scripts/_common.sh
-source ../settings/scripts/ynh_install_ruby
+source ../settings/scripts/ynh_install_ruby__2
 source ../settings/scripts/ynh_redis
 source /usr/share/yunohost/helpers
 
@@ -98,15 +98,18 @@ ynh_script_progression --message="Reinstalling dependencies..." --weight=17
 
 # Define and install dependencies
 ynh_install_app_dependencies $pkg_dependencies
+ynh_install_ruby --ruby_version=$RUBY_VERSION
 
 #=================================================
 # INSTALLING RUBY
 #=================================================
 ynh_script_progression --message="Installing Ruby...( This may take a while... )" --weight=100 #331
 
-ynh_install_ruby --ruby_version=$RUBY_VERSION
-/opt/rbenv/versions/$RUBY_VERSION/bin/gem update --system --no-document
-/opt/rbenv/versions/$RUBY_VERSION/bin/gem install bundler --no-document
+pushd "$final_path/live"
+	ynh_use_ruby
+	ynh_gem update --system --no-document
+	ynh_gem install bundler --no-document
+popd
 
 #=================================================
 # RESTORE THE MYSQL DATABASE
