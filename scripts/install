@@ -168,12 +168,12 @@ ynh_script_progression --message="Installing Standard Notes - Syncing Server..."
 chown -R $app: "$final_path"
 
 pushd "$final_path/live"
-    exec_as $app $ynh_ruby_load_path bin/bundle config set --local path 'vendor/bundle'
-    exec_as $app $ynh_ruby_load_path bin/bundle config set with 'development'
-    exec_as $app $ynh_ruby_load_path bin/bundle install -j$(getconf _NPROCESSORS_ONLN)
-    exec_as $app RAILS_ENV=production $ynh_ruby_load_path bin/bundle exec rails db:migrate --quiet
-    exec_as $app RAILS_ENV=production $ynh_ruby_load_path bin/bundle exec rails db:seed --quiet
-#    exec_as $app RAILS_ENV=production $ynh_ruby_load_path bin/bundle exec rails assets:precompile --quiet
+    ynh_exec_as $app $ynh_ruby_load_path bin/bundle config set --local path 'vendor/bundle'
+    ynh_exec_as $app $ynh_ruby_load_path bin/bundle config set with 'development'
+    ynh_exec_as $app $ynh_ruby_load_path bin/bundle install -j$(getconf _NPROCESSORS_ONLN)
+    ynh_exec_as $app RAILS_ENV=production $ynh_ruby_load_path bin/bundle exec rails db:migrate --quiet
+    ynh_exec_as $app RAILS_ENV=production $ynh_ruby_load_path bin/bundle exec rails db:seed --quiet
+#    ynh_exec_as $app RAILS_ENV=production $ynh_ruby_load_path bin/bundle exec rails assets:precompile --quiet
 popd
 
 #=================================================
