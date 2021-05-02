@@ -95,7 +95,10 @@ then
     domain="$old_domain"
     path_url="$new_path"
     # Create a dedicated nginx config
-    ynh_add_nginx_config
+    ynh_add_nginx_config "\
+        port \
+        access_domain\
+        "
 fi
 
 # Change the domain for nginx
@@ -149,7 +152,10 @@ domain=$new_domain
 path_url=$new_path
 # Create a dedicated fail2ban config
 touch "/var/log/$app/$app.log"
-ynh_add_fail2ban_config --use_template
+ynh_add_fail2ban_config --use_template --others_var="\
+    domain \
+    path_url \
+    "
 
 #=================================================
 # GENERIC FINALISATION
