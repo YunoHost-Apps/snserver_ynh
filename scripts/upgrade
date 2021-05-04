@@ -27,6 +27,7 @@ db_user=$db_name
 db_pwd=$(ynh_app_setting_get --app=$app --key=mysqlpwd)
 port=$(ynh_app_setting_get --app=$app --key=port)
 access_domain=$(ynh_app_setting_get --app=$app --key=access_domain)
+access_domain=$(echo $access_domain | sed "s@;@ @g")
 mail=$(ynh_app_setting_get --app=$app --key=mail)
 redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
 

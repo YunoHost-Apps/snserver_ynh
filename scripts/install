@@ -35,6 +35,7 @@ if [ -z "$access_domain" ]
 then
     access_domain=$domain
 fi
+access_domain=$(echo $access_domain | sed "s@;@ @g")
 mail="$app@$domain"
 
 #=================================================
