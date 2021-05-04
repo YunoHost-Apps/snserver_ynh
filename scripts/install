@@ -7,8 +7,9 @@
 #=================================================
 
 source _common.sh
-source ynh_install_ruby
+source ynh_install_ruby__2
 source ynh_redis
+source ynh_send_readme_to_admin__2
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -75,6 +76,7 @@ ynh_app_setting_set --app=$app --key=port --value=$port
 ynh_script_progression --message="Installing dependencies..."  --weight=17
 
 ynh_install_app_dependencies $pkg_dependencies
+ynh_install_ruby --ruby_version=$RUBY_VERSION
 
 #=================================================
 # CREATE A MYSQL DATABASE
@@ -122,9 +124,11 @@ ynh_system_user_create --username=$app --home_dir=$final_path
 #=================================================
 ynh_script_progression --message="Installing Ruby...( This may take a while... )"  --weight=100 #331
 
-ynh_install_ruby --ruby_version=$RUBY_VERSION
-/opt/rbenv/versions/$RUBY_VERSION/bin/gem update --system --no-document
-/opt/rbenv/versions/$RUBY_VERSION/bin/gem install bundler --no-document
+pushd "$final_path/live"
+	ynh_use_ruby
+	ynh_gem update --system --no-document
+	ynh_gem install bundler --no-document
+popd
 
 #=================================================
 # Setup
@@ -158,19 +162,19 @@ ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --targ
 ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
 
 #=================================================
-# INSTALLING Standard Notes - Synicing Server
+# INSTALLING Standard Notes - Syncing Server
 #=================================================
-ynh_script_progression --message="Installing Standard Notes - Synicing Server..."  --weight=93
+ynh_script_progression --message="Installing Standard Notes - Syncing Server..."  --weight=93
 
 chown -R $app: "$final_path"
 
 pushd "$final_path/live"
-    exec_as $app /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set --local path 'vendor/bundle'
-    exec_as $app /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set with 'development'
-    exec_as $app /opt/rbenv/versions/$RUBY_VERSION/bin/bundle install -j$(getconf _NPROCESSORS_ONLN)
-    exec_as $app RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:migrate --quiet
-    exec_as $app RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:seed --quiet
-#    exec_as $app RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails assets:precompile --quiet
+    ynh_exec_as $app $ynh_ruby_load_path bin/bundle config set --local path 'vendor/bundle'
+    ynh_exec_as $app $ynh_ruby_load_path bin/bundle config set with 'development'
+    ynh_exec_as $app $ynh_ruby_load_path bin/bundle install -j$(getconf _NPROCESSORS_ONLN)
+    ynh_exec_as $app RAILS_ENV=production $ynh_ruby_load_path bin/bundle exec rails db:migrate --quiet
+    ynh_exec_as $app RAILS_ENV=production $ynh_ruby_load_path bin/bundle exec rails db:seed --quiet
+#    ynh_exec_as $app RAILS_ENV=production $ynh_ruby_load_path bin/bundle exec rails assets:precompile --quiet
 popd
 
 #=================================================
@@ -207,7 +211,7 @@ ynh_script_progression --message="Configuring a systemd service..."  --weight=4
 # Create a dedicated systemd config
 ynh_add_systemd_config --others_var="\
     port \
-    RUBY_VERSION \
+    RBENV_ROOT \
 "
 
 #=================================================
@@ -228,8 +232,10 @@ ynh_store_file_checksum --file="/etc/nginx/conf.d/$domain.d/$app.conf"
 ynh_script_progression --message="Securing files and directories..." --weight=1
 
 # Set permissions to app files
-chown -R root: $final_path
-chown $app: $final_path
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app: "$final_path"
+
 mkdir -p "$final_path/live/log"
 chown -R $app: "$final_path/live/log/"
 mkdir -p "$final_path/live/tmp"
