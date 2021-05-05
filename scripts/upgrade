@@ -7,8 +7,9 @@
 #=================================================
 
 source _common.sh
-source ynh_install_ruby
+source ynh_install_ruby__2
 source ynh_redis
+source ynh_send_readme_to_admin__2
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -26,6 +27,7 @@ db_user=$db_name
 db_pwd=$(ynh_app_setting_get --app=$app --key=mysqlpwd)
 port=$(ynh_app_setting_get --app=$app --key=port)
 access_domain=$(ynh_app_setting_get --app=$app --key=access_domain)
+access_domain=$(echo $access_domain | sed "s@;@ @g")
 mail=$(ynh_app_setting_get --app=$app --key=mail)
 redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
 
@@ -213,15 +215,18 @@ ynh_add_nginx_config "\
 ynh_script_progression --message="Upgrading dependencies..." --weight=1
 
 ynh_install_app_dependencies $pkg_dependencies
+ynh_install_ruby --ruby_version=$RUBY_VERSION
 
 #=================================================
 # INSTALL RUBY
 #=================================================
 ynh_script_progression --message="Installing Ruby...( This may take a while... )" --weight=100 #331
 
-ynh_install_ruby --ruby_version=$RUBY_VERSION
-/opt/rbenv/versions/$RUBY_VERSION/bin/gem update --system --no-document
-/opt/rbenv/versions/$RUBY_VERSION/bin/gem install bundler --no-document
+pushd "$final_path/live"
+	ynh_use_ruby
+	ynh_gem update --system --no-document
+	ynh_gem install bundler --no-document
+popd
 
 #=================================================
 # CREATE DEDICATED USER
@@ -256,21 +261,21 @@ ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --targ
 ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
 
 #=================================================
-# INSTALLING Standard Notes - Synicing Server 
+# INSTALLING Standard Notes - Syncing Server
 #=================================================
 if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
-    ynh_script_progression --message="Installing Standard Notes - Synicing Server..."  --weight=93
+    ynh_script_progression --message="Installing Standard Notes - Syncing Server..."  --weight=93
 
     chown -R $app: "$final_path"
 
     pushd "$final_path/live"
-        exec_as $app /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set --local path 'vendor/bundle'
-        exec_as $app /opt/rbenv/versions/$RUBY_VERSION/bin/bundle config set with 'development'
-        exec_as $app /opt/rbenv/versions/$RUBY_VERSION/bin/bundle install -j$(getconf _NPROCESSORS_ONLN)
-        exec_as $app RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:migrate --quiet
-        exec_as $app RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails db:seed --quiet
-#        exec_as $app RAILS_ENV=production /opt/rbenv/versions/$RUBY_VERSION/bin/bundle exec rails assets:precompile --quiet
+        ynh_exec_as $app $ynh_ruby_load_path bin/bundle config set --local path 'vendor/bundle'
+        ynh_exec_as $app $ynh_ruby_load_path bin/bundle config set with 'development'
+        ynh_exec_as $app $ynh_ruby_load_path bin/bundle install -j$(getconf _NPROCESSORS_ONLN)
+        ynh_exec_as $app RAILS_ENV=production $ynh_ruby_load_path bin/bundle exec rails db:migrate --quiet
+        ynh_exec_as $app RAILS_ENV=production $ynh_ruby_load_path bin/bundle exec rails db:seed --quiet
+#        ynh_exec_as $app RAILS_ENV=production $ynh_ruby_load_path bin/bundle exec rails assets:precompile --quiet
     popd
 fi
 
@@ -307,7 +312,7 @@ ynh_script_progression --message="Upgrading systemd configuration..." --weight=1
 # Create a dedicated systemd config
 ynh_add_systemd_config --others_var="\
     port \
-    RUBY_VERSION \
+    RBENV_ROOT \
 "
 
 #=================================================
@@ -326,8 +331,10 @@ ynh_store_file_checksum --file="/etc/nginx/conf.d/$domain.d/$app.conf"
 #=================================================
 
 # Set permissions to app files
-chown -R root: $final_path
-chown $app: $final_path
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app: "$final_path"
+
 mkdir -p "$final_path/live/log"
 chown -R $app: "$final_path/live/log/"
 mkdir -p "$final_path/live/tmp"
@@ -403,7 +410,7 @@ Please setup the Access-Domain for the extensions in the __URL_TAG1__config-pane
 
 echo -e "\
 Standard Notes - Syncing Server was successfully upgraded.\n\
-Please configure the Standard Notes web app or mobile app to use this syning server: https://$domain$path_url/\n\
+Please configure the Standard Notes web app or mobile app to use this syncing server: https://$domain$path_url/\n\
 $config_panel\n\n\
 $admin_mail_info\
 " > message
