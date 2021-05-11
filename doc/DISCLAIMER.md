@@ -2,6 +2,7 @@
     * No single-sign on or LDAP integration
     * The app requires up 600MB of RAM to install
     * The app requires at least 110MB of RAM to work properly. And will increase with use.
+    * The app requires around 300MB of disk.
 
 * Other infos that people should be aware of, such as:
     * The config-file is stored under "/opt/yunohost/$app/live/.env"
