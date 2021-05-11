@@ -7,6 +7,14 @@
     },
     "version": "3.22.8~ynh2",
     "url": "https://github.com/standardnotes/syncing-server",
+	"upstream": {
+        "license": "AGPL-3.0-or-later",
+        "website": "https://standardnotes.org/",
+        "demo": "https://standardnotes.org/demo",
+        "admindoc": "https://docs.standardnotes.org/",
+        "userdoc": "https://docs.standardnotes.org/",
+        "code": "https://github.com/standardnotes/syncing-server"
+    },
     "license": "AGPL-3.0-or-later",
     "maintainer": {
         "name": "Fabian Wilkens",
