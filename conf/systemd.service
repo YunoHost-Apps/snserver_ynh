@@ -9,9 +9,9 @@ Type=simple
 User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/live
-Environment=RAILS_ENV=production
+Environment="RAILS_ENV=production"
 Environment="PORT=__PORT__"
-ExecStart=__RBENV_ROOT__/versions/__APP__/bin/bundle exec rails server
+ExecStart=__RBENV_INSTALL_DIR__/versions/__APP__/bin/bundle exec rails server
 ExecReload=/bin/kill -SIGUSR1 $MAINPID
 StandardOutput=append:/var/log/__APP__/__APP__.log
 StandardError=append:/var/log/__APP__/__APP__.log
