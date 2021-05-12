@@ -3,7 +3,7 @@
 #=================================================
 # COMMON VARIABLES
 #=================================================
-RUBY_VERSION="2.7.2"
+RUBY_VERSION="2.7.3"
 
 # dependencies used by the app
 pkg_dependencies="\
