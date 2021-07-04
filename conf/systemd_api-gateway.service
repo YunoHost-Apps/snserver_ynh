@@ -1,0 +1,21 @@
+[Unit]
+Description=StandardNotes api-gateway
+After=network.target
+After=__APP__-syncing-server-js.service
+After=__APP__-auth.service
+
+[Service]
+Type=simple
+User=__APP__
+Group=__APP__
+WorkingDirectory=__FINALPATH__/live/api-gateway
+Environment="PATH=__ENV_PATH__"
+Environment="NODE_ENV=production"
+Environment="__YNH_NODE_LOAD_PATH__"
+ExecStart=/usr/bin/yarn start
+StandardOutput=append:/var/log/__APP__/api-gateway.log
+StandardError=inherit
+Restart=always
+
+[Install]
+WantedBy=default.target

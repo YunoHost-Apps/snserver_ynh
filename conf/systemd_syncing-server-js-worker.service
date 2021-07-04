@@ -1,0 +1,22 @@
+[Unit]
+Description=StandardNotes syncing server worker
+After=network.target
+After=mysql.service
+After=redis.service
+After=__APP__-syncing-server-js.service
+
+[Service]
+Type=simple
+User=__APP__
+Group=__APP__
+WorkingDirectory=__FINALPATH__/live/syncing-server-js-worker
+Environment="PATH=__ENV_PATH__"
+Environment="NODE_ENV=production"
+Environment="__YNH_NODE_LOAD_PATH__"
+ExecStart=/usr/bin/yarn worker
+StandardOutput=append:/var/log/__APP__/syncing-server-js-worker.log
+StandardError=inherit
+Restart=always
+
+[Install]
+WantedBy=default.target

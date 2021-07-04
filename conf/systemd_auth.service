@@ -1,0 +1,22 @@
+[Unit]
+Description=StandardNotes auth
+After=network.target
+After=mysql.service
+After=redis.service
+After=__APP__-synicing-server-js.service
+
+[Service]
+Type=simple
+User=__APP__
+Group=__APP__
+WorkingDirectory=__FINALPATH__/live/auth
+Environment="PATH=__ENV_PATH__"
+Environment="NODE_ENV=production"
+Environment="__YNH_NODE_LOAD_PATH__"
+ExecStart=/usr/bin/yarn start
+StandardOutput=append:/var/log/__APP__/auth.log
+StandardError=inherit
+Restart=always
+
+[Install]
+WantedBy=default.target
