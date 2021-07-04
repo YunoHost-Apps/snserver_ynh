@@ -10,9 +10,7 @@ Type=simple
 User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/live/auth-worker
-Environment="PATH=__ENV_PATH__"
-Environment="NODE_ENV=production"
-Environment="__YNH_NODE_LOAD_PATH__"
+EnvironmentFile=__FINALPATH__/live/auth-worker/.env
 ExecStart=/usr/bin/yarn worker
 StandardOutput=append:/var/log/__APP__/auth-worker.log
 StandardError=inherit

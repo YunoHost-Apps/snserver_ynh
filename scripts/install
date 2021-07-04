@@ -71,7 +71,7 @@ port_syncing_server_js=$(ynh_find_port --port=3000)
 port_syncing_server_js_worker=$(ynh_find_port --port=$((port_syncing_server_js+1)))
 port_auth=$(ynh_find_port --port=$((port_syncing_server_js_worker+1)))
 port_auth_worker=$(ynh_find_port --port=$((port_auth+1)))
-port_api_gateway=$(ynh_find_port --port=$((port_autho_worker+1)))
+port_api_gateway=$(ynh_find_port --port=$((port_auth_worker+1)))
 # Open the port
 ynh_app_setting_set --app=$app --key=port --value=$port_syncing_server_js
 ynh_app_setting_set --app=$app --key=port --value=$port_syncing_server_js_worker
@@ -136,9 +136,11 @@ ynh_system_user_create --username=$app --home_dir=$final_path
 #=================================================
 ynh_script_progression --message="Modifying a config file..."  --weight=2
 
-config_syncing_server_js="$final_path/live/syncing-server-js.env"
-config_auth="$final_path/live/auth.env"
-config_api_gateway="$final_path/live/api-gateway.env"
+config_syncing_server_js="$final_path/live/syncing-server-js/.env"
+config_syncing_server_js_worker="$final_path/live/syncing-server-js-worker/.env"
+config_auth="$final_path/live/auth/.env"
+config_auth_worker="$final_path/live/auth-worker/.env"
+config_api_gateway="$final_path/live/api-gateway/.env"
 
 
 jwt_sectret=$(ynh_string_random --length=48 | base64)
@@ -157,7 +159,9 @@ ynh_app_setting_set --app=$app --key=encryption_server_key --value=$encryption_s
 #ynh_replace_string --match_string="SMTP_STARTTLS=.*$" --replace_string="SMTP_STARTTLS=" --target_file="$config_file"
 
 ynh_add_config --template="env_syncing-server-js.env.sample" --destination="$config_syncing_server_js"
+ynh_add_config --template="env_syncing-server-js-worker.env.sample" --destination="$config_syncing_server_js_worker"
 ynh_add_config --template="env_auth.env.sample" --destination="$config_auth"
+ynh_add_config --template="env_auth-worker.env.sample" --destination="$config_auth_worker"
 ynh_add_config --template="env_api-gateway.env.sample" --destination="$config_api_gateway"
 
 #ynh_replace_string --match_string="__MAIL__" --replace_string="$mail" --target_file="$final_path/live/app/mailers/application_mailer.rb"
@@ -239,7 +243,9 @@ ynh_script_progression --message="Storing the config file checksum..." --weight=
 
 # Calculate and store the config file checksum into the app settings
 ynh_store_file_checksum --file="$onfig_syncing_server_js"
+ynh_store_file_checksum --file="$onfig_syncing_server_js_worker"
 ynh_store_file_checksum --file="$onfig_auth"
+ynh_store_file_checksum --file="$onfig_auth_worker"
 ynh_store_file_checksum --file="$onfig_api_gateway"
 ynh_store_file_checksum --file="/etc/nginx/conf.d/$domain.d/$app.conf"
 
