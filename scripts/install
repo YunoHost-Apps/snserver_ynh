@@ -89,6 +89,14 @@ ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
 ynh_install_extra_app_dependencies --repo="deb https://dl.yarnpkg.com/debian/ stable main" --package="yarn" --key="https://dl.yarnpkg.com/debian/pubkey.gpg"
 
 #=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Configuring system user..."  --weight=1
+
+# Create a system user
+ynh_system_user_create --username=$app --home_dir=$final_path
+
+#=================================================
 # CREATE A MYSQL DATABASE
 #=================================================
 ynh_script_progression --message="Creating a MySQL database..."  --weight=2
@@ -112,6 +120,10 @@ ynh_setup_source --source_id=app_auth --dest_dir="$final_path/live/auth"
 ynh_setup_source --source_id=app_auth --dest_dir="$final_path/live/auth-worker"
 ynh_setup_source --source_id=app_api-gateway --dest_dir="$final_path/live/api-gateway"
 
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:$app "$final_path"
+
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
@@ -119,14 +131,6 @@ ynh_script_progression --message="Configuring nginx web server..."  --weight=3
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Configuring system user..."  --weight=1
-
-# Create a system user
-ynh_system_user_create --username=$app --home_dir=$final_path
 
 #=================================================
 # SPECIFIC SETUP
@@ -143,13 +147,15 @@ config_auth_worker="$final_path/live/auth-worker/.env"
 config_api_gateway="$final_path/live/api-gateway/.env"
 
 
-jwt_sectret=$(ynh_string_random --length=48 | base64)
-legacy_jwt_sectret=$(ynh_string_random --length=48 | base64)
+jwt_secret=$(ynh_string_random --length=48 | base64)
+legacy_jwt_secret=$(ynh_string_random --length=48 | base64)
+auth_jwt_secret=$(ynh_string_random --length=48 | base64)
 pseudo_key_params_key=$(ynh_string_random --length=48 | base64)
-encryption_server_key=$(ynh_string_random --length=32 | base64)
+encryption_server_key=$(ynh_string_random --length=64 | base64)
 
-ynh_app_setting_set --app=$app --key=jwt_sectret --value=$jwt_sectret
-ynh_app_setting_set --app=$app --key=legacy_jwt_sectret --value=$legacy_jwt_sectret
+ynh_app_setting_set --app=$app --key=jwt_secret --value=$jwt_secret
+ynh_app_setting_set --app=$app --key=legacy_jwt_secret --value=$legacy_jwt_secret
+ynh_app_setting_set --app=$app --key=auth_jwt_secret --value=$auth_jwt_secret
 ynh_app_setting_set --app=$app --key=pseudo_key_params_key --value=$pseudo_key_params_key
 ynh_app_setting_set --app=$app --key=encryption_server_key --value=$encryption_server_key
 
@@ -242,11 +248,11 @@ ynh_add_systemd_config --service="$app-api-gateway" --template="systemd_api-gate
 ynh_script_progression --message="Storing the config file checksum..." --weight=1
 
 # Calculate and store the config file checksum into the app settings
-ynh_store_file_checksum --file="$onfig_syncing_server_js"
-ynh_store_file_checksum --file="$onfig_syncing_server_js_worker"
-ynh_store_file_checksum --file="$onfig_auth"
-ynh_store_file_checksum --file="$onfig_auth_worker"
-ynh_store_file_checksum --file="$onfig_api_gateway"
+ynh_store_file_checksum --file="$config_syncing_server_js"
+ynh_store_file_checksum --file="$config_syncing_server_js_worker"
+ynh_store_file_checksum --file="$config_auth"
+ynh_store_file_checksum --file="$config_auth_worker"
+ynh_store_file_checksum --file="$config_api_gateway"
 ynh_store_file_checksum --file="/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
@@ -321,8 +327,8 @@ fi
 ynh_script_progression --message="Starting a systemd service..."  --weight=1
 
 # Start a systemd service
-ynh_systemd_action --service_name="$app-syncing-server-js" --action="start" --log_path="/var/log/$app/sycing-server-js.log"
-ynh_systemd_action --service_name="$app-syncing-server-js-worker" --action="start" --log_path="/var/log/$app/sycing-server-js-worker.log"
+ynh_systemd_action --service_name="$app-syncing-server-js" --action="start" --log_path="/var/log/$app/syncing-server-js.log"
+ynh_systemd_action --service_name="$app-syncing-server-js-worker" --action="start" --log_path="/var/log/$app/syncing-server-js-worker.log"
 ynh_systemd_action --service_name="$app-auth" --action="start" --log_path="/var/log/$app/auth.log"
 ynh_systemd_action --service_name="$app-auth-worker" --action="start" --log_path="/var/log/$app/auth-worker.log"
 ynh_systemd_action --service_name="$app-api-gateway" --action="start" --log_path="/var/log/$app/api-gateway.log"
@@ -359,7 +365,7 @@ Please setup the Access-Domain for the extensions in the __URL_TAG1__config-pane
 
 echo -e "\
 Standard Notes - Syncing Server was successfully installed.\n\
-Please configure the Standard Notes web app or mobile app to use this syning server: https://$domain$path_url/\n\
+Please configure the Standard Notes web app or mobile app to use this syncing server: https://$domain$path_url/\n\
 $config_panel\n\n\
 $admin_mail_info\
 " > message

@@ -12,7 +12,7 @@ WorkingDirectory=__FINALPATH__/live/syncing-server-js
 EnvironmentFile=__FINALPATH__/live/syncing-server-js/.env
 ExecStart=/usr/bin/yarn start
 StandardOutput=append:/var/log/__APP__/syncing-server-js.log
-StandardError=append:inherit
+StandardError=inherit
 Restart=always
 
 [Install]
