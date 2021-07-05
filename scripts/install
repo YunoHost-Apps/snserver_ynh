@@ -151,7 +151,7 @@ jwt_secret=$(ynh_string_random --length=48 | base64)
 legacy_jwt_secret=$(ynh_string_random --length=48 | base64)
 auth_jwt_secret=$(ynh_string_random --length=48 | base64)
 pseudo_key_params_key=$(ynh_string_random --length=48 | base64)
-encryption_server_key=$(ynh_string_random --length=64 | base64)
+encryption_server_key=$(hexdump -n 32 -e '4/4 "%08X" 1 "\n"' /dev/random) # 32bytes hex key is required
 
 ynh_app_setting_set --app=$app --key=jwt_secret --value=$jwt_secret
 ynh_app_setting_set --app=$app --key=legacy_jwt_secret --value=$legacy_jwt_secret
@@ -236,11 +236,11 @@ popd
 ynh_script_progression --message="Configuring a systemd service..."  --weight=4
 
 # Create a dedicated systemd config
-ynh_add_systemd_config --service="$app-syncing-server-js" --template="systemd_syncing-server-js"
-ynh_add_systemd_config --service="$app-syncing-server-js-worker" --template="systemd_syncing-server-js-worker"
-ynh_add_systemd_config --service="$app-auth" --template="systemd_auth"
-ynh_add_systemd_config --service="$app-auth-worker" --template="systemd_auth-worker"
-ynh_add_systemd_config --service="$app-api-gateway" --template="systemd_api-gateway"
+ynh_add_systemd_config --service="$app-syncing-server-js" --template="systemd_syncing-server-js.service"
+ynh_add_systemd_config --service="$app-syncing-server-js-worker" --template="systemd_syncing-server-js-worker.service"
+ynh_add_systemd_config --service="$app-auth" --template="systemd_auth.service"
+ynh_add_systemd_config --service="$app-auth-worker" --template="systemd_auth-worker.service"
+ynh_add_systemd_config --service="$app-api-gateway" --template="systemd_api-gateway.service"
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
