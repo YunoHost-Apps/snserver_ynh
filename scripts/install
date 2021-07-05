@@ -42,7 +42,10 @@ mail="$app@$domain"
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
 final_path=/opt/yunohost/$app
+final_path_www=/var/www/$app
+final_path_extensions="$final_path_www/extensions"
 test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
+test ! -e "$final_path_www" || ynh_die --message="This path already contains a folder"
 
 # Register (book) web path
 ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
@@ -123,6 +126,25 @@ ynh_setup_source --source_id=app_api-gateway --dest_dir="$final_path/live/api-ga
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
 chown -R $app:$app "$final_path"
+
+# Extensions
+ynh_app_setting_set --app=$app --key=final_path --value=$final_path_www
+ynh_app_setting_set --app=$app --key=final_path --value=$final_path_extensions
+mkdir -p "$final_path_extensions"
+
+if test -e "$YNH_APP_BASEDIR/sources/extra_files/extensions"; then
+    cp --archive "$YNH_APP_BASEDIR/sources/extra_files/extensions/." "$final_path_extensions"
+fi
+
+find "../conf/" -name "ext_*.src" -print0 | while read -d $'\0' file
+do
+    basename=$(basename -as .src $file)
+    ynh_setup_source  --dest_dir="$final_path_extensions/src/${basename#'ext_'}" --source_id="$basename"
+done
+
+chmod 750 "$final_path_www"
+chmod -R o-rwx "$final_path_www"
+chown -R "www-data":"www-data" "$final_path_www"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -207,29 +229,24 @@ popd
 #=================================================
 # INSTALLING Standard Notes - Extensions
 #=================================================
-#ynh_script_progression --message="Installing Standard Notes - Extensions..."  --weight=1
-#
-#
-#if [ $path_url = "/" ]
-#then
-#    path=""
-#else
-#    path=$path_url
-#fi
-#
-#ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$final_path/live/public/extensions/repo.json"
-#
-#find "$final_path/live/public/extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
-#do
-#    ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$file"
-#done
-#
-#find "../conf/" -name "ext_*.src" -print0 | while read -d $'\0' file
-#do
-#basename=$(basename -as .src $file)
-#    ynh_setup_source  --dest_dir="$final_path/live/public/extensions/src/${basename#'ext_'}" --source_id="$basename"
-#done
-#
+ynh_script_progression --message="Setup Standard Notes - Extensions..."  --weight=1
+
+
+if [ $path_url = "/" ]
+then
+    path=""
+else
+    path=$path_url
+fi
+
+ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$final_path_extensions/repo.json"
+
+find "$final_path_extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
+do
+    ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$file"
+done
+
+
 #=================================================
 # SETUP SYSTEMD
 #=================================================
@@ -259,27 +276,12 @@ ynh_store_file_checksum --file="/etc/nginx/conf.d/$domain.d/$app.conf"
 # GENERIC FINALIZATION
 #=================================================
 #=================================================
-# SECURE FILES AND DIRECTORIES
-#=================================================
-ynh_script_progression --message="Securing files and directories..." --weight=1
-
-# Set permissions to app files
-chmod 750 "$final_path"
-chmod -R o-rwx "$final_path"
-chown -R $app: "$final_path"
-
-#mkdir -p "$final_path/live/log"
-#chown -R $app: "$final_path/live/log/"
-#mkdir -p "$final_path/live/tmp"
-#chown -R $app: "$final_path/live/tmp/"
-
-mkdir -p "/var/log/$app"
-chown -R $app: "/var/log/$app"
-
-#=================================================
 # SETUP LOGROTATE
 #=================================================
 ynh_script_progression --message="Configuring log rotation..."  --weight=1
+
+mkdir -p "/var/log/$app"
+chown -R "$app": "/var/log/$app"
 
 # Use logrotate to manage application logfile(s)
 #ynh_use_logrotate --logfile="$final_path/live/log/production.log"
