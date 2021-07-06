@@ -78,12 +78,11 @@ port_syncing_server_js_worker=$(ynh_find_port --port=$((port_syncing_server_js+1
 port_auth=$(ynh_find_port --port=$((port_syncing_server_js_worker+1)))
 port_auth_worker=$(ynh_find_port --port=$((port_auth+1)))
 port_api_gateway=$(ynh_find_port --port=$((port_auth_worker+1)))
-# Open the port
-ynh_app_setting_set --app=$app --key=port --value=$port_syncing_server_js
-ynh_app_setting_set --app=$app --key=port --value=$port_syncing_server_js_worker
-ynh_app_setting_set --app=$app --key=port --value=$port_auth
-ynh_app_setting_set --app=$app --key=port --value=$port_auth_worker
-ynh_app_setting_set --app=$app --key=port --value=$port_api_gateway
+ynh_app_setting_set --app=$app --key=port_syncing_server_js --value=$port_syncing_server_js
+ynh_app_setting_set --app=$app --key=port_syncing_server_js_worker --value=$port_syncing_server_js_worker
+ynh_app_setting_set --app=$app --key=port_auth --value=$port_auth
+ynh_app_setting_set --app=$app --key=port_auth_worker --value=$port_auth_worker
+ynh_app_setting_set --app=$app --key=port_api_gateway --value=$port_api_gateway
 
 #=================================================
 # INSTALL DEPENDENCIES
@@ -207,24 +206,29 @@ ynh_use_nodejs
 #ynh_exec_as $app $ynh_ruby_load_path bin/bundle config set with 'development'
 #ynh_exec_as $app $ynh_ruby_load_path bin/bundle install -j$(getconf _NPROCESSORS_ONLN)
 pushd "$final_path/live/syncing-server-js"
-	ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
-	ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
+    ynh_print_info "Installing ... [1/5]"
+    ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
+    ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
 popd
 pushd "$final_path/live/syncing-server-js-worker"
-	ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
-	ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
+    ynh_print_info "Installing ... [2/5]"
+    ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
+    ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
 popd
 pushd "$final_path/live/auth"
-	ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
-	ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
+    ynh_print_info "Installing ... [3/5]"
+    ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
+    ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
 popd
 pushd "$final_path/live/auth-worker"
-	ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
-	ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
+    ynh_print_info "Installing ... [4/5]"
+    ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
+    ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
 popd
 pushd "$final_path/live/api-gateway"
-	ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
-	ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
+    ynh_print_info "Installing ... [5/5]"
+    ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
+    ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
 popd
 #=================================================
 # INSTALLING Standard Notes - Extensions
@@ -320,7 +324,7 @@ if [ $is_public -eq 1 ]
 then
     # Everyone can access the app.
     # The "main" permission is automatically created before the install script.
-    ynh_permission_update --permission="main" --add="visitors" --remove="all_users"
+    ynh_permission_update --permission="main" --add="visitors"
 fi
 
 #=================================================
@@ -333,7 +337,7 @@ ynh_systemd_action \
 	--service_name="$app-syncing-server-js" \
 	--action="start" \
 	--log_path="/var/log/$app/syncing-server-js.log" \
-	--line_match='{"message":"Server started on port 3000","level":"info"}'
+	--line_match='{"message":"Server started on port '$port_syncing_server_js'","level":"info"}'
 ynh_systemd_action \
 	--service_name="$app-syncing-server-js-worker" \
 	--action="start" \
@@ -343,7 +347,7 @@ ynh_systemd_action \
 	--service_name="$app-auth" \
 	--action="start" \
 	--log_path="/var/log/$app/auth.log" \
-	--line_match='{"message":"Server started on port 3002","level":"info"}'
+	--line_match='{"message":"Server started on port '$port_auth'","level":"info"}'
 ynh_systemd_action \
 	--service_name="$app-auth-worker" \
 	--action="start" \
@@ -351,8 +355,9 @@ ynh_systemd_action \
 	--line_match='{"message":"Starting worker...","level":"info"}'
 ynh_systemd_action \
 	--service_name="$app-api-gateway" \
-	--action="start" --log_path="/var/log/$app/api-gateway.log" \
-	--line_match='{"message":"Server started on port 3006","level":"info"}'
+	--action="start" \
+	--log_path="/var/log/$app/api-gateway.log" \
+	--line_match='{"message":"Server started on port '$port_api_gateway'","level":"info"}'
 
 #=================================================
 # RELOAD NGINX
