@@ -44,6 +44,9 @@ mail="$app@$domain"
 final_path=/opt/yunohost/$app
 final_path_www=/var/www/$app
 final_path_extensions="$final_path_www/extensions"
+ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+ynh_app_setting_set --app=$app --key=final_path_www --value=$final_path_www
+ynh_app_setting_set --app=$app --key=final_path_extensions --value=$final_path_extensions
 test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
 test ! -e "$final_path_www" || ynh_die --message="This path already contains a folder"
 
@@ -114,7 +117,6 @@ ynh_mysql_setup_db --db_user=$db_user --db_name=$db_name
 #=================================================
 ynh_script_progression --message="Setting up source files..."  --weight=2
 
-ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
 mkdir -p "$final_path/live"
 ynh_setup_source --source_id=app_syncing-server-js --dest_dir="$final_path/live/syncing-server-js"
@@ -128,8 +130,6 @@ chmod -R o-rwx "$final_path"
 chown -R $app:$app "$final_path"
 
 # Extensions
-ynh_app_setting_set --app=$app --key=final_path --value=$final_path_www
-ynh_app_setting_set --app=$app --key=final_path --value=$final_path_extensions
 mkdir -p "$final_path_extensions"
 
 if test -e "$YNH_APP_BASEDIR/sources/extra_files/extensions"; then
@@ -173,7 +173,7 @@ jwt_secret=$(ynh_string_random --length=48 | base64)
 legacy_jwt_secret=$(ynh_string_random --length=48 | base64)
 auth_jwt_secret=$(ynh_string_random --length=48 | base64)
 pseudo_key_params_key=$(ynh_string_random --length=48 | base64)
-encryption_server_key=$(hexdump -n 32 -e '4/4 "%08X" 1 "\n"' /dev/random) # 32bytes hex key is required
+encryption_server_key=$(hexdump -n 32 -e '4/4 "%08X"' /dev/random) # 32bytes hex key is required
 
 ynh_app_setting_set --app=$app --key=jwt_secret --value=$jwt_secret
 ynh_app_setting_set --app=$app --key=legacy_jwt_secret --value=$legacy_jwt_secret
@@ -296,11 +296,11 @@ ynh_use_logrotate --logfile="/var/log/$app/api-gateway.log"
 #=================================================
 ynh_script_progression --message="Integrate $app service in Yunohost..."  --weight=1
 
-yunohost service add $app --description "Standard Notes - Syncing Server" --log "/var/log/$app/syncing-server-js.log"
-yunohost service add $app --description "Standard Notes - Syncing Server - Worker" --log "/var/log/$app/syncing-server-js-worker.log"
-yunohost service add $app --description "Standard Notes - Auth" --log "/var/log/$app/auth.log"
-yunohost service add $app --description "Standard Notes - Auth - Worker" --log "/var/log/$app/auth-worker.log"
-yunohost service add $app --description "Standard Notes - API Gateway" --log "/var/log/$app/api-gateway.log"
+yunohost service add $app --description="Standard Notes - Syncing Server" --log="/var/log/$app/syncing-server-js.log"
+yunohost service add $app --description="Standard Notes - Syncing Server - Worker" --log="/var/log/$app/syncing-server-js-worker.log"
+yunohost service add $app --description="Standard Notes - Auth" --log="/var/log/$app/auth.log"
+yunohost service add $app --description="Standard Notes - Auth - Worker" --log="/var/log/$app/auth-worker.log"
+yunohost service add $app --description="Standard Notes - API Gateway" --log="/var/log/$app/api-gateway.log"
 
 #=================================================
 # SETUP FAIL2BAN
@@ -329,11 +329,30 @@ fi
 ynh_script_progression --message="Starting a systemd service..."  --weight=1
 
 # Start a systemd service
-ynh_systemd_action --service_name="$app-syncing-server-js" --action="start" --log_path="/var/log/$app/syncing-server-js.log"
-ynh_systemd_action --service_name="$app-syncing-server-js-worker" --action="start" --log_path="/var/log/$app/syncing-server-js-worker.log"
-ynh_systemd_action --service_name="$app-auth" --action="start" --log_path="/var/log/$app/auth.log"
-ynh_systemd_action --service_name="$app-auth-worker" --action="start" --log_path="/var/log/$app/auth-worker.log"
-ynh_systemd_action --service_name="$app-api-gateway" --action="start" --log_path="/var/log/$app/api-gateway.log"
+ynh_systemd_action \
+	--service_name="$app-syncing-server-js" \
+	--action="start" \
+	--log_path="/var/log/$app/syncing-server-js.log" \
+	--line_match='{"message":"Server started on port 3000","level":"info"}'
+ynh_systemd_action \
+	--service_name="$app-syncing-server-js-worker" \
+	--action="start" \
+	--log_path="/var/log/$app/syncing-server-js-worker.log" \
+	--line_match='{"message":"Starting worker...","level":"info"}'
+ynh_systemd_action \
+	--service_name="$app-auth" \
+	--action="start" \
+	--log_path="/var/log/$app/auth.log" \
+	--line_match='{"message":"Server started on port 3002","level":"info"}'
+ynh_systemd_action \
+	--service_name="$app-auth-worker" \
+	--action="start" \
+	--log_path="/var/log/$app/auth-worker.log" \
+	--line_match='{"message":"Starting worker...","level":"info"}'
+ynh_systemd_action \
+	--service_name="$app-api-gateway" \
+	--action="start" --log_path="/var/log/$app/api-gateway.log" \
+	--line_match='{"message":"Server started on port 3006","level":"info"}'
 
 #=================================================
 # RELOAD NGINX
@@ -341,13 +360,6 @@ ynh_systemd_action --service_name="$app-api-gateway" --action="start" --log_path
 ynh_script_progression --message="Reloading nginx web server..."  --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
-
-#=================================================
-# WAITING FOR SERVICE
-#=================================================
-ynh_script_progression --message="Waiting for services..."  --weight=1
-
-is_service_ready
 
 #=================================================
 # SEND A README FOR THE ADMIN
