@@ -1,5 +1,5 @@
-SOURCE_URL=https://github.com/standardnotes/folders-component/archive/1.3.5.zip
-SOURCE_SUM=190CE79BAD28C772955960A16D6027BE8B7B7A9B8850BD65D79F5FAB4FF64E90
+SOURCE_URL=https://github.com/standardnotes/folders-component/archive/1.3.8.zip
+SOURCE_SUM=ae30cf348466af90b05216a16f8094fd9f087979dced6b1b83a8ad5f26a924e3
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=zip
 SOURCE_IN_SUBDIR=true

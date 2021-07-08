@@ -1,5 +1,5 @@
-SOURCE_URL=https://github.com/standardnotes/plus-editor/archive/1.4.5.zip
-SOURCE_SUM=9F4C4381D66FDE8C8867EDA36C3802616758D2185A4EBB5E903CF296004C6C53
+SOURCE_URL=https://github.com/standardnotes/plus-editor/archive/1.5.0.zip
+SOURCE_SUM=2d30a2544523f9d482f17a0bdace0b7e803a40c96ccd320926776a403ec6cd6f
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=zip
 SOURCE_IN_SUBDIR=true

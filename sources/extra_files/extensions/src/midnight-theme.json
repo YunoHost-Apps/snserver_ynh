@@ -3,10 +3,10 @@
   "name": "Midnight Theme",
   "content_type": "SN|Theme",
   "area": "theme",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Elegant utilitarianism.",
   "url": "https://__DOMAIN__PATH__/extensions/src/midnight-theme/dist/dist.css", 
-  "download_url": "https://github.com/sn-extensions/midnight-theme/archive/1.2.1.zip",
+  "download_url": "https://github.com/sn-extensions/midnight-theme/archive/1.2.2.zip",
   "latest_url": "https://__DOMAIN__PATH__/extensions/src/midnight-theme.json",
   "dock_icon":{
     "type":"circle",

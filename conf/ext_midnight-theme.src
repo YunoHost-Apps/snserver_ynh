@@ -1,5 +1,5 @@
-SOURCE_URL=https://github.com/standardnotes/midnight-theme/archive/1.2.1.zip
-SOURCE_SUM=f219de3cf26494a73d506139082463a06782a5fc1717290d96da9c8a54102342
+SOURCE_URL=https://github.com/standardnotes/midnight-theme/archive/1.2.2.zip
+SOURCE_SUM=916aa7ebbd9df97d2dba0d14b322031307495787ededb4429a295792756b7c2b
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=zip
 SOURCE_IN_SUBDIR=true

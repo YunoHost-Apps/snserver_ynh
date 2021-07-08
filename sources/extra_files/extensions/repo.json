@@ -67,7 +67,7 @@
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/midnight-theme.json",
             "name": "Midnight Theme",
             "url": "https://__DOMAIN__PATH__/extensions/src/midnight-theme/dist/dist.css",
-            "version": "1.2.1"
+            "version": "1.2.2"
         },
         {
             "area": "theme",
@@ -142,7 +142,7 @@
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/bold-editor.json",
             "name": "Bold Editor",
             "url": "https://__DOMAIN__PATH__/extensions/src/bold-editor/dist/index.html",
-            "version": "1.1.0"
+            "version": "1.2.1"
         },
         {
             "area": "editor-editor",
@@ -164,7 +164,7 @@
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/markdown-basic.json",
             "name": "Markdown Basic",
             "url": "https://__DOMAIN__PATH__/extensions/src/markdown-basic/dist/index.html",
-            "version": "1.3.7"
+            "version": "1.4.0"
         },
         {
             "area": "editor-editor",
@@ -175,7 +175,7 @@
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/markdown-pro.json",
             "name": "Markdown Pro",
             "url": "https://__DOMAIN__PATH__/extensions/src/markdown-pro/index.html",
-            "version": "1.3.9"
+            "version": "1.3.14"
         },
         {
             "area": "editor-editor",
@@ -197,7 +197,7 @@
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/minimal-markdown-editor.json",
             "name": "Minimal Markdown Editor",
             "url": "https://__DOMAIN__PATH__/extensions/src/minimal-markdown-editor/index.html",
-            "version": "1.3.5"
+            "version": "1.3.7"
         },
         {
             "area": "editor-editor",
@@ -208,7 +208,7 @@
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/plus-editor.json",
             "name": "Plus Editor",
             "url": "https://__DOMAIN__PATH__/extensions/src/plus-editor/dist/index.html",
-            "version": "1.4.5"
+            "version": "1.5.0"
         },
         {
             "area": "editor-editor",
@@ -219,7 +219,7 @@
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/simple-task-editor.json",
             "name": "Task Editor",
             "url": "https://__DOMAIN__PATH__/extensions/src/simple-task-editor/dist/index.html",
-            "version": "1.3.5"
+            "version": "1.3.7"
         },
         {
             "area": "editor-editor",
@@ -230,7 +230,7 @@
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/token-vault.json",
             "name": "Token Vault",
             "url": "https://__DOMAIN__PATH__/extensions/src/token-vault/dist/index.html",
-            "version": "1.0.5"
+            "version": "1.0.10"
         },
         {
             "area": "editor-editor",
@@ -252,7 +252,7 @@
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/action-bar.json",
             "name": "Action Bar",
             "url": "https://__DOMAIN__PATH__/extensions/src/action-bar/index.html",
-            "version": "1.3.1"
+            "version": "1.3.2"
         },
         {
             "area": "tags-list",
@@ -263,7 +263,7 @@
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/folders-component.json",
             "name": "Folders",
             "url": "https://__DOMAIN__PATH__/extensions/src/folders-component/index.html",
-            "version": "1.3.5"
+            "version": "1.3.8"
         },
         {
             "area": "editor-stack",
@@ -285,7 +285,7 @@
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/mfa-link.json",
             "name": "MFA-Link",
             "url": "https://__DOMAIN__PATH__/extensions/src/mfa-link/dist/index.html",
-            "version": "1.2.2"
+            "version": "1.2.4"
         },
         {
             "area": "note-tags",
