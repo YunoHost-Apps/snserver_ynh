@@ -188,20 +188,11 @@ ynh_app_setting_set --app=$app --key=auth_jwt_secret --value=$auth_jwt_secret
 ynh_app_setting_set --app=$app --key=pseudo_key_params_key --value=$pseudo_key_params_key
 ynh_app_setting_set --app=$app --key=encryption_server_key --value=$encryption_server_key
 
-#ynh_replace_string --match_string="SMTP_HOST=.*$" --replace_string="SMTP_HOST=localhost" --target_file="$config_file"
-#ynh_replace_string --match_string="SMTP_PORT=.*$" --replace_string="SMTP_PORT=25" --target_file="$config_file"
-#ynh_replace_string --match_string="SMTP_DOMAIN=.*$" --replace_string="SMTP_DOMAIN=localhost" --target_file="$config_file"
-#ynh_replace_string --match_string="SMTP_STARTTLS=.*$" --replace_string="SMTP_STARTTLS=" --target_file="$config_file"
-
 ynh_add_config --template="env_syncing-server-js.env.sample" --destination="$config_syncing_server_js"
 ynh_add_config --template="env_syncing-server-js-worker.env.sample" --destination="$config_syncing_server_js_worker"
 ynh_add_config --template="env_auth.env.sample" --destination="$config_auth"
 ynh_add_config --template="env_auth-worker.env.sample" --destination="$config_auth_worker"
 ynh_add_config --template="env_api-gateway.env.sample" --destination="$config_api_gateway"
-
-#ynh_replace_string --match_string="__MAIL__" --replace_string="$mail" --target_file="$final_path/live/app/mailers/application_mailer.rb"
-#ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
-#ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
 
 #=================================================
 # INSTALLING Standard Notes - Syncing Server
@@ -210,9 +201,6 @@ ynh_script_progression --message="Installing Standard Notes - Syncing Server..."
 
 
 ynh_use_nodejs
-#ynh_exec_as $app $ynh_ruby_load_path bin/bundle config set --local path 'vendor/bundle'
-#ynh_exec_as $app $ynh_ruby_load_path bin/bundle config set with 'development'
-#ynh_exec_as $app $ynh_ruby_load_path bin/bundle install -j$(getconf _NPROCESSORS_ONLN)
 pushd "$final_path/live/syncing-server-js"
     ynh_print_info "Installing ... [1/5]"
     ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
@@ -296,7 +284,6 @@ mkdir -p "/var/log/$app"
 chown -R "$app": "/var/log/$app"
 
 # Use logrotate to manage application logfile(s)
-#ynh_use_logrotate --logfile="$final_path/live/log/production.log"
 ynh_use_logrotate --logfile="/var/log/$app/syncing-server.log"
 ynh_use_logrotate --logfile="/var/log/$app/syncing-server-worker.log"
 ynh_use_logrotate --logfile="/var/log/$app/auth.log"
@@ -342,30 +329,30 @@ ynh_script_progression --message="Starting a systemd service..."  --weight=1
 
 # Start a systemd service
 ynh_systemd_action \
-	--service_name="$app-syncing-server-js" \
-	--action="start" \
-	--log_path="/var/log/$app/syncing-server-js.log" \
-	--line_match='{"message":"Server started on port '$port_syncing_server_js'","level":"info"}'
+    --service_name="$app-syncing-server-js" \
+    --action="start" \
+    --log_path="/var/log/$app/syncing-server-js.log" \
+    --line_match='{"message":"Server started on port '$port_syncing_server_js'","level":"info"}'
 ynh_systemd_action \
-	--service_name="$app-syncing-server-js-worker" \
-	--action="start" \
-	--log_path="/var/log/$app/syncing-server-js-worker.log" \
-	--line_match='{"message":"Starting worker...","level":"info"}'
+    --service_name="$app-syncing-server-js-worker" \
+    --action="start" \
+    --log_path="/var/log/$app/syncing-server-js-worker.log" \
+    --line_match='{"message":"Starting worker...","level":"info"}'
 ynh_systemd_action \
-	--service_name="$app-auth" \
-	--action="start" \
-	--log_path="/var/log/$app/auth.log" \
-	--line_match='{"message":"Server started on port '$port_auth'","level":"info"}'
+    --service_name="$app-auth" \
+    --action="start" \
+    --log_path="/var/log/$app/auth.log" \
+    --line_match='{"message":"Server started on port '$port_auth'","level":"info"}'
 ynh_systemd_action \
-	--service_name="$app-auth-worker" \
-	--action="start" \
-	--log_path="/var/log/$app/auth-worker.log" \
-	--line_match='{"message":"Starting worker...","level":"info"}'
+    --service_name="$app-auth-worker" \
+    --action="start" \
+    --log_path="/var/log/$app/auth-worker.log" \
+    --line_match='{"message":"Starting worker...","level":"info"}'
 ynh_systemd_action \
-	--service_name="$app-api-gateway" \
-	--action="start" \
-	--log_path="/var/log/$app/api-gateway.log" \
-	--line_match='{"message":"Server started on port '$port_api_gateway'","level":"info"}'
+    --service_name="$app-api-gateway" \
+    --action="start" \
+    --log_path="/var/log/$app/api-gateway.log" \
+    --line_match='{"message":"Server started on port '$port_api_gateway'","level":"info"}'
 
 #=================================================
 # RELOAD NGINX

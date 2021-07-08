@@ -195,30 +195,30 @@ yunohost service add "$app-api-gateway" --description="Standard Notes - API Gate
 ynh_script_progression --message="Starting a systemd service..." --weight=1
 
 ynh_systemd_action \
-	--service_name="$app-syncing-server-js" \
-	--action="start" \
-	--log_path="/var/log/$app/syncing-server-js.log" \
-	--line_match='{"message":"Server started on port '$port_syncing_server_js'","level":"info"}'
+    --service_name="$app-syncing-server-js" \
+    --action="start" \
+    --log_path="/var/log/$app/syncing-server-js.log" \
+    --line_match='{"message":"Server started on port '$port_syncing_server_js'","level":"info"}'
 ynh_systemd_action \
-	--service_name="$app-syncing-server-js-worker" \
-	--action="start" \
-	--log_path="/var/log/$app/syncing-server-js-worker.log" \
-	--line_match='{"message":"Starting worker...","level":"info"}'
+    --service_name="$app-syncing-server-js-worker" \
+    --action="start" \
+    --log_path="/var/log/$app/syncing-server-js-worker.log" \
+    --line_match='{"message":"Starting worker...","level":"info"}'
 ynh_systemd_action \
-	--service_name="$app-auth" \
-	--action="start" \
-	--log_path="/var/log/$app/auth.log" \
-	--line_match='{"message":"Server started on port '$port_auth'","level":"info"}'
+    --service_name="$app-auth" \
+    --action="start" \
+    --log_path="/var/log/$app/auth.log" \
+    --line_match='{"message":"Server started on port '$port_auth'","level":"info"}'
 ynh_systemd_action \
-	--service_name="$app-auth-worker" \
-	--action="start" \
-	--log_path="/var/log/$app/auth-worker.log" \
-	--line_match='{"message":"Starting worker...","level":"info"}'
+    --service_name="$app-auth-worker" \
+    --action="start" \
+    --log_path="/var/log/$app/auth-worker.log" \
+    --line_match='{"message":"Starting worker...","level":"info"}'
 ynh_systemd_action \
-	--service_name="$app-api-gateway" \
-	--action="start" \
-	--log_path="/var/log/$app/api-gateway.log" \
-	--line_match='{"message":"Server started on port '$port_api_gateway'","level":"info"}'
+    --service_name="$app-api-gateway" \
+    --action="start" \
+    --log_path="/var/log/$app/api-gateway.log" \
+    --line_match='{"message":"Server started on port '$port_api_gateway'","level":"info"}'
 
 #=================================================
 # RESTORE THE LOGROTATE CONFIGURATION
