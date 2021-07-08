@@ -29,7 +29,13 @@ ynh_script_progression --message="Loading installation settings..." --weight=1
 
 # Needed for helper "ynh_add_nginx_config"
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-port=$(ynh_app_setting_get --app=$app --key=port)
+final_path_www=$(ynh_app_setting_get --app=$app --key=final_path_www)
+final_path_extensions=$(ynh_app_setting_get --app=$app --key=final_path_extensions)
+port_syncing_server_js=$(ynh_app_setting_get --app=$app --key=port_syncing_server_js)
+port_syncing_server_js_worker=$(ynh_app_setting_get --app=$app --key=port_syncing_server_js_worker)
+port_auth=$(ynh_app_setting_get --app=$app --key=port_auth)
+port_auth_worker=$(ynh_app_setting_get --app=$app --key=port_auth_worker)
+port_api_gateway=$(ynh_app_setting_get --app=$app --key=port_api_gateway)
 access_domain=$(ynh_app_setting_get --app=$app --key=access_domain)
 access_domain=$(echo $access_domain | sed "s@;@ @g")
 mail=$(ynh_app_setting_get --app=$app --key=mail)
@@ -77,9 +83,9 @@ fi
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Stopping a systemd service..." --weight=1
-
-ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
+#ynh_script_progression --message="Stopping a systemd service..." --weight=1
+#
+#ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # MODIFY URL IN NGINX CONF
@@ -113,18 +119,6 @@ fi
 #=================================================
 # SPECIFIC MODIFICATIONS
 #=================================================
-ynh_script_progression --message="Modifying a config file..." --weight=1
-
-config_file="$final_path/live/.env"
-ynh_replace_string --match_string="RAILS_RELATIVE_URL_ROOT=$old_path" --replace_string="RAILS_RELATIVE_URL_ROOT=$new_path" --target_file="$config_file"
-
-if [ $change_domain -eq 1 ]
-then
-    new_mail="$app@$new_domain"
-    ynh_replace_string --match_string="$mail" --replace_string="$new_mail" --target_file="$final_path/live/app/mailers/application_mailer.rb"
-fi
-ynh_replace_string --match_string="$old_domain$old_path" --replace_string="$new_domain$new_path" --target_file="$final_path/live/app/views/user_mailer/welcome.html.erb"
-
 #=================================================
 # Modify Standard Notes - Extensions
 #=================================================
@@ -137,9 +131,17 @@ else
     path=$new_path
 fi
 
-find "$final_path/live/public/extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
+ynh_replace_string \
+	--match_string='url": "https://.*/extensions/src/' \
+	--replace_string='url": "https://'$domain$path'/extensions/src/' \
+	--target_file="$final_path_extensions/repo.json"
+
+find "$final_path_extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
 do
-    ynh_replace_string --match_string='"url": "https://.*/extensions/src/' --replace_string='"url": "https://$domain$path/extensions/src/' --target_file="$file"
+    ynh_replace_string \
+		--match_string='url": "https://.*/extensions/src/' \
+		--replace_string='url": "https://'$domain$path'extensions/src/' \
+		--target_file="$file"
 done
 
 #=================================================
@@ -158,9 +160,9 @@ ynh_add_fail2ban_config --use_template
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..." --weight=2
-
-ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+#ynh_script_progression --message="Starting a systemd service..." --weight=2
+#
+#ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # RELOAD NGINX
@@ -168,13 +170,6 @@ ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$ap
 ynh_script_progression --message="Reloading nginx web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
-
-#=================================================
-# WAITING FOR SERVICE
-#=================================================
-ynh_script_progression --message="Waiting for service..."  --weight=1
-
-is_service_ready
 
 #=================================================
 # SEND A README FOR THE ADMIN
@@ -188,7 +183,7 @@ admin_mail_info="You changed the url of the server. All Extensions have to be re
 
 echo -e "\
 Standard Notes - Syncing Server's url was successfully changed.\n\
-Please configure the Standard Notes web app or mobile app to use this syning server: https://$domain$path_url/\n\
+Please configure the Standard Notes web app or mobile app to use this syncing server: https://$domain$path_url/\n\
 $config_panel\n\n\
 $admin_mail_info\
 " > message

@@ -3,14 +3,14 @@ Description=StandardNotes auth
 After=network.target
 After=mysql.service
 After=redis.service
-After=__APP__-synicing-server-js.service
+After=__APP__-syncing-server-js.service
 
 [Service]
 Type=simple
 User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/live/auth
-EnvironmentFile=__FINALPATH__/live/auth/.env
+EnvironmentFile=__FINALPATH__/live/auth.env
 ExecStart=/usr/bin/yarn start
 StandardOutput=append:/var/log/__APP__/auth.log
 StandardError=inherit

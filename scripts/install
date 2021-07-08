@@ -66,6 +66,15 @@ redis_db=$(ynh_redis_get_free_db)
 ynh_app_setting_set --app=$app --key=redis_db --value="$redis_db"
 
 #=================================================
+# STORE SETTINGS
+#=================================================
+ynh_app_setting_set --app=$app --key=syncing_server_js_version --value=$syncing_server_js_version
+ynh_app_setting_set --app=$app --key=auth_version --value=$auth_version
+ynh_app_setting_set --app=$app --key=api_gateway_version --value=$api_gateway_version
+ynh_app_setting_set --app=$app --key=extensions_version --value=$extensions_version
+ynh_app_setting_set --app=$app --key=standalone --value="true"
+
+#=================================================
 # STANDARD MODIFICATIONS
 #=================================================
 # FIND AND OPEN A PORT
@@ -161,12 +170,11 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Modifying a config file..."  --weight=2
 
-config_syncing_server_js="$final_path/live/syncing-server-js/.env"
-config_syncing_server_js_worker="$final_path/live/syncing-server-js-worker/.env"
-config_auth="$final_path/live/auth/.env"
-config_auth_worker="$final_path/live/auth-worker/.env"
-config_api_gateway="$final_path/live/api-gateway/.env"
-
+config_syncing_server_js="$final_path/live/syncing-server-js.env"
+config_syncing_server_js_worker="$final_path/live/syncing-server-js-worker.env"
+config_auth="$final_path/live/auth.env"
+config_auth_worker="$final_path/live/auth-worker.env"
+config_api_gateway="$final_path/live/api-gateway.env"
 
 jwt_secret=$(ynh_string_random --length=48 | base64)
 legacy_jwt_secret=$(ynh_string_random --length=48 | base64)
@@ -300,11 +308,11 @@ ynh_use_logrotate --logfile="/var/log/$app/api-gateway.log"
 #=================================================
 ynh_script_progression --message="Integrate $app service in Yunohost..."  --weight=1
 
-yunohost service add $app --description="Standard Notes - Syncing Server" --log="/var/log/$app/syncing-server-js.log"
-yunohost service add $app --description="Standard Notes - Syncing Server - Worker" --log="/var/log/$app/syncing-server-js-worker.log"
-yunohost service add $app --description="Standard Notes - Auth" --log="/var/log/$app/auth.log"
-yunohost service add $app --description="Standard Notes - Auth - Worker" --log="/var/log/$app/auth-worker.log"
-yunohost service add $app --description="Standard Notes - API Gateway" --log="/var/log/$app/api-gateway.log"
+yunohost service add "$app-syncing-server-js" --description="Standard Notes - Syncing Server" --log="/var/log/$app/syncing-server-js.log"
+yunohost service add "$app-syncing-server-js-worker" --description="Standard Notes - Syncing Server - Worker" --log="/var/log/$app/syncing-server-js-worker.log"
+yunohost service add "$app-auth" --description="Standard Notes - Auth" --log="/var/log/$app/auth.log"
+yunohost service add "$app-auth-worker" --description="Standard Notes - Auth - Worker" --log="/var/log/$app/auth-worker.log"
+yunohost service add "$app-api-gateway" --description="Standard Notes - API Gateway" --log="/var/log/$app/api-gateway.log"
 
 #=================================================
 # SETUP FAIL2BAN

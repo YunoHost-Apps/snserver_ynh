@@ -39,7 +39,11 @@ final_path_www=$(ynh_app_setting_get --app=$app --key=final_path_www)
 if ynh_exec_warn_less yunohost service status $app >/dev/null
 then
     ynh_script_progression --message="Removing $app service..."  --weight=1
-    yunohost service remove $app
+    yunohost service remove "$app-syncing-server-js"
+    yunohost service remove "$app-syncing-server-js-worker"
+    yunohost service remove "$app-auth"
+    yunohost service remove "$app-auth-worker"
+    yunohost service remove "$app-api-gateway"
 fi
 
 #=================================================
@@ -76,6 +80,7 @@ ynh_script_progression --message="Removing dependencies..."  --weight=10
 
 # Remove metapackage and its dependencies
 ynh_remove_app_dependencies
+ynh_remove_nodejs
 
 #=================================================
 # REMOVE APP MAIN DIR
