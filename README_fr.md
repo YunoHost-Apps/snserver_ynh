@@ -13,7 +13,7 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 
 
-**Version incluse :** 3.22.8~ynh2
+**Version incluse :** 2021.07.06~ynh1
 
 **Démo :** https://standardnotes.org/demo
 
@@ -33,9 +33,9 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 ## Documentations et ressources
 
 * Site officiel de l'app : https://standardnotes.org/
-* Documentation officielle utilisateur : https://docs.standardnotes.org/
+* Documentation officielle utilisateur : https://standardnotes.com/help
 * Documentation officielle de l'admin : https://docs.standardnotes.org/
-* Dépôt de code officiel de l'app : https://github.com/standardnotes/syncing-server
+* Dépôt de code officiel de l'app : https://github.com/standardnotes/standalone
 * Documentation YunoHost pour cette app : https://yunohost.org/app_snserver
 * Signaler un bug : https://github.com/YunoHost-Apps/snserver_ynh/issues
 
