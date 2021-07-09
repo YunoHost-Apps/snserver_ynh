@@ -202,27 +202,17 @@ ynh_script_progression --message="Installing Standard Notes - Syncing Server..."
 
 ynh_use_nodejs
 pushd "$final_path/live/syncing-server-js"
-    ynh_print_info "Installing ... [1/5]"
-    ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
-    ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
-popd
-pushd "$final_path/live/syncing-server-js-worker"
-    ynh_print_info "Installing ... [2/5]"
+    ynh_print_info "Installing ... [1/3]"
     ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
     ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
 popd
 pushd "$final_path/live/auth"
-    ynh_print_info "Installing ... [3/5]"
-    ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
-    ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
-popd
-pushd "$final_path/live/auth-worker"
-    ynh_print_info "Installing ... [4/5]"
+    ynh_print_info "Installing ... [2/3]"
     ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
     ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
 popd
 pushd "$final_path/live/api-gateway"
-    ynh_print_info "Installing ... [5/5]"
+    ynh_print_info "Installing ... [3/3]"
     ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
     ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
 popd

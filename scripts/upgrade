@@ -264,13 +264,11 @@ then
     ynh_backup_if_checksum_is_different --file=$config_syncing_server_js_worker
     # Remove destination directory
     ynh_secure_remove --file="$final_path/live/syncing_server_js"
-    ynh_secure_remove --file="$final_path/live/syncing_server_js_worker"
     ynh_secure_remove --file="$config_syncing_server_js"
     ynh_secure_remove --file="$config_syncing_server_js_worker"
     # Download, check integrity, uncompress and patch the source from app.src
     mkdir -p "$final_path/live"
     ynh_setup_source --source_id=app_syncing-server-js --dest_dir="$final_path/live/syncing-server-js"
-    ynh_setup_source --source_id=app_syncing-server-js --dest_dir="$final_path/live/syncing-server-js-worker"
 fi
 
 if [[ "$auth_version_installed" < "$auth_version" ]]
@@ -280,13 +278,11 @@ then
     ynh_backup_if_checksum_is_different --file=$config_auth_worker
     # Remove destination directory
     ynh_secure_remove --file="$final_path/live/auth"
-    ynh_secure_remove --file="$final_path/live/auth_worker"
     ynh_secure_remove --file="$config_auth"
     ynh_secure_remove --file="$config_auth_worker"
     # Download, check integrity, uncompress and patch the source from app.src
     mkdir -p "$final_path/live"
     ynh_setup_source --source_id=app_auth --dest_dir="$final_path/live/auth"
-    ynh_setup_source --source_id=app_auth --dest_dir="$final_path/live/auth-worker"
 fi
 
 if [[ "$api_gateway_version_installed" < "$api_gateway_version" ]]
@@ -372,19 +368,11 @@ then
             ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
             ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
         popd
-        pushd "$final_path/live/syncing-server-js-worker"
-            ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
-            ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
-        popd
         ynh_app_setting_set --app=$app --key=syncing_server_js_version --value=$syncing_server_js_version
     fi
     if [[ "$auth_version_installed" < "$auth_version" ]]
     then
         pushd "$final_path/live/auth"
-            ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
-            ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
-        popd
-        pushd "$final_path/live/auth-worker"
             ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
             ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
         popd
