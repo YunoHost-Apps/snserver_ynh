@@ -253,7 +253,7 @@ ynh_script_progression --message="Upgrading source files..." --weight=1
 # Remove all files if the old syncing-server is used
 if [[ ! $standalone ]];
 then
-    ynh_secure_remove --file="$final_path/*"
+    ynh_secure_remove --file="$final_path"
     ynh_secure_remove --file="/var/log/$app"
 fi
 
@@ -298,7 +298,7 @@ then
     ynh_secure_remove --file="$config_api_gateway"
     # Download, check integrity, uncompress and patch the source from app.src
     mkdir -p "$final_path/live"
-    ynh_setup_source --source_id=app_api_gateway --dest_dir="$final_path/live/api-gateway"
+    ynh_setup_source --source_id=app_api-gateway --dest_dir="$final_path/live/api-gateway"
 fi
 
 if [[ "$extensions_version_installed" < "$extensions_version" ]]
@@ -311,6 +311,12 @@ then
     then
         cp -a "../sources/extra_files/extensions/." "$final_path_extensions"
     fi
+
+    find "../conf/" -name "ext_*.src" -print0 | while read -d $'\0' file
+    do
+        basename=$(basename -as .src $file)
+        ynh_setup_source  --dest_dir="$final_path_extensions/src/${basename#'ext_'}" --source_id="$basename"
+    done
 fi
 
 chmod 750 "$final_path"
