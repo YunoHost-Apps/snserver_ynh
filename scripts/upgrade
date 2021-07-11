@@ -244,13 +244,20 @@ if [ -n $(ynh_app_setting_get --app="$app" --key=port) ]; then
 fi
 
 # If old service exsits; remove it
-if [ $(cat /etc/yunohost/services.yml | grep "$app:") -eq "$app" ]; then
+if [ -n $(cat /etc/yunohost/services.yml | grep "$app:") ]; then
     yunohost service remove "$app"
 fi
 
 # Remove old config scripts
-ynh_secure_remove --file="/etc/yunohost/apps/$app/config_panel.toml"
-ynh_secure_remove --file="/etc/yunohost/apps/$app/scripts/config"
+if [ -e "/etc/yunohost/apps/$app/config_panel.toml" ]; then
+{
+    ynh_secure_remove --file="/etc/yunohost/apps/$app/config_panel.toml"
+}
+
+if [ -e "/etc/yunohost/apps/$app/scripts/config" ]; then
+{
+    ynh_secure_remove --file="/etc/yunohost/apps/$app/scripts/config"
+}
 
 # Remove old dependencies
 if [[ ! $standalone ]];
