@@ -36,9 +36,6 @@ port_auth=$(ynh_app_setting_get --app=$app --key=port_auth)
 port_auth_worker=$(ynh_app_setting_get --app=$app --key=port_auth_worker)
 port_api_gateway=$(ynh_app_setting_get --app=$app --key=port_api_gateway)
 
-access_domain=$(ynh_app_setting_get --app=$app --key=access_domain)
-access_domain=$(echo $access_domain | sed "s@;@ @g")
-mail=$(ynh_app_setting_get --app=$app --key=mail)
 redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
 
 jwt_secret=$(ynh_app_setting_get --app=$app --key=jwt_secret)
@@ -131,6 +128,21 @@ if ynh_legacy_permissions_exists; then
     ynh_app_setting_delete --app=$app --key=is_public
 fi
 
+# Everyone can access the app.
+if [[ $(ynh_permission_exists --permission="main") && ! $standalone ]]
+then
+	ynh_permission_update --permission="main" --add="visitors" --show_tile="false"
+fi
+if ! ynh_permission_exists --permission="main"
+then
+	ynh_permission_create --permission="main" --url="/" --allowed="visitors" --show_tile="false"
+fi
+# Create a permission if needed
+if ! ynh_permission_exists --permission="help"
+then
+	ynh_permission_create --permission="help" --url="/help" --allowed="all_users"
+fi
+
 # If final_path doesn't exist, create it
 if [ -z "$final_path" ]; then
     final_path=/opt/yunohost/$app
@@ -149,27 +161,10 @@ if [ -z "$final_path_extensions" ]; then
     ynh_app_setting_set --app=$app --key=final_path_extensions --value=$final_path_extensions
 fi
 
-# If access_domain doesn't exist, create it
-if [ -z "$access_domain" ]; then
-    access_domain=$domain
-    ynh_app_setting_set --app=$app --key=access_domain --value=$access_domain
-fi
-
-# If mail doesn't exist, create it
-if [ -z "$mail" ]; then
-    mail="$app@$domain"
-    ynh_app_setting_set --app=$app --key=mail --value=$mail
-fi
-
 # If redis_db doesn't exist, create it
 if [ -z "$redis_db" ]; then
     redis_db=$(ynh_redis_get_free_db)
     ynh_app_setting_set --app=$app --key=redis_db --value="$redis_db"
-fi
-
-# If port exist, delete it
-if [ -n $(ynh_app_setting_get --app="$app" --key=port) ]; then
-    ynh_app_setting_delete --app=$app --key=port
 fi
 
 # If port_syncing_server_js doesn't exist, create it
@@ -232,11 +227,38 @@ if [ -z "$encryption_server_key" ]; then
     ynh_app_setting_set --app=$app --key=encryption_server_key --value=$encryption_server_key
 fi
 
+# Remove old Settings, Services, Files, Dependencies
+# If access_domain exist, delete it
+if [ -n $(ynh_app_setting_get --app="$app" --key=access_domain) ]; then
+    ynh_app_setting_delete --app=$app --key=access_domain
+fi
+
+# If mail exist, delete it
+if [ -n $(ynh_app_setting_get --app="$app" --key=mail) ]; then
+    ynh_app_setting_delete --app=$app --key=mail
+fi
+
+# If port exist, delete it
+if [ -n $(ynh_app_setting_get --app="$app" --key=port) ]; then
+    ynh_app_setting_delete --app=$app --key=port
+fi
+
+# If old service exsits; remove it
+if [ $(cat /etc/yunohost/services.yml | grep "$app:") -eq "$app" ]; then
+    yunohost service remove "$app"
+fi
+
+# Remove old config scripts
+ynh_secure_remove --file="/etc/yunohost/apps/$app/config_panel.toml"
+ynh_secure_remove --file="/etc/yunohost/apps/$app/scripts/config"
+
+# Remove old dependencies
 if [[ ! $standalone ]];
 then
     ynh_remove_ruby
     ynh_remove_app_dependencies
 fi
+
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
@@ -314,6 +336,14 @@ then
         ynh_setup_source  --dest_dir="$final_path_extensions/src/${basename#'ext_'}" --source_id="$basename"
     done
 fi
+
+# Copy help file
+ynh_secure_remove --file="$final_path_www/help"
+mkdir -p "$final_path_www/help"
+if test -e "$YNH_APP_BASEDIR/sources/extra_files/help"; then
+    cp --archive "$YNH_APP_BASEDIR/sources/extra_files/help/." "$final_path_www/help"
+fi
+ynh_replace_vars --file="$final_path_www/help/index.html"
 
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"

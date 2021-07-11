@@ -40,24 +40,6 @@
                 "type": "path",
                 "example": "/example",
                 "default": "/example"
-            },
-            {
-                "name": "is_public",
-                "type": "boolean",
-                "help": {
-                    "en": "The Standard Notes - Syncing Server should be public accessable if you want to connect with a desktop or mobile app."
-                },
-                "default": true
-            },
-            {
-                "name": "access_domain",
-                "type": "string",
-                "ask": {
-                    "en": "Choose a domain which has access to the extensions. E.g. the Standard-Notes web app."
-                },
-                "optional": true,
-                "example": "example.tld",
-                "default": ""
             }
         ]
     }

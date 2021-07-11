@@ -36,9 +36,6 @@ port_syncing_server_js_worker=$(ynh_app_setting_get --app=$app --key=port_syncin
 port_auth=$(ynh_app_setting_get --app=$app --key=port_auth)
 port_auth_worker=$(ynh_app_setting_get --app=$app --key=port_auth_worker)
 port_api_gateway=$(ynh_app_setting_get --app=$app --key=port_api_gateway)
-access_domain=$(ynh_app_setting_get --app=$app --key=access_domain)
-access_domain=$(echo $access_domain | sed "s@;@ @g")
-mail=$(ynh_app_setting_get --app=$app --key=mail)
 
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
