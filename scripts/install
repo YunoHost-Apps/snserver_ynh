@@ -361,9 +361,6 @@ config_panel="You can find some specific configurations for this app by using th
 
 admin_mail_info="\
 Standard Notes extensions are hosted with this package.\n\
-New users will get an e-mail with install instructions.\n\
-With the current SMTP settings you can not send e-mails to all e-mail providers. For example GMail will probably not recive this e-mails.\n\
-Please setup the SMTP account in this file: \"$final_path/live/.env\" under \"#Mailer settings\" if you want to fix this.\n\
 Please setup the Access-Domain for the extensions in the __URL_TAG1__config-panel__URL_TAG2__$admin_panel/config-panel__URL_TAG3__ if not already done during the installation settings.\
 "
 
