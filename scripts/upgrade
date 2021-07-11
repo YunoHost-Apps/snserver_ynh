@@ -244,7 +244,7 @@ if [ -n $(ynh_app_setting_get --app="$app" --key=port) ]; then
 fi
 
 # If old service exsits; remove it
-if [ -n $(cat /etc/yunohost/services.yml | grep "$app:") ]; then
+if grep -q "$app:" "/etc/yunohost/services.yml"; then
     yunohost service remove "$app"
 fi
 
