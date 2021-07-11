@@ -250,14 +250,12 @@ fi
 
 # Remove old config scripts
 if [ -e "/etc/yunohost/apps/$app/config_panel.toml" ]; then
-{
     ynh_secure_remove --file="/etc/yunohost/apps/$app/config_panel.toml"
-}
+fi
 
 if [ -e "/etc/yunohost/apps/$app/scripts/config" ]; then
-{
     ynh_secure_remove --file="/etc/yunohost/apps/$app/scripts/config"
-}
+fi
 
 # Remove old dependencies
 if [[ ! $standalone ]];
