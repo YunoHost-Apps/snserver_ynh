@@ -62,12 +62,12 @@
                 "foreground_color": "#ffffff",
                 "type": "circle"
             },
-            "download_url": "https://github.com/standardnotes/midnight-theme/archive/1.2.1.zip",
+            "download_url": "https://github.com/standardnotes/midnight-theme/archive/1.2.2.zip",
             "identifier": "org.standardnotes.midnight-theme",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/midnight-theme.json",
             "name": "Midnight Theme",
             "url": "https://__DOMAIN__PATH__/extensions/src/midnight-theme/dist/dist.css",
-            "version": "1.2.1"
+            "version": "1.2.2"
         },
         {
             "area": "theme",
@@ -137,12 +137,12 @@
             "area": "editor-editor",
             "content_type": "SN|Component",
             "description": "A simple and peaceful rich editor that helps you write and think clearly. Features FileSafe integration, so you can embed your images, videos, and audio recordings directly inline.",
-            "download_url": "https://github.com/standardnotes/bold-editor/archive/1.1.0.zip",
+            "download_url": "https://github.com/standardnotes/bold-editor/archive/1.2.1.zip",
             "identifier": "org.standardnotes.bold-editor",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/bold-editor.json",
             "name": "Bold Editor",
             "url": "https://__DOMAIN__PATH__/extensions/src/bold-editor/dist/index.html",
-            "version": "1.1.0"
+            "version": "1.2.1"
         },
         {
             "area": "editor-editor",
@@ -159,23 +159,23 @@
             "area": "editor-editor",
             "content_type": "SN|Component",
             "description": "A Markdown editor with dynamic split-pane preview.",
-            "download_url": "https://github.com/standardnotes/markdown-basic/archive/1.3.7.zip",
+            "download_url": "https://github.com/standardnotes/markdown-basic/archive/1.4.0.zip",
             "identifier": "org.standardnotes.markdown-basic-editor",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/markdown-basic.json",
             "name": "Markdown Basic",
             "url": "https://__DOMAIN__PATH__/extensions/src/markdown-basic/dist/index.html",
-            "version": "1.3.7"
+            "version": "1.4.0"
         },
         {
             "area": "editor-editor",
             "content_type": "SN|Component",
             "description": "A fully featured Markdown editor that supports live preview, a styling toolbar, and split pane support.",
-            "download_url": "https://github.com/standardnotes/markdown-pro/archive/1.3.9.zip",
+            "download_url": "https://github.com/standardnotes/markdown-pro/archive/1.3.14.zip",
             "identifier": "org.standardnotes.markdown-pro",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/markdown-pro.json",
             "name": "Markdown Pro",
-            "url": "https://__DOMAIN__PATH__/extensions/src/markdown-pro/index.html",
-            "version": "1.3.9"
+            "url": "https://__DOMAIN__PATH__/extensions/src/markdown-pro/dist/index.html",
+            "version": "1.3.14"
         },
         {
             "area": "editor-editor",
@@ -192,45 +192,45 @@
             "area": "editor-editor",
             "content_type": "SN|Component",
             "description": "A minimal Markdown editor with inline style support.",
-            "download_url": "https://github.com/standardnotes/minimal-markdown-editor/archive/1.3.5.zip",
+            "download_url": "https://github.com/standardnotes/minimal-markdown-editor/archive/1.3.7.zip",
             "identifier": "org.stndardnotes.minimal-markdown-editor",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/minimal-markdown-editor.json",
             "name": "Minimal Markdown Editor",
             "url": "https://__DOMAIN__PATH__/extensions/src/minimal-markdown-editor/index.html",
-            "version": "1.3.5"
+            "version": "1.3.7"
         },
         {
             "area": "editor-editor",
             "content_type": "SN|Component",
             "description": "From highlighting to custom font sizes and colors, to tables and lists, this editor is perfect for crafting any document. (Converts your note to an HTML format.)",
-            "download_url": "https://github.com/standardnotes/plus-editor/archive/1.4.5.zip",
+            "download_url": "https://github.com/standardnotes/plus-editor/archive/1.5.0.zip",
             "identifier": "org.standardnotes.plus-editor",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/plus-editor.json",
             "name": "Plus Editor",
             "url": "https://__DOMAIN__PATH__/extensions/src/plus-editor/dist/index.html",
-            "version": "1.4.5"
+            "version": "1.5.0"
         },
         {
             "area": "editor-editor",
             "content_type": "SN|Component",
             "description": "A great way to manage short-term and long-term to-do's. You can mark simple-tasks as completed, change their order, and edit the text naturally in place.",
-            "download_url": "https://github.com/standardnotes/simple-task-editor/archive/1.3.5.zip",
+            "download_url": "https://github.com/standardnotes/simple-task-editor/archive/1.3.7.zip",
             "identifier": "org.standardnotes.simple-task-editor",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/simple-task-editor.json",
             "name": "Task Editor",
             "url": "https://__DOMAIN__PATH__/extensions/src/simple-task-editor/dist/index.html",
-            "version": "1.3.5"
+            "version": "1.3.7"
         },
         {
             "area": "editor-editor",
             "content_type": "SN|Component",
             "description": "Use Standard Notes on both desktop and mobile as your authenticator app. TokenVault handles your 2FA secrets so that you never lose them again, or have to start over when you get a new device.",
-            "download_url": "https://github.com/standardnotes/token-vault/archive/1.0.5.zip",
+            "download_url": "https://github.com/standardnotes/token-vault/archive/1.0.10.zip",
             "identifier": "org.stndardnotes.token-vault",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/token-vault.json",
             "name": "Token Vault",
             "url": "https://__DOMAIN__PATH__/extensions/src/token-vault/dist/index.html",
-            "version": "1.0.5"
+            "version": "1.0.10"
         },
         {
             "area": "editor-editor",
@@ -247,23 +247,23 @@
             "area": "editor-stack",
             "content_type": "SN|Component",
             "description": "Useful utility bar with information about the current note as well as actions like duplicate, copy, and save.",
-            "download_url": "https://github.com/standardnotes/action-bar/archive/1.3.1.zip",
+            "download_url": "https://github.com/standardnotes/action-bar/archive/1.3.2.zip",
             "identifier": "org.stndardnotes.action-bar",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/action-bar.json",
             "name": "Action Bar",
             "url": "https://__DOMAIN__PATH__/extensions/src/action-bar/index.html",
-            "version": "1.3.1"
+            "version": "1.3.2"
         },
         {
             "area": "tags-list",
             "content_type": "SN|Component",
             "description": "Create nested folders from your tags with easy drag and drop. Folders also supports Smart Tags, which allow you to build custom filters for viewing your notes.",
-            "download_url": "https://github.com/standardnotes/folders-component/archive/1.3.5.zip",
+            "download_url": "https://github.com/standardnotes/folders-component/archive/1.3.8.zip",
             "identifier": "org.stndardnotes.folders-component",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/folders-component.json",
             "name": "Folders",
             "url": "https://__DOMAIN__PATH__/extensions/src/folders-component/index.html",
-            "version": "1.3.5"
+            "version": "1.3.8"
         },
         {
             "area": "editor-stack",
@@ -280,12 +280,12 @@
             "area": "modal",
             "content_type": "SN|Component",
             "description": "Set up 2FA to enable an extra layer of security on your private notes account.",
-            "download_url": "https://github.com/standardnotes/mfa-link/archive/1.2.2.zip",
+            "download_url": "https://github.com/standardnotes/mfa-link/archive/1.2.4.zip",
             "identifier": "org.stndardnotes.mfa-link",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/mfa-link.json",
             "name": "MFA-Link",
             "url": "https://__DOMAIN__PATH__/extensions/src/mfa-link/dist/index.html",
-            "version": "1.2.2"
+            "version": "1.2.4"
         },
         {
             "area": "note-tags",

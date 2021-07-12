@@ -5,15 +5,15 @@
     "description": {
         "en": "The Standard Notes syncing server. An end-to-end encrypted note-taking app."
     },
-    "version": "3.22.8~ynh2",
-    "url": "https://github.com/standardnotes/syncing-server",
+    "version": "2021.07.06~ynh1",
+    "url": "https://github.com/standardnotes/standalone",
 	"upstream": {
         "license": "AGPL-3.0-or-later",
         "website": "https://standardnotes.org/",
         "demo": "https://standardnotes.org/demo",
         "admindoc": "https://docs.standardnotes.org/",
-        "userdoc": "https://docs.standardnotes.org/",
-        "code": "https://github.com/standardnotes/syncing-server"
+        "userdoc": "https://standardnotes.com/help",
+        "code": "https://github.com/standardnotes/standalone"
     },
     "license": "AGPL-3.0-or-later",
     "maintainer": {
@@ -40,24 +40,6 @@
                 "type": "path",
                 "example": "/example",
                 "default": "/example"
-            },
-            {
-                "name": "is_public",
-                "type": "boolean",
-                "help": {
-                    "en": "The Standard Notes - Syncing Server should be public accessable if you want to connect with a desktop or mobile app."
-                },
-                "default": true
-            },
-            {
-                "name": "access_domain",
-                "type": "string",
-                "ask": {
-                    "en": "Choose a domain which has access to the extensions. E.g. the Standard-Notes web app."
-                },
-                "optional": true,
-                "example": "example.tld",
-                "default": ""
             }
         ]
     }

@@ -297,7 +297,7 @@ ynh_cleanup_ruby () {
     if [[ ! $required_ruby_versions ]]
     then
         # Remove rbenv environment configuration
-        ynh_print_info --message="Removing of rbenv-$rbenv_version"
+        ynh_print_info --message="Removing of rbenv"
         ynh_secure_remove --file="$rbenv_install_dir"
         ynh_secure_remove --file="/etc/profile.d/rbenv.sh"
     fi

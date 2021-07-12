@@ -3,9 +3,9 @@
   "name": "Bold Editor",
   "content_type": "SN|Component",
   "area": "editor-editor",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "description": "A simple and peaceful rich editor that helps you write and think clearly. Features FileSafe integration, so you can embed your images, videos, and audio recordings directly inline.",
   "url": "https://__DOMAIN__PATH__/extensions/src/bold-editor/dist/index.html", 
-  "download_url": "https://github.com/standardnotes/bold-editor/archive/1.1.0.zip",
+  "download_url": "https://github.com/standardnotes/bold-editor/archive/1.2.1.zip",
   "latest_url": "https://__DOMAIN__PATH__/extensions/src/bold-editor.json"
 }

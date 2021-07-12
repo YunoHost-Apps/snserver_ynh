@@ -1,5 +1,5 @@
-SOURCE_URL=https://github.com/standardnotes/action-bar/archive/1.3.1.zip
-SOURCE_SUM=413F74598DA5C5B401D95620B330E23A094BEEF9DD9C2EBC653199E7FDBB7F7F
+SOURCE_URL=https://github.com/standardnotes/action-bar/archive/1.3.2.zip
+SOURCE_SUM=35b03cc5be9b7d948016ca6f7de8e682361a810f884f6e2c0a71cb09100baba0
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=zip
 SOURCE_IN_SUBDIR=true

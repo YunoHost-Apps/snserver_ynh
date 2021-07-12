@@ -1,5 +1,5 @@
-SOURCE_URL=https://github.com/standardnotes/markdown-pro/archive/1.3.9.zip
-SOURCE_SUM=70a21fa13554d4a7a6d3ac5ae06acf4b97a88b6ea5af804e958774273aaf1c40
+SOURCE_URL=https://github.com/standardnotes/markdown-pro/archive/1.3.14.zip
+SOURCE_SUM=0fe5d2a062fc780e417979605e779ee17bbe580ecfa936a45d8007d8ca6d3b0e
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=zip
 SOURCE_IN_SUBDIR=true

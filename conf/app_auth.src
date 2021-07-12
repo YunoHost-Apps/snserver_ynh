@@ -1,0 +1,5 @@
+SOURCE_URL=https://github.com/standardnotes/auth/archive/1.11.1.tar.gz
+SOURCE_SUM=99ded0f0dfe65b1e98c332e149a52a11e2523e249ea3a0f6aa30bf3e3b55e9f6
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=tar.gz
+SOURCE_IN_SUBDIR=true
