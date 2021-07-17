@@ -359,7 +359,7 @@ Please configure the Standard Notes web app or mobile app to use this syncing se
 \n\
 Standard Notes extensions are hosted with this package.\n\
 An Help page for setting-up the Standard Notes Server and Extensions have been created under: https://$domain$path_url/help\n\
-The Hele page is accessible via the Yunohost Portal.\n\
+The Help page is accessible via the Yunohost Portal.\n\
 You can deactivate the Help page under: $admin_panel\
 " > message
 
