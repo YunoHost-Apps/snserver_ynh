@@ -131,16 +131,16 @@ fi
 # Everyone can access the app.
 if [[ $(ynh_permission_exists --permission="main") && ! $standalone ]]
 then
-	ynh_permission_update --permission="main" --add="visitors" --show_tile="false"
+    ynh_permission_update --permission="main" --add="visitors" --show_tile="false"
 fi
 if ! ynh_permission_exists --permission="main"
 then
-	ynh_permission_create --permission="main" --url="/" --allowed="visitors" --show_tile="false"
+    ynh_permission_create --permission="main" --url="/" --allowed="visitors" --show_tile="false"
 fi
 # Create a permission if needed
 if ! ynh_permission_exists --permission="help"
 then
-	ynh_permission_create --permission="help" --url="/help" --allowed="all_users"
+    ynh_permission_create --permission="help" --url="/help/" --allowed="all_users" --show_tile="true" --label="Help"
 fi
 
 # If final_path doesn't exist, create it
