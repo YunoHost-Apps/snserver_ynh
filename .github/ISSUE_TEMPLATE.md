@@ -53,4 +53,3 @@ about: When creating a bug report, please use the following template to provide 
 *After sharing the log, please copypaste directly the link provided by YunoHost (to help readability, no need to copypaste the entire content of the log here, just the link is enough...)*
 
 *If applicable and useful, add screenshots to help explain your problem.*
-

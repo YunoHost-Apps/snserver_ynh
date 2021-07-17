@@ -36,13 +36,29 @@ final_path_www=$(ynh_app_setting_get --app=$app --key=final_path_www)
 #=================================================
 
 # Remove the service from the list of services known by Yunohost (added from `yunohost service add`)
-if ynh_exec_warn_less yunohost service status $app >/dev/null
+if ynh_exec_warn_less yunohost service status "$app-syncing-server-js" >/dev/null
 then
-    ynh_script_progression --message="Removing $app service..."  --weight=1
+    ynh_script_progression --message="Removing $app-syncing-server-js service..."  --weight=1
     yunohost service remove "$app-syncing-server-js"
+fi
+if ynh_exec_warn_less yunohost service status "$app-syncing-server-js-worker" >/dev/null
+then
+    ynh_script_progression --message="Removing $app-syncing-server-js-worker service..."  --weight=1
     yunohost service remove "$app-syncing-server-js-worker"
+fi
+if ynh_exec_warn_less yunohost service status "$app-auth" >/dev/null
+then
+    ynh_script_progression --message="Removing $app-auth service..."  --weight=1
     yunohost service remove "$app-auth"
+fi
+if ynh_exec_warn_less yunohost service status "$app-auth-worker" >/dev/null
+then
+    ynh_script_progression --message="Removing $app-auth-worker service..."  --weight=1
     yunohost service remove "$app-auth-worker"
+fi
+if ynh_exec_warn_less yunohost service status "$app-api-gateway" >/dev/null
+then
+    ynh_script_progression --message="Removing $app-api-gateway service..."  --weight=1
     yunohost service remove "$app-api-gateway"
 fi
 

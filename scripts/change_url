@@ -158,14 +158,11 @@ ynh_script_progression --message="Sending a readme for the admin..."
 
 admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
 
-config_panel="You can find some specific configurations for this app by using the experimental __URL_TAG1__config-panel feature__URL_TAG2__$admin_panel/config-panel__URL_TAG3__"
-admin_mail_info="You changed the url of the server. All Extensions have to be reinstalled by the users. Or you can change the url back."
-
 echo -e "\
 Standard Notes - Syncing Server's url was successfully changed.\n\
-Please configure the Standard Notes web app or mobile app to use this syncing server: https://$domain$path_url/\n\
-$config_panel\n\n\
-$admin_mail_info\
+Please configure the Standard Notes web app or mobile app to use this syncing server: https://$domain$path_url\n\
+\n\
+You changed the url of the server. All Extensions have to be reinstalled by the users. Or you can change the url back.\
 " > message
 
 ynh_send_readme_to_admin --app_message="message" --type='change_url'
