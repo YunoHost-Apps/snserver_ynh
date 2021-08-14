@@ -402,24 +402,24 @@ then
     if [[ "$syncing_server_js_version_installed" < "$syncing_server_js_version" ]]
     then
         pushd "$final_path/live/syncing-server-js"
-            ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
-            ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
+            ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=4096" PATH=$ynh_node_load_PATH yarn install --pure-lockfile
+            ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=4096" PATH=$ynh_node_load_PATH yarn build
         popd
         ynh_app_setting_set --app=$app --key=syncing_server_js_version --value=$syncing_server_js_version
     fi
     if [[ "$auth_version_installed" < "$auth_version" ]]
     then
         pushd "$final_path/live/auth"
-            ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
-            ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
+            ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=4096" PATH=$ynh_node_load_PATH yarn install --pure-lockfile
+            ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=4096" PATH=$ynh_node_load_PATH yarn build
         popd
         ynh_app_setting_set --app=$app --key=auth_version --value=$auth_version
     fi
     if [[ "$api_gateway_version_installed" < "$api_gateway_version" ]]
     then
         pushd "$final_path/live/api-gateway"
-            ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn install --pure-lockfile
-            ynh_exec_as $app env PATH=$ynh_node_load_PATH yarn build
+            ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=4096" PATH=$ynh_node_load_PATH yarn install --pure-lockfile
+            ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=4096" PATH=$ynh_node_load_PATH yarn build
         popd
         ynh_app_setting_set --app=$app --key=api_gateway_version --value=$api_gateway_version
     fi
