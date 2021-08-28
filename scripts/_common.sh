@@ -11,6 +11,8 @@ auth_version="1.17.1"
 api_gateway_version="1.24.0"
 extensions_version="2021.07.06"
 
+swap_needed=1536
+
 # dependencies used by the app
 pkg_dependencies=""
 
