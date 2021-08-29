@@ -137,12 +137,12 @@
             "area": "editor-editor",
             "content_type": "SN|Component",
             "description": "A simple and peaceful rich editor that helps you write and think clearly. Features FileSafe integration, so you can embed your images, videos, and audio recordings directly inline.",
-            "download_url": "https://github.com/standardnotes/bold-editor/archive/1.2.1.zip",
+            "download_url": "https://github.com/standardnotes/bold-editor/archive/1.2.2.zip",
             "identifier": "org.standardnotes.bold-editor",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/bold-editor.json",
             "name": "Bold Editor",
             "url": "https://__DOMAIN__PATH__/extensions/src/bold-editor/dist/index.html",
-            "version": "1.2.1"
+            "version": "1.2.2"
         },
         {
             "area": "editor-editor",
@@ -280,12 +280,12 @@
             "area": "modal",
             "content_type": "SN|Component",
             "description": "Set up 2FA to enable an extra layer of security on your private notes account.",
-            "download_url": "https://github.com/standardnotes/mfa-link/archive/1.2.4.zip",
+            "download_url": "https://github.com/standardnotes/mfa-link/archive/1.2.5.zip",
             "identifier": "org.stndardnotes.mfa-link",
             "latest_url": "https://__DOMAIN__PATH__/extensions/src/mfa-link.json",
             "name": "MFA-Link",
             "url": "https://__DOMAIN__PATH__/extensions/src/mfa-link/dist/index.html",
-            "version": "1.2.4"
+            "version": "1.2.5"
         },
         {
             "area": "note-tags",

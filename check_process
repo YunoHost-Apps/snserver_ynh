@@ -15,18 +15,10 @@
         setup_private=0
         setup_public=1
         upgrade=1
+        # 2021.07.24~yhn3
+        upgrade=1    from_commit=426dd68db71fda8aa61269928bd991c0f17feb3f
         # 3.22.8~yhn2
         upgrade=1    from_commit=b0c7e9e6f16d286ec74fa3c1b9cdf8492f4dcb9b
-        # 3.22.8~yhn1
-        #upgrade=1    from_commit=c9ea83e8102affd5ca74a6d438920fa40af4a63e
-        # 3.20.5~ynh2
-        #upgrade=1    from_commit=e8db15c97db16f68d6453970a9dff74d5136017b
-        # 3.13.6~ynh4
-        #upgrade=1    from_commit=bdb0c5049c8eacbef68059d2821353d0e0345290
-        # 3.13.6~ynh2
-        #upgrade=1    from_commit=e755357f8306805084317c81e85807ed87fdbd47
-        # 3.13.6~ynh1
-        #upgrade=1    from_commit=7474baadc1705ffe5981a52bdced16bdd1edf979
         backup_restore=1
         multi_instance=1
         port_already_use=0
