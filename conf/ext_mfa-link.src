@@ -1,5 +1,5 @@
-SOURCE_URL=https://github.com/standardnotes/mfa-link/archive/1.2.4.zip
-SOURCE_SUM=d384b8927eafc009022c15d9488e67f0e11672c7b5c90f2318b4cb15b0c81c6a
+SOURCE_URL=https://github.com/standardnotes/mfa-link/archive/1.2.5.zip
+SOURCE_SUM=f5f5221fa3cf53bf5ee94e60a5adb7a455d1ee46fabe8b0ef13e085f4098cbc8
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=zip
 SOURCE_IN_SUBDIR=true

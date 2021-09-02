@@ -7,6 +7,7 @@
 #=================================================
 
 source _common.sh
+source ynh_add_swap
 source ynh_install_ruby__2
 source ynh_redis
 source /usr/share/yunohost/helpers
@@ -135,6 +136,12 @@ ynh_remove_fail2ban_config
 #=================================================
 # SPECIFIC REMOVE
 #=================================================
+#=================================================
+# REMOVE SWAP
+#=================================================
+ynh_script_progression --message="Removing swap..."
+
+ynh_del_swap
 
 #=================================================
 # GENERIC FINALIZATION
