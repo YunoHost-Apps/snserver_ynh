@@ -53,7 +53,6 @@ config_api_gateway="$final_path/live/api-gateway.env"
 #=================================================
 ynh_script_progression --message="Validating restoration parameters..." --weight=2
 
-ynh_webpath_available --domain=$domain --path_url=$path_url || ynh_die --message="Path not available: ${domain}${path_url}"
 test ! -d $final_path || ynh_die --message="There is already a directory: $final_path "
 test ! -d $final_path_www || ynh_die --message="There is already a directory: $final_path_www "
 
