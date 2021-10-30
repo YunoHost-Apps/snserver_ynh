@@ -15,9 +15,9 @@
         setup_private=0
         setup_public=1
         upgrade=1
-        # 2021.07.24~yhn3
-        upgrade=1    from_commit=426dd68db71fda8aa61269928bd991c0f17feb3f
-        # 3.22.8~yhn2
+        # 2021.09.09~yhn1
+        upgrade=1    from_commit=855bdcb966cf396a62edb2f1e17e7351642bbf50
+        # 3.22.8~yhn2 ( Old Server version based on Ruby )
         upgrade=1    from_commit=b0c7e9e6f16d286ec74fa3c1b9cdf8492f4dcb9b
         backup_restore=1
         multi_instance=1
@@ -27,7 +27,8 @@
 Email=
 Notification=
 ;;; Upgrade options
+    ; commit=855bdcb966cf396a62edb2f1e17e7351642bbf50
+        name=2021.09.09~ynh1
     ; commit=b0c7e9e6f16d286ec74fa3c1b9cdf8492f4dcb9b
         name=3.22.8~ynh2
-        manifest_arg=domain=DOMAIN&path=PATH=1
 
