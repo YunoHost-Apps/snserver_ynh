@@ -267,6 +267,14 @@ then
     ynh_remove_app_dependencies
 fi
 
+# Remove unneeded data
+if [ -e "$final_path/live/syncing-server-js-worker" ]; then
+    ynh_secure_remove --file="$final_path/live/syncing-server-js-worker"
+fi
+if [ -e "$final_path/live/auth-worker" ]; then
+    ynh_secure_remove --file="$final_path/live/auth-worker"
+fi
+
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
@@ -293,7 +301,7 @@ then
     ynh_backup_if_checksum_is_different --file=$config_syncing_server_js
     ynh_backup_if_checksum_is_different --file=$config_syncing_server_js_worker
     # Remove destination directory
-    ynh_secure_remove --file="$final_path/live/syncing_server_js"
+    ynh_secure_remove --file="$final_path/live/syncing-server-js"
     ynh_secure_remove --file="$config_syncing_server_js"
     ynh_secure_remove --file="$config_syncing_server_js_worker"
     # Download, check integrity, uncompress and patch the source from app.src
@@ -320,7 +328,7 @@ then
     # Backup files to keep
     ynh_backup_if_checksum_is_different --file=$config_api_gateway
     # Remove destination directory
-    ynh_secure_remove --file="$final_path/live/api_gateway"
+    ynh_secure_remove --file="$final_path/live/api-gateway"
     ynh_secure_remove --file="$config_api_gateway"
     # Download, check integrity, uncompress and patch the source from app.src
     mkdir -p "$final_path/live"

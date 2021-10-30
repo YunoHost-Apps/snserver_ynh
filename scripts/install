@@ -119,9 +119,7 @@ ynh_script_progression --message="Setting up source files..."  --weight=2
 # Download, check integrity, uncompress and patch the source from app.src
 mkdir -p "$final_path/live"
 ynh_setup_source --source_id=app_syncing-server-js --dest_dir="$final_path/live/syncing-server-js"
-ynh_setup_source --source_id=app_syncing-server-js --dest_dir="$final_path/live/syncing-server-js-worker"
 ynh_setup_source --source_id=app_auth --dest_dir="$final_path/live/auth"
-ynh_setup_source --source_id=app_auth --dest_dir="$final_path/live/auth-worker"
 ynh_setup_source --source_id=app_api-gateway --dest_dir="$final_path/live/api-gateway"
 
 chmod 750 "$final_path"
