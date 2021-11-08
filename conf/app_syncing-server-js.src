@@ -1,5 +1,5 @@
-SOURCE_URL=https://github.com/standardnotes/syncing-server-js/archive/1.42.6.tar.gz
-SOURCE_SUM=4b7adcbffe4936e1676f21a4d42bf68a3299421429716b08dcbb545d3a047f37
+SOURCE_URL=https://github.com/standardnotes/syncing-server-js/archive/1.42.7.tar.gz
+SOURCE_SUM=b9a3b457a4c46b39101a278ee71f3714b90c56d598dec6605d8a33e41a6862de
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true
