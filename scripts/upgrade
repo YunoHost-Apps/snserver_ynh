@@ -275,6 +275,12 @@ if [ -e "$final_path/live/auth-worker" ]; then
     ynh_secure_remove --file="$final_path/live/auth-worker"
 fi
 
+# Remove nodejs if current version is lower than 2021.11.22
+if ynh_compare_current_package_version --comparison lt --version 2021.11.22~ynh1
+then
+	ynh_remove_nodejs
+fi
+
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
@@ -385,7 +391,6 @@ ynh_script_progression --message="Upgrading dependencies..." --weight=1
 ynh_install_app_dependencies $pkg_dependencies
 ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
 ynh_install_extra_app_dependencies --repo="deb https://dl.yarnpkg.com/debian/ stable main" --package="yarn" --key="https://dl.yarnpkg.com/debian/pubkey.gpg"
-
 
 #=================================================
 # SPECIFIC UPGRADE

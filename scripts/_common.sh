@@ -4,7 +4,7 @@
 # COMMON VARIABLES
 #=================================================
 RUBY_VERSION="2.7.3"
-NODEJS_VERSION="15.11.0"
+NODEJS_VERSION="16"
 
 syncing_server_js_version="1.42.9"
 auth_version="1.29.0"
