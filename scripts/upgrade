@@ -57,6 +57,7 @@ config_auth_worker="$final_path/live/auth-worker.env"
 config_api_gateway="$final_path/live/api-gateway.env"
 
 standalone=$(ynh_app_setting_get --app=$app --key=standalone)
+nodejs_version_installed=$(ynh_app_setting_get --app=$app --key=nodejs_version)
 
 #=================================================
 # CHECK VERSION
@@ -275,12 +276,6 @@ if [ -e "$final_path/live/auth-worker" ]; then
     ynh_secure_remove --file="$final_path/live/auth-worker"
 fi
 
-# Remove nodejs if current version is lower than 2021.11.22
-if ynh_compare_current_package_version --comparison lt --version 2021.11.22~ynh1
-then
-	ynh_remove_nodejs
-fi
-
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
@@ -387,6 +382,12 @@ ynh_add_nginx_config
 # UPGRADE DEPENDENCIES
 #=================================================
 ynh_script_progression --message="Upgrading dependencies..." --weight=1
+
+# Remove old nodejs version
+if [[ "$nodejs_version_installed" < "$NODEJS_VERSION" && -n "$nodejs_version_installed" ]]
+then
+	ynh_remove_nodejs
+fi
 
 ynh_install_app_dependencies $pkg_dependencies
 ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
