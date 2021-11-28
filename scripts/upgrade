@@ -57,6 +57,7 @@ config_auth_worker="$final_path/live/auth-worker.env"
 config_api_gateway="$final_path/live/api-gateway.env"
 
 standalone=$(ynh_app_setting_get --app=$app --key=standalone)
+nodejs_version_installed=$(ynh_app_setting_get --app=$app --key=nodejs_version)
 
 #=================================================
 # CHECK VERSION
@@ -382,10 +383,15 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Upgrading dependencies..." --weight=1
 
+# Remove old nodejs version
+if [[ "$nodejs_version_installed" < "$NODEJS_VERSION" && -n "$nodejs_version_installed" ]]
+then
+	ynh_remove_nodejs
+fi
+
 ynh_install_app_dependencies $pkg_dependencies
 ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
 ynh_install_extra_app_dependencies --repo="deb https://dl.yarnpkg.com/debian/ stable main" --package="yarn" --key="https://dl.yarnpkg.com/debian/pubkey.gpg"
-
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -547,7 +553,7 @@ ynh_systemd_action \
     --service_name="$app-api-gateway" \
     --action="start" \
     --log_path="/var/log/$app/api-gateway.log" \
-    --line_match='{"message":"Server started on port '$port_api_gateway'","level":"info"}'
+    --line_match='{"level":"info","message":"Server started on port '$port_api_gateway'"}'
 
 #=================================================
 # SETUP FAIL2BAN

@@ -226,7 +226,7 @@ ynh_systemd_action \
     --service_name="$app-api-gateway" \
     --action="start" \
     --log_path="/var/log/$app/api-gateway.log" \
-    --line_match='{"message":"Server started on port '$port_api_gateway'","level":"info"}'
+    --line_match='{"level":"info","message":"Server started on port '$port_api_gateway'"}'
 
 #=================================================
 # RESTORE THE LOGROTATE CONFIGURATION
