@@ -1,5 +1,5 @@
-SOURCE_URL=https://github.com/standardnotes/auth/archive/1.32.3.tar.gz
-SOURCE_SUM=aef19dc831813884bee597debad6224cf6a391f191e8782403f90812120b8162
+SOURCE_URL=https://github.com/standardnotes/auth/archive/1.32.15.tar.gz
+SOURCE_SUM=6518ab6cb1790c4191cd5eb6d96df29513ab4a19c3bbab331f301f9de051ea9c
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true
