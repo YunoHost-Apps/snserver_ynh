@@ -1,5 +1,5 @@
-SOURCE_URL=https://github.com/standardnotes/api-gateway/archive/1.31.0.tar.gz
-SOURCE_SUM=94c75b6d8f111c36639965c1ba4c3340a81578768e3e58096d0455bc7b1fb200
+SOURCE_URL=https://github.com/standardnotes/api-gateway/archive/1.33.0.tar.gz
+SOURCE_SUM=5b2694f140b466e06ce89139d95c0307fcb99fc110b5e82e0434032ddf74ab7e
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true

@@ -6,9 +6,9 @@
 RUBY_VERSION="2.7.3"
 NODEJS_VERSION="16"
 
-syncing_server_js_version="1.45.1"
-auth_version="1.33.0"
-api_gateway_version="1.31.0"
+syncing_server_js_version="1.46.1"
+auth_version="1.38.0"
+api_gateway_version="1.33.0"
 extensions_version="2021.08.27"
 
 swap_needed=2048
