@@ -17,7 +17,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 The Standard Notes syncing server. An end-to-end encrypted note-taking app.
 
-**Shipped version:** 2022.06.20~ynh1
+**Shipped version:** 2022.08.01~ynh1
 
 **Demo:** https://standardnotes.org/demo
 ## Disclaimers / important information
