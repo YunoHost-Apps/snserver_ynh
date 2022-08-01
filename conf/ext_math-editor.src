@@ -1,5 +1,0 @@
-SOURCE_URL=https://github.com/standardnotes/math-editor/archive/1.3.4.zip
-SOURCE_SUM=e8e69f082231f3052185c1f74c7bacdbc26b75fe1047045da2cf22f4459d97bf
-SOURCE_SUM_PRG=sha256sum
-SOURCE_FORMAT=zip
-SOURCE_IN_SUBDIR=true

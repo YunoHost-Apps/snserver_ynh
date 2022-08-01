@@ -1,5 +1,0 @@
-SOURCE_URL=https://github.com/standardnotes/solarized-dark-theme/archive/1.2.1.zip
-SOURCE_SUM=4f05dfb4edc9ce81fd22c01d101cc453509791e24475cfefd235dab15b4abfc6
-SOURCE_SUM_PRG=sha256sum
-SOURCE_FORMAT=zip
-SOURCE_IN_SUBDIR=true

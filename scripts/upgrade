@@ -10,7 +10,6 @@ source _common.sh
 source ynh_add_swap
 source ynh_install_ruby__2
 source ynh_redis
-source ynh_send_readme_to_admin__2
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -24,8 +23,6 @@ domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
 
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-final_path_www=$(ynh_app_setting_get --app=$app --key=final_path_www)
-final_path_extensions=$(ynh_app_setting_get --app=$app --key=final_path_extensions)
 
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
@@ -139,11 +136,6 @@ if ! ynh_permission_exists --permission="main"
 then
     ynh_permission_create --permission="main" --url="/" --allowed="visitors" --show_tile="false"
 fi
-# Create a permission if needed
-if ! ynh_permission_exists --permission="help"
-then
-    ynh_permission_create --permission="help" --url="/help/" --allowed="all_users" --show_tile="true" --label="Help"
-fi
 
 # If final_path doesn't exist, create it
 if [ -z "$final_path" ]; then
@@ -151,17 +143,6 @@ if [ -z "$final_path" ]; then
     ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 fi
 
-# If final_path doesn't exist, create it
-if [ -z "$final_path_www" ]; then
-    final_path_www=/var/www/$app
-    ynh_app_setting_set --app=$app --key=final_path_www --value=$final_path_www
-fi
-
-# If final_path doesn't exist, create it
-if [ -z "$final_path_extensions" ]; then
-    final_path_extensions=/var/www/$app/extensions
-    ynh_app_setting_set --app=$app --key=final_path_extensions --value=$final_path_extensions
-fi
 
 # If redis_db doesn't exist, create it
 if [ -z "$redis_db" ]; then
@@ -245,6 +226,22 @@ if [ -n $(ynh_app_setting_get --app="$app" --key=port) ]; then
     ynh_app_setting_delete --app=$app --key=port
 fi
 
+# If final_path exist, delete it
+if [ -n "$final_path_www" ]; then
+    ynh_app_setting_delete --app=$app --key=final_path_www
+fi
+
+# If final_path exist, delete it
+if [ -n "$final_path_extensions" ]; then
+    ynh_app_setting_delete --app=$app --key=final_path_extensions
+fi
+
+# If permission help exists, delete it
+if ynh_permission_exists --permission="help"
+then
+	ynh_permission_delete --permission="help"
+fi
+
 # If old service exsits; remove it
 if ynh_exec_warn_less yunohost service status "$app" >/dev/null
 then
@@ -274,6 +271,9 @@ if [ -e "$final_path/live/syncing-server-js-worker" ]; then
 fi
 if [ -e "$final_path/live/auth-worker" ]; then
     ynh_secure_remove --file="$final_path/live/auth-worker"
+fi
+if [ -e "/var/www/$app" ]; then
+    ynh_secure_remove --file="/var/www/$app"
 fi
 
 #=================================================
@@ -336,39 +336,9 @@ then
     ynh_setup_source --source_id=app_api-gateway --dest_dir="$final_path/live/api-gateway"
 fi
 
-if [[ "$extensions_version_installed" < "$extensions_version" ]]
-then
-    # Remove destination directory
-    ynh_secure_remove --file="$final_path_extensions"
-    # Download, check integrity, uncompress and patch the source from app.src
-    mkdir -p "$final_path_extensions"
-    if test -e "../sources/extra_files/extensions"
-    then
-        cp -a "../sources/extra_files/extensions/." "$final_path_extensions"
-    fi
-
-    find "../conf/" -name "ext_*.src" -print0 | while read -d $'\0' file
-    do
-        basename=$(basename -as .src $file)
-        ynh_setup_source  --dest_dir="$final_path_extensions/src/${basename#'ext_'}" --source_id="$basename"
-    done
-fi
-
-# Copy help file
-ynh_secure_remove --file="$final_path_www/help"
-mkdir -p "$final_path_www/help"
-if test -e "$YNH_APP_BASEDIR/sources/extra_files/help"; then
-    cp --archive "$YNH_APP_BASEDIR/sources/extra_files/help/." "$final_path_www/help"
-fi
-ynh_replace_vars --file="$final_path_www/help/index.html"
-
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
 chown -R $app:$app "$final_path"
-
-chmod 750 "$final_path_www"
-chmod -R o-rwx "$final_path_www"
-chown -R "www-data":"www-data" "$final_path_www"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -445,29 +415,6 @@ then
         popd
         ynh_app_setting_set --app=$app --key=api_gateway_version --value=$api_gateway_version
     fi
-fi
-
-#=================================================
-# INSTALLING Standard Notes - Extensions
-#=================================================
-if [[ "$extensions_version_installed" < "$extensions_version" ]]
-then
-    ynh_script_progression --message="Installing Standard Notes - Extensions..."  --weight=1
-
-    if [ $path_url = "/" ]
-    then
-        path=""
-    else
-        path=$path_url
-    fi
-
-    ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$final_path_extensions/repo.json"
-
-    find "$final_path_extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
-    do
-        ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$file"
-    done
-    ynh_app_setting_set --app=$app --key=extensions_version --value=$extensions_version
 fi
 
 #=================================================
@@ -569,25 +516,6 @@ ynh_add_fail2ban_config --use_template
 ynh_script_progression --message="Reloading nginx web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
-
-#=================================================
-# SEND A README FOR THE ADMIN
-#=================================================
-ynh_script_progression --message="Sending a readme for the admin..."
-
-admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
-
-echo -e "\
-Standard Notes - Syncing Server was successfully upgraded.\n\
-Please configure the Standard Notes web app or mobile app to use this syncing server: https://$domain$path_url\n\
-\n\
-Standard Notes extensions are hosted with this package.\n\
-An Help page for setting-up the Standard Notes Server and Extensions have been created under: https://$domain$path_url/help\n\
-The Help page is accessible via the Yunohost Portal.\n\
-You can deactivate the Help page under: $admin_panel\
-" > message
-
-ynh_send_readme_to_admin --app_message="message" --type='upgrade'
 
 #=================================================
 # STORE SETTINGS

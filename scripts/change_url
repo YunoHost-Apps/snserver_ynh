@@ -7,7 +7,6 @@
 #=================================================
 
 source _common.sh
-source ynh_send_readme_to_admin__2
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -29,8 +28,6 @@ ynh_script_progression --message="Loading installation settings..." --weight=1
 
 # Needed for helper "ynh_add_nginx_config"
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-final_path_www=$(ynh_app_setting_get --app=$app --key=final_path_www)
-final_path_extensions=$(ynh_app_setting_get --app=$app --key=final_path_extensions)
 port_syncing_server_js=$(ynh_app_setting_get --app=$app --key=port_syncing_server_js)
 port_syncing_server_js_worker=$(ynh_app_setting_get --app=$app --key=port_syncing_server_js_worker)
 port_auth=$(ynh_app_setting_get --app=$app --key=port_auth)
@@ -106,31 +103,6 @@ fi
 # SPECIFIC MODIFICATIONS
 #=================================================
 #=================================================
-# Modify Standard Notes - Extensions
-#=================================================
-ynh_script_progression --message="Modify Standard Notes - Extensions..."  --weight=1
-
-if [ $new_path = "/" ]
-then
-    path=""
-else
-    path=$new_path
-fi
-
-ynh_replace_string \
-    --match_string='url": "https://.*/extensions/src/' \
-    --replace_string='url": "https://'$new_domain$path'/extensions/src/' \
-    --target_file="$final_path_extensions/repo.json"
-
-find "$final_path_extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
-do
-    ynh_replace_string \
-        --match_string='url": "https://.*/extensions/src/' \
-        --replace_string='url": "https://'$new_domain$path'extensions/src/' \
-        --target_file="$file"
-done
-
-#=================================================
 # SETUP FAIL2BAN
 #=================================================
 ynh_script_progression --message="Configuring fail2ban..." --weight=1
@@ -150,22 +122,6 @@ ynh_add_fail2ban_config --use_template
 ynh_script_progression --message="Reloading nginx web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
-
-#=================================================
-# SEND A README FOR THE ADMIN
-#=================================================
-ynh_script_progression --message="Sending a readme for the admin..."
-
-admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
-
-echo -e "\
-Standard Notes - Syncing Server's url was successfully changed.\n\
-Please configure the Standard Notes web app or mobile app to use this syncing server: https://$domain$path_url\n\
-\n\
-You changed the url of the server. All Extensions have to be reinstalled by the users. Or you can change the url back.\
-" > message
-
-ynh_send_readme_to_admin --app_message="message" --type='change_url'
 
 #=================================================
 # END OF SCRIPT

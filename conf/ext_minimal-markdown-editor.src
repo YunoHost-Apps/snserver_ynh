@@ -1,5 +1,0 @@
-SOURCE_URL=https://github.com/standardnotes/minimal-markdown-editor/archive/1.3.7.zip
-SOURCE_SUM=58232eeb4a129c1c89dbc86271832d68ff3c508e2256e80b099a18e95258cd70
-SOURCE_SUM_PRG=sha256sum
-SOURCE_FORMAT=zip
-SOURCE_IN_SUBDIR=true

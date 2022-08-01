@@ -10,7 +10,6 @@ source _common.sh
 source ynh_add_swap
 source ynh_install_ruby__2
 source ynh_redis
-source ynh_send_readme_to_admin__2
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -35,13 +34,8 @@ app=$YNH_APP_INSTANCE_NAME
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
 final_path=/opt/yunohost/$app
-final_path_www=/var/www/$app
-final_path_extensions="$final_path_www/extensions"
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
-ynh_app_setting_set --app=$app --key=final_path_www --value=$final_path_www
-ynh_app_setting_set --app=$app --key=final_path_extensions --value=$final_path_extensions
 test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
-test ! -e "$final_path_www" || ynh_die --message="This path already contains a folder"
 
 # Register (book) web path
 ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
@@ -62,7 +56,6 @@ ynh_app_setting_set --app=$app --key=redis_db --value="$redis_db"
 ynh_app_setting_set --app=$app --key=syncing_server_js_version --value=$syncing_server_js_version
 ynh_app_setting_set --app=$app --key=auth_version --value=$auth_version
 ynh_app_setting_set --app=$app --key=api_gateway_version --value=$api_gateway_version
-ynh_app_setting_set --app=$app --key=extensions_version --value=$extensions_version
 ynh_app_setting_set --app=$app --key=standalone --value="true"
 
 #=================================================
@@ -125,30 +118,6 @@ ynh_setup_source --source_id=app_api-gateway --dest_dir="$final_path/live/api-ga
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
 chown -R $app:$app "$final_path"
-
-# Copy help file
-mkdir -p "$final_path_www/help"
-if test -e "$YNH_APP_BASEDIR/sources/extra_files/help"; then
-    cp --archive "$YNH_APP_BASEDIR/sources/extra_files/help/." "$final_path_www/help"
-fi
-ynh_replace_vars --file="$final_path_www/help/index.html"
-
-# Extensions
-mkdir -p "$final_path_extensions"
-
-if test -e "$YNH_APP_BASEDIR/sources/extra_files/extensions"; then
-    cp --archive "$YNH_APP_BASEDIR/sources/extra_files/extensions/." "$final_path_extensions"
-fi
-
-find "../conf/" -name "ext_*.src" -print0 | while read -d $'\0' file
-do
-    basename=$(basename -as .src $file)
-    ynh_setup_source  --dest_dir="$final_path_extensions/src/${basename#'ext_'}" --source_id="$basename"
-done
-
-chmod 750 "$final_path_www"
-chmod -R o-rwx "$final_path_www"
-chown -R "www-data":"www-data" "$final_path_www"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -219,26 +188,6 @@ pushd "$final_path/live/api-gateway"
     ynh_exec_warn_less ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" PATH=$ynh_node_load_PATH yarn install --pure-lockfile
     ynh_exec_warn_less ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" PATH=$ynh_node_load_PATH yarn build
 popd
-#=================================================
-# INSTALLING Standard Notes - Extensions
-#=================================================
-ynh_script_progression --message="Setup Standard Notes - Extensions..."  --weight=1
-
-
-if [ $path_url = "/" ]
-then
-    path=""
-else
-    path=$path_url
-fi
-
-ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$final_path_extensions/repo.json"
-
-find "$final_path_extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
-do
-    ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$file"
-done
-
 
 #=================================================
 # SETUP SYSTEMD
@@ -343,7 +292,6 @@ ynh_script_progression --message="Configuring SSOwat..."  --weight=3
 # Everyone can access the app.
 # The "main" permission is automatically created before the install script.
 ynh_permission_update --permission="main" --add="visitors" --show_tile="false"
-ynh_permission_create --permission="help" --url="/help/" --allowed="all_users" --show_tile="true" --label="Help"
 
 #=================================================
 # RELOAD NGINX
@@ -351,25 +299,6 @@ ynh_permission_create --permission="help" --url="/help/" --allowed="all_users" -
 ynh_script_progression --message="Reloading nginx web server..."  --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
-
-#=================================================
-# SEND A README FOR THE ADMIN
-#=================================================
-ynh_script_progression --message="Sending a readme for the admin..."
-
-admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
-
-echo -e "\
-Standard Notes - Syncing Server was successfully installed.\n\
-Please configure the Standard Notes web app or mobile app to use this syncing server: https://$domain$path_url\n\
-\n\
-Standard Notes extensions are hosted with this package.\n\
-An Help page for setting-up the Standard Notes Server and Extensions have been created under: https://$domain$path_url/help\n\
-The Help page is accessible via the Yunohost Portal.\n\
-You can deactivate the Help page under: $admin_panel\
-" > message
-
-ynh_send_readme_to_admin --app_message="message" --type='install'
 
 #=================================================
 # END OF SCRIPT
