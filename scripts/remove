@@ -8,7 +8,6 @@
 
 source _common.sh
 source ynh_add_swap
-source ynh_install_ruby__2
 source ynh_redis
 source /usr/share/yunohost/helpers
 
@@ -20,14 +19,17 @@ ynh_script_progression --message="Loading installation settings..."  --weight=1
 app=$YNH_APP_INSTANCE_NAME
 
 domain=$(ynh_app_setting_get --app=$app --key=domain)
-port_syncing_server_js=$(ynh_app_setting_get --app=$app --key=port_syncing_server_js)
-port_syncing_server_js_worker=$(ynh_app_setting_get --app=$app --key=port_syncing_server_js_worker)
+
+port_api_gateway=$(ynh_app_setting_get --app=$app --key=port_api_gateway)
 port_auth=$(ynh_app_setting_get --app=$app --key=port_auth)
 port_auth_worker=$(ynh_app_setting_get --app=$app --key=port_auth_worker)
-port_api_gateway=$(ynh_app_setting_get --app=$app --key=port_api_gateway)
+port_files=$(ynh_app_setting_get --app=$app --key=port_files)
+port_syncing_server=$(ynh_app_setting_get --app=$app --key=port_syncing_server)
+port_syncing_server_worker=$(ynh_app_setting_get --app=$app --key=port_syncing_server_worker)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 
 #=================================================
 # STANDARD REMOVE
@@ -36,15 +38,10 @@ final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 #=================================================
 
 # Remove the service from the list of services known by Yunohost (added from `yunohost service add`)
-if ynh_exec_warn_less yunohost service status "$app-syncing-server-js" >/dev/null
+if ynh_exec_warn_less yunohost service status "$app-api-gateway" >/dev/null
 then
-    ynh_script_progression --message="Removing $app-syncing-server-js service..."  --weight=1
-    yunohost service remove "$app-syncing-server-js"
-fi
-if ynh_exec_warn_less yunohost service status "$app-syncing-server-js-worker" >/dev/null
-then
-    ynh_script_progression --message="Removing $app-syncing-server-js-worker service..."  --weight=1
-    yunohost service remove "$app-syncing-server-js-worker"
+    ynh_script_progression --message="Removing $app-api-gateway service..."  --weight=1
+    yunohost service remove "$app-api-gateway"
 fi
 if ynh_exec_warn_less yunohost service status "$app-auth" >/dev/null
 then
@@ -56,10 +53,20 @@ then
     ynh_script_progression --message="Removing $app-auth-worker service..."  --weight=1
     yunohost service remove "$app-auth-worker"
 fi
-if ynh_exec_warn_less yunohost service status "$app-api-gateway" >/dev/null
+if ynh_exec_warn_less yunohost service status "$app-files" >/dev/null
 then
-    ynh_script_progression --message="Removing $app-api-gateway service..."  --weight=1
-    yunohost service remove "$app-api-gateway"
+    ynh_script_progression --message="Removing $app-files service..."  --weight=1
+    yunohost service remove "$app-files"
+fi
+if ynh_exec_warn_less yunohost service status "$app-syncing-server" >/dev/null
+then
+    ynh_script_progression --message="Removing $app-syncing-server service..."  --weight=1
+    yunohost service remove "$app-syncing-server"
+fi
+if ynh_exec_warn_less yunohost service status "$app-syncing-server-worker" >/dev/null
+then
+    ynh_script_progression --message="Removing $app-syncing-server-worker service..."  --weight=1
+    yunohost service remove "$app-syncing-server-worker"
 fi
 
 #=================================================
@@ -68,11 +75,12 @@ fi
 ynh_script_progression --message="Stopping and removing the systemd service..."  --weight=1
 
 # Remove the dedicated systemd config
-ynh_remove_systemd_config --service="$app-syncing-server-js"
-ynh_remove_systemd_config --service="$app-syncing-server-js-worker"
+ynh_remove_systemd_config --service="$app-api-gateway"
 ynh_remove_systemd_config --service="$app-auth"
 ynh_remove_systemd_config --service="$app-auth-worker"
-ynh_remove_systemd_config --service="$app-api-gateway"
+ynh_remove_systemd_config --service="$app-files"
+ynh_remove_systemd_config --service="$app-syncing-server"
+ynh_remove_systemd_config --service="$app-syncing-server-worker"
 
 #=================================================
 # REMOVE THE MYSQL DATABASE
@@ -105,6 +113,17 @@ ynh_script_progression --message="Removing app main directory..."  --weight=1
 
 # Remove the app directory securely
 ynh_secure_remove --file="$final_path"
+
+#=================================================
+# REMOVE DATA DIR
+#=================================================
+
+# Remove the data directory if --purge option is used
+if [ "${YNH_APP_PURGE:-0}" -eq 1 ]
+then
+	ynh_script_progression --message="Removing app data directory..." --weight=1
+	ynh_secure_remove --file="$datadir"
+fi
 
 #=================================================
 # REMOVE NGINX CONFIGURATION

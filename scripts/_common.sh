@@ -3,12 +3,12 @@
 #=================================================
 # COMMON VARIABLES
 #=================================================
-RUBY_VERSION="2.7.3"
 NODEJS_VERSION="16"
 
-syncing_server_js_version="1.54.1"
-auth_version="1.46.2"
 api_gateway_version="1.40.1"
+auth_version="1.46.2"
+files_version="0"
+syncing_server_version="1.54.1"
 
 swap_needed=2048
 node_max_old_space_size=6144
