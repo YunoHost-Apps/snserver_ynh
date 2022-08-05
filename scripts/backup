@@ -84,7 +84,7 @@ ynh_print_info "Backing up systemd configuration..."
 
 ynh_backup --src_path="/etc/systemd/system/$app-api-gateway.service"
 ynh_backup --src_path="/etc/systemd/system/$app-auth.service"
-ynh_backup --src_path="/etc/systemd/system/$app-auth.service"
+ynh_backup --src_path="/etc/systemd/system/$app-auth-worker.service"
 ynh_backup --src_path="/etc/systemd/system/$app-files.service"
 ynh_backup --src_path="/etc/systemd/system/$app-syncing-server.service"
 ynh_backup --src_path="/etc/systemd/system/$app-syncing-server-worker.service"
