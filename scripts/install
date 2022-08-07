@@ -115,6 +115,7 @@ ynh_script_progression --message="Setting up source files..."  --weight=2
 # Download, check integrity, uncompress and patch the source from app.src
 mkdir -p "$final_path/live"
 ynh_setup_source --source_id=app --dest_dir="$final_path/live"
+cp "$YNH_APP_BASEDIR/sources/extra_files/cron.sh" "$final_path/cron.sh"
 
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
@@ -292,6 +293,17 @@ ynh_systemd_action \
     --action="start" \
     --log_path="/var/log/$app/syncing-server-worker.log" \
     --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
+
+#=================================================
+# SETUP A CRON
+#=================================================
+ynh_script_progression --message="Setup a cron..."
+
+ynh_add_config --template="../conf/cron.env" --destination="__finalpath__/$app.env"
+ynh_add_config --template="../conf/cron" --destination="/etc/cron.d/$app"
+
+chown root: "/etc/cron.d/$app"
+chmod 640 "/etc/cron.d/$app"
 
 #=================================================
 # SETUP FAIL2BAN

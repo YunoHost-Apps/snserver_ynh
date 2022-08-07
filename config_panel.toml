@@ -1,0 +1,15 @@
+version = "1.0"
+
+[main]
+name = "StandardNotes Server configuration"
+services = ["__APP__"]
+
+    [main.config]
+    name = "Configuration Options"
+
+        [main.config.files_limit]
+        ask = "Default user files limit"
+        type = "string"
+        default = "100"
+        help = "Choose a default limit in MB for the user file upload space.\n 100 = 100 MB, 1024 = 1GB, 10240 = 10GB"
+        bind = "FILES_SIZE:__FINALPATH__/cron.env"

@@ -90,6 +90,13 @@ ynh_backup --src_path="/etc/systemd/system/$app-syncing-server.service"
 ynh_backup --src_path="/etc/systemd/system/$app-syncing-server-worker.service"
 
 #=================================================
+# CRON LOGROTATE
+#=================================================
+ynh_print_info "Backing up cron configuration..."
+
+ynh_backup --src_path="/etc/cron.d/$app"
+
+#=================================================
 # END OF SCRIPT
 #=================================================
 
