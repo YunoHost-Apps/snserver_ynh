@@ -19,6 +19,7 @@ The Standard Notes syncing server. An end-to-end encrypted note-taking app.
 
 **Shipped version:** 2022.07.29~ynh1
 
+
 **Demo:** https://standardnotes.org/demo
 ## Disclaimers / important information
 
