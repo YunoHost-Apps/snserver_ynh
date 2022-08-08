@@ -10,7 +10,7 @@ FILE_UPLOAD_BYTES_LIMIT=$(($FILES_SIZE*$FILE_UPLOAD_BYTES_PER_MB))
 
 # Searching for new users in the last 10 minutes without a Pro_Plan subscription.
 mysql --password=$DB_PASSWORD --database=$DB_DATABASE <<< " \
-    SELECT email FROM users WHERE created_at >= DATE_SUB( TIMESTAMP(NOW()), INTERVAL 10 HOUR) AND NOT EXISTS( SELECT * FROM user_subscriptions WHERE user_subscriptions.plan_name = \"PRO_PLAN\" AND user_subscriptions.user_uuid = users.uuid ); \
+    SELECT email FROM users WHERE created_at >= DATE_SUB( TIMESTAMP(NOW()), INTERVAL 10 MINUTE) AND NOT EXISTS( SELECT * FROM user_subscriptions WHERE user_subscriptions.plan_name = \"PRO_PLAN\" AND user_subscriptions.user_uuid = users.uuid ); \
 "  2>/dev/null |
 
 # Read through the piped result until it's empty.
