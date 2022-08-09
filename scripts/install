@@ -58,6 +58,11 @@ ynh_app_setting_set --app=$app --key=auth_version --value=$auth_version
 ynh_app_setting_set --app=$app --key=files_version --value=$files_version
 ynh_app_setting_set --app=$app --key=syncing_server_version --value=$syncing_server_version
 
+disable_user_registration=false
+files_size=100
+ynh_app_setting_set --app=$app --key=DISABLE_USER_REGISTRATION --value=$disable_user_registration
+ynh_app_setting_set --app=$app --key=FILES_SIZE --value=$files_size
+
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================

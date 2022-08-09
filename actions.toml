@@ -1,0 +1,8 @@
+[add_subscriptions]
+name = "Add a subscription and file space to all users without a subscription."
+command = "/bin/bash scripts/actions/add_subscription.sh"
+# user = "root"  # optional
+# cwd = "/" # optional
+# accepted_return_codes = [0, 1, 2, 3]  # optional
+accepted_return_codes = [0]
+description = "Add subs"

@@ -48,6 +48,9 @@ syncing_server_version_installed=$(ynh_app_setting_get --app=$app --key=syncing_
 auth_version_installed=$(ynh_app_setting_get --app=$app --key=auth_version)
 api_gateway_version_installed=$(ynh_app_setting_get --app=$app --key=api_gateway_version)
 
+disable_user_registration=$(ynh_app_setting_get --app=$app --key=DISABLE_USER_REGISTRATION)
+files_size=$(ynh_app_setting_get --app=$app --key=FILES_SIZE)
+
 config_api_gateway="$final_path/live/api-gateway.env"
 config_auth="$final_path/live/auth.env"
 config_auth_worker="$final_path/live/auth-worker.env"
@@ -194,6 +197,16 @@ fi
 if [ -z "$valet_token_secret" ]; then
     valet_token_secret=$(ynh_string_random --length=48 | base64)
     ynh_app_setting_set --app=$app --key=valet_token_secret --value=$valet_token_secret
+fi
+# If disable_user_registration doesn't exist, create it
+if [ -z "$diable_user_registration" ]; then
+    disable_user_registration=false
+    ynh_app_setting_set --app=$app --key=DISABLE_USER_REGISTRATION --value=$disable_user_registration
+fi
+# If files_zise doesn't exist, create it
+if [ -z "$files_size" ]; then
+    files_size=100
+    ynh_app_setting_set --app=$app --key=FILES_SIZE --value=$files_size
 fi
 
 
