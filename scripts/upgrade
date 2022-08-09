@@ -44,10 +44,6 @@ pseudo_key_params_key=$(ynh_app_setting_get --app=$app --key=pseudo_key_params_k
 encryption_server_key=$(ynh_app_setting_get --app=$app --key=encryption_server_key)
 valet_token_secret=$(ynh_app_setting_get --app=$app --key=valet_token_secret)
 
-syncing_server_version_installed=$(ynh_app_setting_get --app=$app --key=syncing_server_version)
-auth_version_installed=$(ynh_app_setting_get --app=$app --key=auth_version)
-api_gateway_version_installed=$(ynh_app_setting_get --app=$app --key=api_gateway_version)
-
 disable_user_registration=$(ynh_app_setting_get --app=$app --key=DISABLE_USER_REGISTRATION)
 files_size=$(ynh_app_setting_get --app=$app --key=FILES_SIZE)
 
@@ -158,7 +154,7 @@ if [ -z "$port_files" ]; then
 fi
 # If port_syncing_server doesn't exist, create it
 if [ -z "$port_syncing_server" ]; then
-	port_syncing_server=$(ynh_find_port --port=$((port_files+1)))
+    port_syncing_server=$(ynh_find_port --port=$((port_files+1)))
     ynh_app_setting_set --app=$app --key=port_syncing_server --value=$port_syncing_server
 fi
 # If port_syncing_server_worker doesn't exist, create it
@@ -166,7 +162,6 @@ if [ -z "$port_syncing_server_worker" ]; then
     port_syncing_server_worker=$(ynh_find_port --port=$((port_syncing_server+1)))
     ynh_app_setting_set --app=$app --key=port_syncing_server_worker --value=$port_syncing_server_worker
 fi
-
 
 # If jwt_secret doesn't exist, create it
 if [ -z "$jwt_secret" ]; then
@@ -199,7 +194,7 @@ if [ -z "$valet_token_secret" ]; then
     ynh_app_setting_set --app=$app --key=valet_token_secret --value=$valet_token_secret
 fi
 # If disable_user_registration doesn't exist, create it
-if [ -z "$diable_user_registration" ]; then
+if [ -z "$disable_user_registration" ]; then
     disable_user_registration=false
     ynh_app_setting_set --app=$app --key=DISABLE_USER_REGISTRATION --value=$disable_user_registration
 fi
@@ -209,15 +204,26 @@ if [ -z "$files_size" ]; then
     ynh_app_setting_set --app=$app --key=FILES_SIZE --value=$files_size
 fi
 
-
 # Remove old Settings, Services, Files, Dependencies
 # If final_path_www exist, delete it
+api_gateway_version_installed=$(ynh_app_setting_get --app=$app --key=api_gateway_version)
+auth_version_installed=$(ynh_app_setting_get --app=$app --key=auth_version)
+syncing_server_version_installed=$(ynh_app_setting_get --app=$app --key=syncing_server_version)
 final_path_www=$(ynh_app_setting_get --app=$app --key=final_path_www)
+final_path_extensions=$(ynh_app_setting_get --app=$app --key=final_path_extensions)
+if [ -n ${api_gateway_version_installed+x} ]; then
+    ynh_app_setting_delete --app=$app --key=api_gateway_version_installed
+fi
+if [ -n ${auth_version_installed+x} ]; then
+    ynh_app_setting_delete --app=$app --key=auth_version_installe
+fi
+if [ -n ${syncing_server_version_installed+x} ]; then
+    ynh_app_setting_delete --app=$app --key=syncing_server_version_installed
+fi
 if [ -n ${final_path_www+x} ]; then
     ynh_app_setting_delete --app=$app --key=final_path_www
 fi
 # If final_path_extensions exist, delete it
-final_path_extensions=$(ynh_app_setting_get --app=$app --key=final_path_extensions)
 if [ -n ${final_path_extensions+x} ]; then
     ynh_app_setting_delete --app=$app --key=final_path_extensions
 fi
@@ -225,7 +231,7 @@ fi
 # If permission help exists, delete it
 if ynh_permission_exists --permission="help"
 then
-	ynh_permission_delete --permission="help"
+    ynh_permission_delete --permission="help"
 fi
 
 # If old service exsits; remove it
@@ -239,7 +245,6 @@ then
     ynh_script_progression --message="Removing old service..."  --weight=1
     yunohost service remove "$app-syncing-server-js-worker"
 fi
-
 
 # Remove unneeded data
 if [ -e "/var/www/$app" ]; then
@@ -301,7 +306,7 @@ ynh_script_progression --message="Upgrading dependencies..." --weight=1
 # Remove old nodejs version
 if [[ "$nodejs_version_installed" < "$NODEJS_VERSION" && -n "$nodejs_version_installed" ]]
 then
-	ynh_remove_nodejs
+    ynh_remove_nodejs
 fi
 
 ynh_install_app_dependencies $pkg_dependencies
@@ -445,7 +450,7 @@ ynh_systemd_action \
 #=================================================
 ynh_script_progression --message="Setup a cron..."
 
-ynh_add_config --template="../conf/cron.env" --destination="__finalpath__/$app.env"
+ynh_add_config --template="../conf/cron.env" --destination="$final_path/cron.env"
 ynh_add_config --template="../conf/cron" --destination="/etc/cron.d/$app"
 
 chown root: "/etc/cron.d/$app"
