@@ -46,9 +46,4 @@ jobs:
           title: 'Upgrade to ${{ env.VERSION }}'
           body: |
             Upgrade ${{ env.VERSION_CURRENT }} to ${{ env.VERSION }}
-            
-            API-Gateway Version: ${{ env.VERSION_API }} to ${{ env.VERSION_API_UPDATE }}
-            Auth Version: ${{ env.VERSION_AUTH }} to ${{ env.VERSION_AUTH_UPDATE }}
-            Files Version: ${{ env.VERSION_FILES }} to ${{ env.VERSION_FILEs_UPDATE }}
-            Syncing-Server-JS Version: ${{ env.VERSION_SS }} to ${{ env.VERSION_SS_UPDATE }}
-          draft: true
+          draft: false

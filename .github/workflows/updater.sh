@@ -14,8 +14,6 @@
 #=================================================
 
 # Fetching information
-# Current versions are defined in _common.sh
-source scripts/_common.sh
 current_version=$(cat manifest.json | jq -j '.version|split("~")[0]')
 #repo=$(cat manifest.json | jq -j '.upstream.code|split("https://github.com/")[1]')
 repo="standardnotes/server"
@@ -41,15 +39,10 @@ version=$(curl --silent "https://api.github.com/repos/$repo/commits/$commit" | j
 api_gateway_online_version=$(curl --silent "https://raw.githubusercontent.com/$repo/$commit/packages/api-gateway/package.json" | jq -j '.version')
 auth_online_version=$(curl --silent "https://raw.githubusercontent.com/$repo/$commit/packages/auth/package.json" | jq -j '.version')
 files_online_version=$(curl --silent "https://raw.githubusercontent.com/$repo/$commit/packages/files/package.json" | jq -j '.version')
-ss_online_version=$(curl --silent "https://raw.githubusercontent.com/$repo/$commit/packages/syncing_server/package.json" | jq -j '.version')
+ss_online_version=$(curl --silent "https://raw.githubusercontent.com/$repo/$commit/packages/syncing-server/package.json" | jq -j '.version')
 
 # Setting up the environment variables
 echo "Current version: $current_version"
-echo "API-Gateway: $api_gateway_version"
-echo "Auth: $auth_version"
-echo "Files: $files_version"
-echo "Syncing-Server: $syncing_server_version"
-echo ""
 echo "Latest release from upstream: $version"
 echo "API-Gateway: $api_gateway_online_version"
 echo "Auth: $auth_online_version"
@@ -58,14 +51,10 @@ echo "Syncing-Server: $ss_online_version"
 
 echo "VERSION=$version" >> $GITHUB_ENV
 echo "VERSION_CURRENT=$current_version" >> $GITHUB_ENV
-echo "VERSION_API=$api_gateway_version" >> $GITHUB_ENV
-echo "VERSION_API_UPDATE=$api_gateway_online_version" >> $GITHUB_ENV
-echo "VERSION_AUTH=$auth_version" >> $GITHUB_ENV
-echo "VERSION_AUTH_UPDATE=$auth_online_version" >> $GITHUB_ENV
-echo "VERSION_FILES=$files_version" >> $GITHUB_ENV
-echo "VERSION_FILES_UPDATE=$files_online_version" >> $GITHUB_ENV
-echo "VERSION_SS=$syncing_server_version" >> $GITHUB_ENV
-echo "VERSION_SS_UPDATE=$ss_online_version" >> $GITHUB_ENV
+echo "VERSION_API=$api_gateway_online_version" >> $GITHUB_ENV
+echo "VERSION_AUTH=$auth_online_version" >> $GITHUB_ENV
+echo "VERSION_FILES=$files_online_version" >> $GITHUB_ENV
+echo "VERSION_SS=$ss_online_version" >> $GITHUB_ENV
 
 # For the time being, let's assume the script will fail
 echo "PROCEED=false" >> $GITHUB_ENV
@@ -80,7 +69,7 @@ elif git ls-remote -q --exit-code --heads https://github.com/$GITHUB_REPOSITORY.
     exit 0
 fi
 
-asset="https://github.com/$remote/archive/$commit.tar.gz"
+asset="https://github.com/$repo/archive/$commit.tar.gz"
 
 #=================================================
 # UPDATE SOURCE FILES
@@ -104,7 +93,6 @@ SOURCE_SUM=$checksum
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true
-SOURCE_FILENAME=
 EOT
 echo "... conf/app.src updated"
 
