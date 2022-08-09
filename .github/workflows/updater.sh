@@ -23,7 +23,7 @@ commit=""
 id=0
 while [[ -z $commit && $id -le 29 ]]
 do
-	commit=$(curl --silent "https://api.github.com/repos/$repo/commits"  | jq -r '.[$id] | .sha' )
+	commit=$(curl --silent "https://api.github.com/repos/$repo/commits"  | jq -r ".[$id] | .sha" )
 	tags=$(git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' https://github.com/standardnotes/server.git | grep $commit)
 
 	if [[ -z $tags || $tags == *"alpha"* ]]; then
@@ -41,7 +41,7 @@ version=$(curl --silent "https://api.github.com/repos/$repo/commits/$commit" | j
 api_gateway_online_version=$(curl --silent "https://raw.githubusercontent.com/$repo/$commit/packages/api-gateway/package.json" | jq -j '.version')
 auth_online_version=$(curl --silent "https://raw.githubusercontent.com/$repo/$commit/packages/auth/package.json" | jq -j '.version')
 files_online_version=$(curl --silent "https://raw.githubusercontent.com/$repo/$commit/packages/files/package.json" | jq -j '.version')
-ss_online_version=$(curl --silent "https://raw.githubusercontent.com/$repo/$commit/packages/syncing_server/package.json" | jq -j '.#version')
+ss_online_version=$(curl --silent "https://raw.githubusercontent.com/$repo/$commit/packages/syncing_server/package.json" | jq -j '.version')
 
 # Setting up the environment variables
 echo "Current version: $current_version"
