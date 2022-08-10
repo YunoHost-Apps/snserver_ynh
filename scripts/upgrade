@@ -343,10 +343,8 @@ then
     ynh_script_progression --message="Installing Standard Notes - Syncing Server..."  --weight=93
     ynh_use_nodejs
     pushd "$final_path/live"
-        #ynh_exec_warn_less ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" PATH=$ynh_node_load_PATH yarn install --pure-lockfile
-        #ynh_exec_warn_less ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" PATH=$ynh_node_load_PATH yarn build
-        ynh_exec_warn_less ynh_exec_as $app PATH=$ynh_node_load_PATH yarn install --immutable
-        ynh_exec_warn_less ynh_exec_as $app PATH=$ynh_node_load_PATH yarn build
+        ynh_exec_warn_less ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" PATH=$ynh_node_load_PATH yarn install --immutable
+        ynh_exec_warn_less ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" PATH=$ynh_node_load_PATH yarn build
     popd
 fi
 

@@ -5,8 +5,8 @@
 #=================================================
 NODEJS_VERSION="16"
 
-swap_needed=2048
-node_max_old_space_size=6144
+swap_needed=4096
+node_max_old_space_size=4096
 
 # dependencies used by the app
 pkg_dependencies=""
