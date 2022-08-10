@@ -15,7 +15,7 @@ final_path=$(ynh_app_setting_get $app final_path)
 
 if [ ! -f .env ]
 then
-  export $(cat $final_path/cron.env | xargs)
+  export $(cat $final_path/cron.env | grep -v -E "^#" | xargs)
 fi
 
 FILE_UPLOAD_BYTES_PER_MB=1048576

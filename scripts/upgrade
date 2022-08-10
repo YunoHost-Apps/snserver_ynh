@@ -132,34 +132,24 @@ if [ -z "$redis_db" ]; then
 fi
 
 
-# If port_api_gateway doesn't exist, create it
-if [ -z "$port_api_gateway" ]; then
+# If one port_* doesn't exist, create all new
+if [[ -z "$port_api_gateway" || \
+      -z "$port_auth" || \
+      -z "$port_auth_worker" || \
+      -z "$port_files" || \
+      -z "$port_syncing_server" || \
+      -z "$port_syncing_server_worker" ]]; then
     port_api_gateway=$(ynh_find_port --port=3000)
-    ynh_app_setting_set --app=$app --key=port_api_gateway --value=$port_api_gateway
-fi
-# If port_auth doesn't exist, create it
-if [ -z "$port_auth" ]; then
     port_auth=$(ynh_find_port --port=$((port_api_gateway+1)))
-    ynh_app_setting_set --app=$app --key=port_auth --value=$port_auth
-fi
-# If port_auth_worker doesn't exist, create it
-if [ -z "$port_auth_worker" ]; then
     port_auth_worker=$(ynh_find_port --port=$((port_auth+1)))
-    ynh_app_setting_set --app=$app --key=port_auth_worker --value=$port_auth_worker
-fi
-# If port_files doesn't exist, create it
-if [ -z "$port_files" ]; then
     port_files=$(ynh_find_port --port=$((port_auth_worker+1)))
-    ynh_app_setting_set --app=$app --key=port_files --value=$port_files
-fi
-# If port_syncing_server doesn't exist, create it
-if [ -z "$port_syncing_server" ]; then
     port_syncing_server=$(ynh_find_port --port=$((port_files+1)))
-    ynh_app_setting_set --app=$app --key=port_syncing_server --value=$port_syncing_server
-fi
-# If port_syncing_server_worker doesn't exist, create it
-if [ -z "$port_syncing_server_worker" ]; then
     port_syncing_server_worker=$(ynh_find_port --port=$((port_syncing_server+1)))
+    ynh_app_setting_set --app=$app --key=port_api_gateway --value=$port_api_gateway
+    ynh_app_setting_set --app=$app --key=port_auth --value=$port_auth
+    ynh_app_setting_set --app=$app --key=port_auth_worker --value=$port_auth_worker
+    ynh_app_setting_set --app=$app --key=port_files --value=$port_files
+    ynh_app_setting_set --app=$app --key=port_syncing_server --value=$port_syncing_server
     ynh_app_setting_set --app=$app --key=port_syncing_server_worker --value=$port_syncing_server_worker
 fi
 
@@ -239,11 +229,13 @@ if ynh_exec_warn_less yunohost service status "$app-syncing-server-js" >/dev/nul
 then
     ynh_script_progression --message="Removing old service..."  --weight=1
     yunohost service remove "$app-syncing-server-js"
+    ynh_remove_systemd_config --service="$app-syncing-server-js"
 fi
 if ynh_exec_warn_less yunohost service status "$app-syncing-server-js-worker" >/dev/null
 then
     ynh_script_progression --message="Removing old service..."  --weight=1
     yunohost service remove "$app-syncing-server-js-worker"
+    ynh_remove_systemd_config --service="$app-syncing-server-worker-js"
 fi
 
 # Remove unneeded data
