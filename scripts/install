@@ -53,11 +53,6 @@ ynh_app_setting_set --app=$app --key=redis_db --value="$redis_db"
 # STORE SETTINGS
 #=================================================
 
-ynh_app_setting_set --app=$app --key=api_gateway_version --value=$api_gateway_version
-ynh_app_setting_set --app=$app --key=auth_version --value=$auth_version
-ynh_app_setting_set --app=$app --key=files_version --value=$files_version
-ynh_app_setting_set --app=$app --key=syncing_server_version --value=$syncing_server_version
-
 disable_user_registration=false
 files_size=100
 ynh_app_setting_set --app=$app --key=DISABLE_USER_REGISTRATION --value=$disable_user_registration
