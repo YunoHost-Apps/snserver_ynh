@@ -45,9 +45,5 @@ jobs:
           delete-branch: true
           title: 'Upgrade to ${{ env.VERSION }}'
           body: |
-            Upgrade to ${{ env.VERSION }}
-            
-            Syncing-Server-JS Version: ${{ env.VERSION_SSJS }} to ${{ env.VERSION_SSJS_UPDATE }}
-            Auth Version: ${{ env.VERSION_AUTH }} to ${{ env.VERSION_AUTH_UPDATE }}
-            API-Gateway Version: ${{ env.VERSION_API }} to ${{ env.VERSION_API_UPDATE }}
+            Upgrade ${{ env.VERSION_CURRENT }} to ${{ env.VERSION }}
           draft: false

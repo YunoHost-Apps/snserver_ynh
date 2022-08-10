@@ -1,5 +1,0 @@
-SOURCE_URL=https://github.com/standardnotes/simple-task-editor/archive/1.3.7.zip
-SOURCE_SUM=11afda3335058031880b7f1833d639f37b32d92c5b1ad8359503af2784706215
-SOURCE_SUM_PRG=sha256sum
-SOURCE_FORMAT=zip
-SOURCE_IN_SUBDIR=true

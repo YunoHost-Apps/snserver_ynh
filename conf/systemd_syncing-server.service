@@ -8,10 +8,10 @@ After=redis.service
 Type=simple
 User=__APP__
 Group=__APP__
-WorkingDirectory=__FINALPATH__/live/syncing-server-js
-EnvironmentFile=__FINALPATH__/live/syncing-server-js.env
-ExecStart=/usr/bin/yarn start
-StandardOutput=append:/var/log/__APP__/syncing-server-js.log
+WorkingDirectory=__FINALPATH__/live
+EnvironmentFile=__FINALPATH__/live/syncing-server.env
+ExecStart=/usr/bin/yarn start:syncing-server
+StandardOutput=append:/var/log/__APP__/syncing-server.log
 StandardError=inherit
 Restart=always
 

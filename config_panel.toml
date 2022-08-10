@@ -1,0 +1,27 @@
+version = "1.0"
+
+[main]
+name = "StandardNotes Server configuration"
+
+    [main.new_user]
+    name = "New User Options"
+
+        [main.new_user.disable_user_registration]
+        ask = "Disable user registration?"
+        type = "boolean"
+        default = "false"
+        help = "false = New users can register\ntrue  = No new user registrations allowed"
+
+        [main.new_user.files_limit]
+        ask = "Default files limit"
+        type = "number"
+        default = "100"
+        help = "Choose a default limit in MB for the user file upload space.\n 100 = 100 MB\n 1024 = 1GB\n 10240 = 10GB"
+
+    [main.subscription]
+    name = "User Subscription"
+
+        [main.subscription.info]
+        ask = ""
+        type = "alert"
+        style = "info"

@@ -1,17 +1,18 @@
 [Unit]
-Description=StandardNotes api-gateway
+Description=StandardNotes files
 After=network.target
+After=mysql.service
+After=redis.service
 After=__APP__-syncing-server.service
-After=__APP__-auth.service
 
 [Service]
 Type=simple
 User=__APP__
 Group=__APP__
-WorkingDirectory=__FINALPATH__/live/
-EnvironmentFile=__FINALPATH__/live/api-gateway.env
-ExecStart=/usr/bin/yarn start:api-gateway
-StandardOutput=append:/var/log/__APP__/api-gateway.log
+WorkingDirectory=__FINALPATH__/live
+EnvironmentFile=__FINALPATH__/live/files.env
+ExecStart=/usr/bin/yarn start:files
+StandardOutput=append:/var/log/__APP__/files.log
 StandardError=inherit
 Restart=always
 

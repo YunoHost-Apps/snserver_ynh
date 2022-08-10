@@ -9,7 +9,6 @@
 #Keep this path for calling _common.sh inside the execution's context of backup and restore scripts
 source ../settings/scripts/_common.sh
 source ../settings/scripts/ynh_add_swap
-source ../settings/scripts/ynh_install_ruby__2
 source ../settings/scripts/ynh_redis
 source /usr/share/yunohost/helpers
 
@@ -34,19 +33,20 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-final_path_www=$(ynh_app_setting_get --app=$app --key=final_path_www)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
 db_pwd=$(ynh_app_setting_get --app=$app --key=mysqlpwd)
+datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 
 redis_db=$(ynh_redis_get_free_db)
 ynh_app_setting_set --app=$app --key=redis_db --value="$redis_db"
 
-config_syncing_server_js="$final_path/live/syncing-server-js.env"
-config_syncing_server_js_worker="$final_path/live/syncing-server-js-worker.env"
+config_api_gateway="$final_path/live/api-gateway.env"
 config_auth="$final_path/live/auth.env"
 config_auth_worker="$final_path/live/auth-worker.env"
-config_api_gateway="$final_path/live/api-gateway.env"
+config_files="$final_path/live/files.env"
+config_syncing_server="$final_path/live/syncing-server.env"
+config_syncing_server_worker="$final_path/live/syncing-server-worker.env"
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
@@ -54,7 +54,6 @@ config_api_gateway="$final_path/live/api-gateway.env"
 ynh_script_progression --message="Validating restoration parameters..." --weight=2
 
 test ! -d $final_path || ynh_die --message="There is already a directory: $final_path "
-test ! -d $final_path_www || ynh_die --message="There is already a directory: $final_path_www "
 
 #=================================================
 # STANDARD RESTORATION STEPS
@@ -64,16 +63,19 @@ test ! -d $final_path_www || ynh_die --message="There is already a directory: $f
 ynh_script_progression --message="Finding an available port..."  --weight=1
 
 # Find an available port
-port_syncing_server_js=$(ynh_find_port --port=3000)
-port_syncing_server_js_worker=$(ynh_find_port --port=$((port_syncing_server_js+1)))
-port_auth=$(ynh_find_port --port=$((port_syncing_server_js_worker+1)))
+port_api_gateway=$(ynh_find_port --port=3000)
+port_auth=$(ynh_find_port --port=$((port_api_gateway+1)))
 port_auth_worker=$(ynh_find_port --port=$((port_auth+1)))
-port_api_gateway=$(ynh_find_port --port=$((port_auth_worker+1)))
-ynh_app_setting_set --app=$app --key=port_syncing_server_js --value=$port_syncing_server_js
-ynh_app_setting_set --app=$app --key=port_syncing_server_js_worker --value=$port_syncing_server_js_worker
+port_files=$(ynh_find_port --port=$((port_auth_worker+1)))
+port_syncing_server=$(ynh_find_port --port=$((port_files+1)))
+port_syncing_server_worker=$(ynh_find_port --port=$((port_syncing_server+1)))
+
+ynh_app_setting_set --app=$app --key=port_api_gateway --value=$port_api_gateway
 ynh_app_setting_set --app=$app --key=port_auth --value=$port_auth
 ynh_app_setting_set --app=$app --key=port_auth_worker --value=$port_auth_worker
-ynh_app_setting_set --app=$app --key=port_api_gateway --value=$port_api_gateway
+ynh_app_setting_set --app=$app --key=port_files --value=$port_files
+ynh_app_setting_set --app=$app --key=port_syncing_server --value=$port_syncing_server
+ynh_app_setting_set --app=$app --key=port_syncing_server_worker --value=$port_syncing_server_worker
 
 #=================================================
 # RESTORE THE NGINX CONFIGURATION
@@ -87,7 +89,15 @@ ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 ynh_script_progression --message="Restoring the app main directory..." --weight=1
 
 ynh_restore_file --origin_path="$final_path"
-ynh_restore_file --origin_path="$final_path_www"
+
+#=================================================
+# RESTORE THE DATA DIRECTORY
+#=================================================
+ynh_script_progression --message="Restoring the data directory..." --weight=1
+
+ynh_restore_file --origin_path="$datadir" --not_mandatory
+
+mkdir -p "$datadir/uploads"
 
 #=================================================
 # RECREATE THE DEDICATED USER
@@ -106,9 +116,9 @@ chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
 chown -R $app:$app "$final_path"
 
-chmod 750 "$final_path_www"
-chmod -R o-rwx "$final_path_www"
-chown -R "www-data":"www-data" "$final_path_www"
+chmod 750 "$datadir"
+chmod -R o-rwx "$datadir"
+chown -R $app:$app "$datadir"
 
 mkdir -p "/var/log/$app"
 chown -R $app: "/var/log/$app"
@@ -147,55 +157,61 @@ ynh_mysql_connect_as --user=$db_user --password=$db_pwd --database=$db_name < ./
 ynh_script_progression --message="Modify config files..." --weight=2
 
 # Redis Port
-ynh_replace_string --match_string="^REDIS_URL.*$" --replace_string="REDIS_URL=redis://localhost:6379/$redis_db" --target_file="$config_syncing_server_js"
-ynh_replace_string --match_string="^REDIS_URL.*$" --replace_string="REDIS_URL=redis://localhost:6379/$redis_db" --target_file="$config_syncing_server_js_worker"
+ynh_replace_string --match_string="^REDIS_URL.*$" --replace_string="REDIS_URL=redis://localhost:6379/$redis_db" --target_file="$config_api_gateway"
 ynh_replace_string --match_string="^REDIS_URL.*$" --replace_string="REDIS_URL=redis://localhost:6379/$redis_db" --target_file="$config_auth"
 ynh_replace_string --match_string="^REDIS_URL.*$" --replace_string="REDIS_URL=redis://localhost:6379/$redis_db" --target_file="$config_auth_worker"
-# Syncing_Server_JS Port
-ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_syncing_server_js" --target_file="$config_syncing_server_js"
-ynh_replace_string --match_string="^SYNCING_SERVER_URL.*$" --replace_string="SYNCING_SERVER_URL=$port_syncing_server_js" --target_file="$config_auth"
-ynh_replace_string --match_string="^SYNCING_SERVER_URL.*$" --replace_string="SYNCING_SERVER_URL=$port_syncing_server_js" --target_file="$config_auth_worker"
-ynh_replace_string --match_string="^SYNCING_SERVER_URL.*$" --replace_string="SYNCING_SERVER_URL=$port_syncing_server_js" --target_file="$config_api_gateway"
-# Syncing_Server_JS_Worker Port
-ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_syncing_server_js_worker" --target_file="$config_syncing_server_js_worker"
+ynh_replace_string --match_string="^REDIS_URL.*$" --replace_string="REDIS_URL=redis://localhost:6379/$redis_db" --target_file="$config_files"
+ynh_replace_string --match_string="^REDIS_URL.*$" --replace_string="REDIS_URL=redis://localhost:6379/$redis_db" --target_file="$config_syncing_server"
+ynh_replace_string --match_string="^REDIS_URL.*$" --replace_string="REDIS_URL=redis://localhost:6379/$redis_db" --target_file="$config_syncing_server_worker"
+# Syncing_Server Port
+ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_syncing_server" --target_file="$config_syncing_server"
+ynh_replace_string --match_string="^SYNCING_SERVER_URL.*$" --replace_string="SYNCING_SERVER_URL=$port_syncing_server" --target_file="$config_api_gateway"
+ynh_replace_string --match_string="^SYNCING_SERVER_URL.*$" --replace_string="SYNCING_SERVER_URL=$port_syncing_server" --target_file="$config_auth"
+ynh_replace_string --match_string="^SYNCING_SERVER_URL.*$" --replace_string="SYNCING_SERVER_URL=$port_syncing_server" --target_file="$config_auth_worker"
+# Syncing_Server_Worker Port
+ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_syncing_server_worker" --target_file="$config_syncing_server_worker"
 # Auth Port
 ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_auth" --target_file="$config_auth"
-ynh_replace_string --match_string="^AUTH_SERVER_URL.*$" --replace_string="AUTH_SERVER_URL=$port_auth" --target_file="$config_syncing_server_js"
-ynh_replace_string --match_string="^AUTH_SERVER_URL.*$" --replace_string="AUTH_SERVER_URL=$port_auth" --target_file="$config_syncing_server_js_worker"
 ynh_replace_string --match_string="^AUTH_SERVER_URL.*$" --replace_string="AUTH_SERVER_URL=$port_auth" --target_file="$config_api_gateway"
+ynh_replace_string --match_string="^AUTH_SERVER_URL.*$" --replace_string="AUTH_SERVER_URL=$port_auth" --target_file="$config_syncing_server"
+ynh_replace_string --match_string="^AUTH_SERVER_URL.*$" --replace_string="AUTH_SERVER_URL=$port_auth" --target_file="$config_syncing_server_worker"
 # Auth_Worker Port
 ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_auth_worker" --target_file="$config_auth_worker"
 # API-Gateway Port
 ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_api_gateway" --target_file="$config_api_gateway"
-
-
+# Files Port
+ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_files" --target_file="$config_files"
 
 #=================================================
 # RESTORE SYSTEMD
 #=================================================
 ynh_script_progression --message="Restoring the systemd configuration..." --weight=1
 
-ynh_restore_file --origin_path="/etc/systemd/system/$app-syncing-server-js.service"
-ynh_restore_file --origin_path="/etc/systemd/system/$app-syncing-server-js-worker.service"
+ynh_restore_file --origin_path="/etc/systemd/system/$app-api-gateway.service"
 ynh_restore_file --origin_path="/etc/systemd/system/$app-auth.service"
 ynh_restore_file --origin_path="/etc/systemd/system/$app-auth-worker.service"
-ynh_restore_file --origin_path="/etc/systemd/system/$app-api-gateway.service"
-systemctl enable $app-syncing-server-js.service --quiet
-systemctl enable $app-syncing-server-js-worker.service --quiet
+ynh_restore_file --origin_path="/etc/systemd/system/$app-files.service"
+ynh_restore_file --origin_path="/etc/systemd/system/$app-syncing-server.service"
+ynh_restore_file --origin_path="/etc/systemd/system/$app-syncing-server-worker.service"
+
+systemctl enable $app-api-gateway.service --quiet
 systemctl enable $app-auth.service --quiet
 systemctl enable $app-auth-worker.service --quiet
-systemctl enable $app-api-gateway.service --quiet
+systemctl enable $app-files.service --quiet
+systemctl enable $app-syncing-server.service --quiet
+systemctl enable $app-syncing-server-worker.service --quiet
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
 ynh_script_progression --message="Integrate $app service in Yunohost..."  --weight=1
 
-yunohost service add "$app-syncing-server-js" --description="Standard Notes - Syncing Server" --log="/var/log/$app/syncing-server-js.log"
-yunohost service add "$app-syncing-server-js-worker" --description="Standard Notes - Syncing Server - Worker" --log="/var/log/$app/syncing-server-js-worker.log"
+yunohost service add "$app-api-gateway" --description="Standard Notes - API Gateway" --log="/var/log/$app/api-gateway.log"
 yunohost service add "$app-auth" --description="Standard Notes - Auth" --log="/var/log/$app/auth.log"
 yunohost service add "$app-auth-worker" --description="Standard Notes - Auth - Worker" --log="/var/log/$app/auth-worker.log"
-yunohost service add "$app-api-gateway" --description="Standard Notes - API Gateway" --log="/var/log/$app/api-gateway.log"
+yunohost service add "$app-files" --description="Standard Notes - Files" --log="/var/log/$app/files.log"
+yunohost service add "$app-syncing-server" --description="Standard Notes - Syncing Server" --log="/var/log/$app/syncing-server.log"
+yunohost service add "$app-syncing-server-worker" --description="Standard Notes - Syncing Server - Worker" --log="/var/log/$app/syncing-server-worker.log"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -203,30 +219,42 @@ yunohost service add "$app-api-gateway" --description="Standard Notes - API Gate
 ynh_script_progression --message="Starting a systemd service..." --weight=1
 
 ynh_systemd_action \
-    --service_name="$app-syncing-server-js" \
+    --service_name="$app-api-gateway" \
     --action="start" \
-    --log_path="/var/log/$app/syncing-server-js.log" \
-    --line_match='{"message":"Server started on port '$port_syncing_server_js'","level":"info"}'
-ynh_systemd_action \
-    --service_name="$app-syncing-server-js-worker" \
-    --action="start" \
-    --log_path="/var/log/$app/syncing-server-js-worker.log" \
-    --line_match='{"message":"Starting worker...","level":"info"}'
+    --log_path="/var/log/$app/api-gateway.log" \
+    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
 ynh_systemd_action \
     --service_name="$app-auth" \
     --action="start" \
     --log_path="/var/log/$app/auth.log" \
-    --line_match='{"message":"Server started on port '$port_auth'","level":"info"}'
+    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
 ynh_systemd_action \
     --service_name="$app-auth-worker" \
     --action="start" \
     --log_path="/var/log/$app/auth-worker.log" \
-    --line_match='{"message":"Starting worker...","level":"info"}'
+    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
 ynh_systemd_action \
-    --service_name="$app-api-gateway" \
+    --service_name="$app-files" \
     --action="start" \
-    --log_path="/var/log/$app/api-gateway.log" \
-    --line_match='{"level":"info","message":"Server started on port '$port_api_gateway'"}'
+    --log_path="/var/log/$app/files.log" \
+    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
+ynh_systemd_action \
+    --service_name="$app-syncing-server" \
+    --action="start" \
+    --log_path="/var/log/$app/syncing-server.log" \
+    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
+ynh_systemd_action \
+    --service_name="$app-syncing-server-worker" \
+    --action="start" \
+    --log_path="/var/log/$app/syncing-server-worker.log" \
+    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
+
+#=================================================
+# RESTORE THE CRON CONFIGURATION
+#=================================================
+ynh_script_progression --message="Restoring cron configuration..."  --weight=1
+
+ynh_restore_file --origin_path="/etc/cron.d/$app"
 
 #=================================================
 # RESTORE THE LOGROTATE CONFIGURATION
