@@ -153,6 +153,12 @@ ynh_remove_fail2ban_config
 #=================================================
 # SPECIFIC REMOVE
 #=================================================
+# REMOVE CRON CONFIGURATION
+#=================================================
+ynh_script_progression --message="Removing cron configuration..."  --weight=1
+
+ynh_secure_remove --file="/etc/cron.d/$app"
+
 #=================================================
 # REMOVE SWAP
 #=================================================

@@ -47,6 +47,7 @@ config_auth_worker="$final_path/live/auth-worker.env"
 config_files="$final_path/live/files.env"
 config_syncing_server="$final_path/live/syncing-server.env"
 config_syncing_server_worker="$final_path/live/syncing-server-worker.env"
+config_nginx="/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
@@ -165,22 +166,24 @@ ynh_replace_string --match_string="^REDIS_URL.*$" --replace_string="REDIS_URL=re
 ynh_replace_string --match_string="^REDIS_URL.*$" --replace_string="REDIS_URL=redis://localhost:6379/$redis_db" --target_file="$config_syncing_server_worker"
 # Syncing_Server Port
 ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_syncing_server" --target_file="$config_syncing_server"
-ynh_replace_string --match_string="^SYNCING_SERVER_URL.*$" --replace_string="SYNCING_SERVER_URL=$port_syncing_server" --target_file="$config_api_gateway"
-ynh_replace_string --match_string="^SYNCING_SERVER_URL.*$" --replace_string="SYNCING_SERVER_URL=$port_syncing_server" --target_file="$config_auth"
-ynh_replace_string --match_string="^SYNCING_SERVER_URL.*$" --replace_string="SYNCING_SERVER_URL=$port_syncing_server" --target_file="$config_auth_worker"
+ynh_replace_string --match_string="^SYNCING_SERVER_JS_URL.*$" --replace_string="SYNCING_SERVER_JS_URL=http://localhost:$port_syncing_server" --target_file="$config_api_gateway"
+ynh_replace_string --match_string="^SYNCING_SERVER_URL.*$" --replace_string="SYNCING_SERVER_URL=http://localhost:$port_syncing_server" --target_file="$config_auth"
+ynh_replace_string --match_string="^SYNCING_SERVER_URL.*$" --replace_string="SYNCING_SERVER_URL=http://localhost:$port_syncing_server" --target_file="$config_auth_worker"
 # Syncing_Server_Worker Port
 ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_syncing_server_worker" --target_file="$config_syncing_server_worker"
 # Auth Port
 ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_auth" --target_file="$config_auth"
-ynh_replace_string --match_string="^AUTH_SERVER_URL.*$" --replace_string="AUTH_SERVER_URL=$port_auth" --target_file="$config_api_gateway"
-ynh_replace_string --match_string="^AUTH_SERVER_URL.*$" --replace_string="AUTH_SERVER_URL=$port_auth" --target_file="$config_syncing_server"
-ynh_replace_string --match_string="^AUTH_SERVER_URL.*$" --replace_string="AUTH_SERVER_URL=$port_auth" --target_file="$config_syncing_server_worker"
+ynh_replace_string --match_string="^AUTH_SERVER_URL.*$" --replace_string="AUTH_SERVER_URL=http://localhost:$port_auth" --target_file="$config_api_gateway"
+ynh_replace_string --match_string="^AUTH_SERVER_URL.*$" --replace_string="AUTH_SERVER_URL=http://localhost:$port_auth" --target_file="$config_syncing_server"
+ynh_replace_string --match_string="^AUTH_SERVER_URL.*$" --replace_string="AUTH_SERVER_URL=http://localhost:$port_auth" --target_file="$config_syncing_server_worker"
 # Auth_Worker Port
 ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_auth_worker" --target_file="$config_auth_worker"
 # API-Gateway Port
 ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_api_gateway" --target_file="$config_api_gateway"
+ynh_replace_string_occurrence --occurrence="1" --match_string="^proxy_pass.*$" --replace_string="proxy_pass http://127.0.0.1:$port_api_gateway/;" --target_file="$config_nginx"
 # Files Port
 ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_files" --target_file="$config_files"
+ynh_replace_string_occurrence --occurrence="2" --match_string="^proxy_pass.*$" --replace_string="proxy_pass http://127.0.0.1:$port_files/;" --target_file="$config_nginx"
 
 #=================================================
 # RESTORE SYSTEMD

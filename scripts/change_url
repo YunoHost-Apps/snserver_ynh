@@ -36,6 +36,8 @@ port_files=$(ynh_app_setting_get --app=$app --key=port_files)
 port_syncing_server=$(ynh_app_setting_get --app=$app --key=port_syncing_server)
 port_syncing_server_worker=$(ynh_app_setting_get --app=$app --key=port_syncing_server_worker)
 
+config_api_gateway="$final_path/live/api-gateway.env"
+
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
@@ -104,6 +106,13 @@ fi
 #=================================================
 # SPECIFIC MODIFICATIONS
 #=================================================
+# MODIFY CONFIG
+#=================================================
+ynh_script_progression --message="Modify configuring..." --weight=1
+
+ynh_replace_string --match_string="^FILES_SERVER_URL.*$" --replace_string="FILES_SERVER_URL=https://$new_domain$new_path/files" --target_file="$config_api_gateway"
+ynh_store_file_checksum --file="$config_api_gateway"
+
 #=================================================
 # SETUP FAIL2BAN
 #=================================================
