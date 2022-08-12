@@ -230,12 +230,14 @@ then
     ynh_script_progression --message="Removing old service..."  --weight=1
     yunohost service remove "$app-syncing-server-js"
     ynh_remove_systemd_config --service="$app-syncing-server-js"
+    ynh_reset_systemd
 fi
 if ynh_exec_warn_less yunohost service status "$app-syncing-server-js-worker" >/dev/null
 then
     ynh_script_progression --message="Removing old service..."  --weight=1
     yunohost service remove "$app-syncing-server-js-worker"
-    ynh_remove_systemd_config --service="$app-syncing-server-worker-js"
+    ynh_remove_systemd_config --service="$app-syncing-server-js-worker"
+    ynh_reset_systemd
 fi
 
 # Remove unneeded data

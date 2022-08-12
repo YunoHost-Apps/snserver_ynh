@@ -15,6 +15,12 @@ pkg_dependencies=""
 # PERSONAL HELPERS
 #=================================================
 
+
+# Reset failed systemd services.
+ynh_reset_systemd(){
+    systemctl reset-failed
+}
+
 # Substitute/replace a string (or expression) by another in a file on a
 #
 # usage: ynh_replace_string_occurrence --occurrence=occurrence --match_string=match_string --replace_string=replace_string --target_file=target_file

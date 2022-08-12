@@ -2,7 +2,7 @@
 
 if [ ! -f .env ]
 then
-  export $(cat cron.env | xargs)
+  export $(cat cron.env | grep -v -E "^#" | xargs)
 fi
 
 FILE_UPLOAD_BYTES_PER_MB=1048576

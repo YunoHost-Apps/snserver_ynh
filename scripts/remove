@@ -82,6 +82,8 @@ ynh_remove_systemd_config --service="$app-files"
 ynh_remove_systemd_config --service="$app-syncing-server"
 ynh_remove_systemd_config --service="$app-syncing-server-worker"
 
+ynh_reset_systemd
+
 #=================================================
 # REMOVE THE MYSQL DATABASE
 #=================================================
