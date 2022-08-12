@@ -15,16 +15,15 @@ pkg_dependencies=""
 # PERSONAL HELPERS
 #=================================================
 
-
 # Reset failed systemd services.
 ynh_reset_systemd(){
     systemctl reset-failed
 }
 
-# Substitute/replace a string (or expression) by another in a file on a
+# Substitute/replace a string (or expression) by another in a file on a line
 #
-# usage: ynh_replace_string_occurrence --occurrence=occurrence --match_string=match_string --replace_string=replace_string --target_file=target_file
-# | arg: -o, --occurrence=      - Replace the nth occurrence in the file
+# usage: ynh_replace_string_on_line --line=line --match_string=match_string --replace_string=replace_string --target_file=target_file
+# | arg: -l, --line=            - Replace match on nth line in the file
 # | arg: -m, --match_string=    - String to be searched and replaced in the file
 # | arg: -r, --replace_string=  - String that will replace matches
 # | arg: -f, --target_file=     - File in which the string will be replaced.
@@ -32,11 +31,11 @@ ynh_reset_systemd(){
 # As this helper is based on sed command, regular expressions and references to
 # sub-expressions can be used (see sed manual page for more information)
 #
-ynh_replace_string_occurrence() {
+ynh_replace_string_on_line() {
     # Declare an array to define the options of this helper.
-    local legacy_args=omrf
-    local -A args_array=([o]=occurrence [m]=match_string= [r]=replace_string= [f]=target_file=)
-    local occurrence
+    local legacy_args=lmrf
+    local -A args_array=([l]=line= [m]=match_string= [r]=replace_string= [f]=target_file=)
+    local line
     local match_string
     local replace_string
     local target_file
@@ -50,7 +49,7 @@ ynh_replace_string_occurrence() {
     replace_string=${replace_string//${delimit}/"\\${delimit}"}
 
     set -o xtrace # set -x
-    sed --in-place "s${delimit}${match_string}${delimit}${replace_string}${delimit}${occurrence}" "$target_file"
+    sed --in-place "${line} s${delimit}${match_string}${delimit}${replace_string}${delimit}" "$target_file"
 }
 
 #================================================

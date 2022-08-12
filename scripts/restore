@@ -180,10 +180,10 @@ ynh_replace_string --match_string="^AUTH_SERVER_URL.*$" --replace_string="AUTH_S
 ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_auth_worker" --target_file="$config_auth_worker"
 # API-Gateway Port
 ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_api_gateway" --target_file="$config_api_gateway"
-ynh_replace_string_occurrence --occurrence="1" --match_string="proxy_pass.*$" --replace_string="proxy_pass http://127.0.0.1:$port_api_gateway/;" --target_file="$config_nginx"
+ynh_replace_string_on_line --line="2" --match_string="proxy_pass.*$" --replace_string="proxy_pass http://127.0.0.1:$port_api_gateway/;" --target_file="$config_nginx"
 # Files Port
 ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_files" --target_file="$config_files"
-ynh_replace_string_occurrence --occurrence="2" --match_string="proxy_pass.*$" --replace_string="proxy_pass http://127.0.0.1:$port_files/;" --target_file="$config_nginx"
+ynh_replace_string_on_line --line="17" --match_string="proxy_pass.*$" --replace_string="proxy_pass http://127.0.0.1:$port_files/;" --target_file="$config_nginx"
 
 #=================================================
 # RESTORE SYSTEMD
