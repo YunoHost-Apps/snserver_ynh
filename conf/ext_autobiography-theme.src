@@ -1,5 +1,0 @@
-SOURCE_URL=https://github.com/standardnotes/autobiography-theme/archive/1.0.0.zip
-SOURCE_SUM=cbc8e07fa7703bdf8b7c9c3ef30a6d87d4ade7e5eb58ce7a983a34f1199a819d
-SOURCE_SUM_PRG=sha256sum
-SOURCE_FORMAT=zip
-SOURCE_IN_SUBDIR=true

@@ -1,5 +1,0 @@
-SOURCE_URL=https://github.com/standardnotes/token-vault/archive/1.0.10.zip
-SOURCE_SUM=e078f096717ae03a50634d2267cea457deb49ced30e1741cd2ba28829aa1b947
-SOURCE_SUM_PRG=sha256sum
-SOURCE_FORMAT=zip
-SOURCE_IN_SUBDIR=true

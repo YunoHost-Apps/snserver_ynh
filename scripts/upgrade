@@ -8,9 +8,7 @@
 
 source _common.sh
 source ynh_add_swap
-source ynh_install_ruby__2
 source ynh_redis
-source ynh_send_readme_to_admin__2
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -24,18 +22,18 @@ domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
 
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-final_path_www=$(ynh_app_setting_get --app=$app --key=final_path_www)
-final_path_extensions=$(ynh_app_setting_get --app=$app --key=final_path_extensions)
+datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
 db_pwd=$(ynh_app_setting_get --app=$app --key=mysqlpwd)
 
-port_syncing_server_js=$(ynh_app_setting_get --app=$app --key=port_syncing_server_js)
-port_syncing_server_js_worker=$(ynh_app_setting_get --app=$app --key=port_syncing_server_js_worker)
+port_api_gateway=$(ynh_app_setting_get --app=$app --key=port_api_gateway)
 port_auth=$(ynh_app_setting_get --app=$app --key=port_auth)
 port_auth_worker=$(ynh_app_setting_get --app=$app --key=port_auth_worker)
-port_api_gateway=$(ynh_app_setting_get --app=$app --key=port_api_gateway)
+port_files=$(ynh_app_setting_get --app=$app --key=port_files)
+port_syncing_server=$(ynh_app_setting_get --app=$app --key=port_syncing_server)
+port_syncing_server_worker=$(ynh_app_setting_get --app=$app --key=port_syncing_server_worker)
 
 redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
 
@@ -44,19 +42,18 @@ legacy_jwt_secret=$(ynh_app_setting_get --app=$app --key=legacy_jwt_secret)
 auth_jwt_secret=$(ynh_app_setting_get --app=$app --key=auth_jwt_secret)
 pseudo_key_params_key=$(ynh_app_setting_get --app=$app --key=pseudo_key_params_key)
 encryption_server_key=$(ynh_app_setting_get --app=$app --key=encryption_server_key)
+valet_token_secret=$(ynh_app_setting_get --app=$app --key=valet_token_secret)
 
-syncing_server_js_version_installed=$(ynh_app_setting_get --app=$app --key=syncing_server_js_version)
-auth_version_installed=$(ynh_app_setting_get --app=$app --key=auth_version)
-api_gateway_version_installed=$(ynh_app_setting_get --app=$app --key=api_gateway_version)
-extensions_version_installed=$(ynh_app_setting_get --app=$app --key=extension_version)
+disable_user_registration=$(ynh_app_setting_get --app=$app --key=DISABLE_USER_REGISTRATION)
+files_size=$(ynh_app_setting_get --app=$app --key=FILES_SIZE)
 
-config_syncing_server_js="$final_path/live/syncing-server-js.env"
-config_syncing_server_js_worker="$final_path/live/syncing-server-js-worker.env"
+config_api_gateway="$final_path/live/api-gateway.env"
 config_auth="$final_path/live/auth.env"
 config_auth_worker="$final_path/live/auth-worker.env"
-config_api_gateway="$final_path/live/api-gateway.env"
+config_files="$final_path/live/files.env"
+config_syncing_server="$final_path/live/syncing-server.env"
+config_syncing_server_worker="$final_path/live/syncing-server-worker.env"
 
-standalone=$(ynh_app_setting_get --app=$app --key=standalone)
 nodejs_version_installed=$(ynh_app_setting_get --app=$app --key=nodejs_version)
 
 #=================================================
@@ -92,75 +89,40 @@ ynh_abort_if_errors
 #=================================================
 ynh_script_progression --message="Stopping a systemd service..." --weight=1
 
-if [[ ! $standalone ]];
-then
-    ynh_remove_systemd_config --service=$app
-else
-    ynh_systemd_action \
-        --service_name="$app-syncing-server-js" \
-        --action="stop" \
-        --log_path="/var/log/$app/syncing-server-js.log"
-    ynh_systemd_action \
-        --service_name="$app-syncing-server-js-worker" \
-        --action="stop" \
-        --log_path="/var/log/$app/syncing-server-js-worker.log"
-    ynh_systemd_action \
-        --service_name="$app-auth" \
-        --action="stop" \
-        --log_path="/var/log/$app/auth.log"
-    ynh_systemd_action \
-        --service_name="$app-auth-worker" \
-        --action="stop" \
-        --log_path="/var/log/$app/auth-worker.log"
-    ynh_systemd_action \
-        --service_name="$app-api-gateway" \
-        --action="stop" \
-        --log_path="/var/log/$app/api-gateway.log"
-fi
+ynh_systemd_action \
+    --service_name="$app-api-gateway" \
+    --action="stop" \
+    --log_path="/var/log/$app/api-gateway.log"
+ynh_systemd_action \
+    --service_name="$app-auth" \
+    --action="stop" \
+    --log_path="/var/log/$app/auth.log"
+ynh_systemd_action \
+    --service_name="$app-auth-worker" \
+    --action="stop" \
+    --log_path="/var/log/$app/auth-worker.log"
+ynh_systemd_action \
+    --service_name="$app-files" \
+    --action="stop" \
+    --log_path="/var/log/$app/files.log"
+ynh_systemd_action \
+    --service_name="$app-syncing-server" \
+    --action="stop" \
+    --log_path="/var/log/$app/syncing-server.log"
+ynh_systemd_action \
+    --service_name="$app-syncing-server-worker" \
+    --action="stop" \
+    --log_path="/var/log/$app/syncing-server-worker.log"
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
 
-# Cleaning legacy permissions
-if ynh_legacy_permissions_exists; then
-    ynh_legacy_permissions_delete_all
-
-    ynh_app_setting_delete --app=$app --key=is_public
-fi
-
-# Everyone can access the app.
-if [[ $(ynh_permission_exists --permission="main") && ! $standalone ]]
-then
-    ynh_permission_update --permission="main" --add="visitors" --show_tile="false"
-fi
-if ! ynh_permission_exists --permission="main"
-then
-    ynh_permission_create --permission="main" --url="/" --allowed="visitors" --show_tile="false"
-fi
-# Create a permission if needed
-if ! ynh_permission_exists --permission="help"
-then
-    ynh_permission_create --permission="help" --url="/help/" --allowed="all_users" --show_tile="true" --label="Help"
-fi
-
 # If final_path doesn't exist, create it
 if [ -z "$final_path" ]; then
     final_path=/opt/yunohost/$app
     ynh_app_setting_set --app=$app --key=final_path --value=$final_path
-fi
-
-# If final_path doesn't exist, create it
-if [ -z "$final_path_www" ]; then
-    final_path_www=/var/www/$app
-    ynh_app_setting_set --app=$app --key=final_path_www --value=$final_path_www
-fi
-
-# If final_path doesn't exist, create it
-if [ -z "$final_path_extensions" ]; then
-    final_path_extensions=/var/www/$app/extensions
-    ynh_app_setting_set --app=$app --key=final_path_extensions --value=$final_path_extensions
 fi
 
 # If redis_db doesn't exist, create it
@@ -169,34 +131,26 @@ if [ -z "$redis_db" ]; then
     ynh_app_setting_set --app=$app --key=redis_db --value="$redis_db"
 fi
 
-# If port_syncing_server_js doesn't exist, create it
-if [ -z "$port_syncing_server_js" ]; then
-    port_syncing_server_js=$(ynh_find_port --port=3000)
-    ynh_app_setting_set --app=$app --key=port_syncing_server_js --value=$port_syncing_server_js
-fi
 
-# If port_syncing_server_js_worker doesn't exist, create it
-if [ -z "$port_syncing_server_js_worker" ]; then
-    port_syncing_server_js_worker=$(ynh_find_port --port=$((port_syncing_server_js+1)))
-    ynh_app_setting_set --app=$app --key=port_syncing_server_js_worker --value=$port_syncing_server_js_worker
-fi
-
-# If port_auth doesn't exist, create it
-if [ -z "$port_auth" ]; then
-    port_auth=$(ynh_find_port --port=$((port_syncing_server_js_worker+1)))
-    ynh_app_setting_set --app=$app --key=port_auth --value=$port_auth
-fi
-
-# If port_auth_worker doesn't exist, create it
-if [ -z "$port_auth_worker" ]; then
+# If one port_* doesn't exist, create all new
+if [[ -z "$port_api_gateway" || \
+      -z "$port_auth" || \
+      -z "$port_auth_worker" || \
+      -z "$port_files" || \
+      -z "$port_syncing_server" || \
+      -z "$port_syncing_server_worker" ]]; then
+    port_api_gateway=$(ynh_find_port --port=3000)
+    port_auth=$(ynh_find_port --port=$((port_api_gateway+1)))
     port_auth_worker=$(ynh_find_port --port=$((port_auth+1)))
-    ynh_app_setting_set --app=$app --key=port_auth_worker --value=$port_auth_worker
-fi
-
-# If port_api_gateway doesn't exist, create it
-if [ -z "$port_api_gateway" ]; then
-    port_api_gateway=$(ynh_find_port --port=$((port_auth_worker+1)))
+    port_files=$(ynh_find_port --port=$((port_auth_worker+1)))
+    port_syncing_server=$(ynh_find_port --port=$((port_files+1)))
+    port_syncing_server_worker=$(ynh_find_port --port=$((port_syncing_server+1)))
     ynh_app_setting_set --app=$app --key=port_api_gateway --value=$port_api_gateway
+    ynh_app_setting_set --app=$app --key=port_auth --value=$port_auth
+    ynh_app_setting_set --app=$app --key=port_auth_worker --value=$port_auth_worker
+    ynh_app_setting_set --app=$app --key=port_files --value=$port_files
+    ynh_app_setting_set --app=$app --key=port_syncing_server --value=$port_syncing_server
+    ynh_app_setting_set --app=$app --key=port_syncing_server_worker --value=$port_syncing_server_worker
 fi
 
 # If jwt_secret doesn't exist, create it
@@ -204,76 +158,104 @@ if [ -z "$jwt_secret" ]; then
     jwt_secret=$(ynh_string_random --length=48 | base64)
     ynh_app_setting_set --app=$app --key=jwt_secret --value=$jwt_secret
 fi
-
 # If legacy_jwt_secret doesn't exist, create it
 if [ -z "$legacy_jwt_secret" ]; then
     legacy_jwt_secret=$(ynh_string_random --length=48 | base64)
     ynh_app_setting_set --app=$app --key=legacy_jwt_secret --value=$legacy_jwt_secret
 fi
-
 # If auth_jwt_secret doesn't exist, create it
 if [ -z "$auth_jwt_secret" ]; then
     auth_jwt_secret=$(ynh_string_random --length=48 | base64)
     ynh_app_setting_set --app=$app --key=auth_jwt_secret --value=$auth_jwt_secret
 fi
-
 # If pseudo_key_params_key doesn't exist, create it
 if [ -z "$pseudo_key_params_key" ]; then
     pseudo_key_params_key=$(ynh_string_random --length=48 | base64)
     ynh_app_setting_set --app=$app --key=pseudo_key_params_key --value=$pseudo_key_params_key
 fi
-
 # If encryption_server_key doesn't exist, create it
 if [ -z "$encryption_server_key" ]; then
     encryption_server_key=$(hexdump -n 32 -e '4/4 "%08X"' /dev/random) # 32bytes hex key is required
     ynh_app_setting_set --app=$app --key=encryption_server_key --value=$encryption_server_key
 fi
+# If valet_token_secret doesn't exist, create it
+if [ -z "$valet_token_secret" ]; then
+    valet_token_secret=$(ynh_string_random --length=48 | base64)
+    ynh_app_setting_set --app=$app --key=valet_token_secret --value=$valet_token_secret
+fi
+# If disable_user_registration doesn't exist, create it
+if [ -z "$disable_user_registration" ]; then
+    disable_user_registration=false
+    ynh_app_setting_set --app=$app --key=DISABLE_USER_REGISTRATION --value=$disable_user_registration
+fi
+# If files_zise doesn't exist, create it
+if [ -z "$files_size" ]; then
+    files_size=100
+    ynh_app_setting_set --app=$app --key=FILES_SIZE --value=$files_size
+fi
 
 # Remove old Settings, Services, Files, Dependencies
-# If access_domain exist, delete it
-if [ -n $(ynh_app_setting_get --app="$app" --key=access_domain) ]; then
-    ynh_app_setting_delete --app=$app --key=access_domain
+# If final_path_www exist, delete it
+api_gateway_version_installed=$(ynh_app_setting_get --app=$app --key=api_gateway_version)
+auth_version_installed=$(ynh_app_setting_get --app=$app --key=auth_version)
+syncing_server_version_installed=$(ynh_app_setting_get --app=$app --key=syncing_server_version)
+final_path_www=$(ynh_app_setting_get --app=$app --key=final_path_www)
+final_path_extensions=$(ynh_app_setting_get --app=$app --key=final_path_extensions)
+if [ -n ${api_gateway_version_installed+x} ]; then
+    ynh_app_setting_delete --app=$app --key=api_gateway_version_installed
+fi
+if [ -n ${auth_version_installed+x} ]; then
+    ynh_app_setting_delete --app=$app --key=auth_version_installe
+fi
+if [ -n ${syncing_server_version_installed+x} ]; then
+    ynh_app_setting_delete --app=$app --key=syncing_server_version_installed
+fi
+if [ -n ${final_path_www+x} ]; then
+    ynh_app_setting_delete --app=$app --key=final_path_www
+fi
+# If final_path_extensions exist, delete it
+if [ -n ${final_path_extensions+x} ]; then
+    ynh_app_setting_delete --app=$app --key=final_path_extensions
 fi
 
-# If mail exist, delete it
-if [ -n $(ynh_app_setting_get --app="$app" --key=mail) ]; then
-    ynh_app_setting_delete --app=$app --key=mail
-fi
-
-# If port exist, delete it
-if [ -n $(ynh_app_setting_get --app="$app" --key=port) ]; then
-    ynh_app_setting_delete --app=$app --key=port
+# If permission help exists, delete it
+if ynh_permission_exists --permission="help"
+then
+    ynh_permission_delete --permission="help"
 fi
 
 # If old service exsits; remove it
-if ynh_exec_warn_less yunohost service status "$app" >/dev/null
+if ynh_exec_warn_less yunohost service status "$app-syncing-server-js" >/dev/null
 then
-    ynh_script_progression --message="Removing $app service..."  --weight=1
-    yunohost service remove "$app"
+    ynh_script_progression --message="Removing old service..."  --weight=1
+    yunohost service remove "$app-syncing-server-js"
+    ynh_remove_systemd_config --service="$app-syncing-server-js"
+    ynh_reset_systemd
 fi
-
-# Remove old config scripts
-if [ -e "/etc/yunohost/apps/$app/config_panel.toml" ]; then
-    ynh_secure_remove --file="/etc/yunohost/apps/$app/config_panel.toml"
-fi
-
-if [ -e "/etc/yunohost/apps/$app/scripts/config" ]; then
-    ynh_secure_remove --file="/etc/yunohost/apps/$app/scripts/config"
-fi
-
-# Remove old dependencies
-if [[ ! $standalone ]];
+if ynh_exec_warn_less yunohost service status "$app-syncing-server-js-worker" >/dev/null
 then
-    ynh_remove_ruby
-    ynh_remove_app_dependencies
+    ynh_script_progression --message="Removing old service..."  --weight=1
+    yunohost service remove "$app-syncing-server-js-worker"
+    ynh_remove_systemd_config --service="$app-syncing-server-js-worker"
+    ynh_reset_systemd
 fi
 
 # Remove unneeded data
-if [ -e "$final_path/live/syncing-server-js-worker" ]; then
-    ynh_secure_remove --file="$final_path/live/syncing-server-js-worker"
+if [ -e "/var/www/$app" ]; then
+    ynh_secure_remove --file="/var/www/$app"
 fi
-if [ -e "$final_path/live/auth-worker" ]; then
-    ynh_secure_remove --file="$final_path/live/auth-worker"
+
+# If datadir doesn't exist, create it
+# CREATE DATA DIRECTORY
+if [ -z "$datadir" ]; then
+    datadir=/home/yunohost.app/$app
+    ynh_app_setting_set --app=$app --key=datadir --value=$datadir
+
+    mkdir -p $datadir/uploads
+
+    chmod -R 750 "$datadir"
+    chmod -R o-rwx "$datadir"
+    chown -R $app:$app "$datadir"
 fi
 
 #=================================================
@@ -287,88 +269,20 @@ ynh_system_user_create --username=$app --home_dir=$final_path
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-
-ynh_script_progression --message="Upgrading source files..." --weight=1
-# Remove all files if the old syncing-server is used
-if [[ ! $standalone ]];
+if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
-    ynh_secure_remove --file="$final_path"
-    ynh_secure_remove --file="/var/log/$app"
-fi
+    ynh_script_progression --message="Upgrading source files..." --weight=1
 
-if [[ "$syncing_server_js_version_installed" < "$syncing_server_js_version" ]]
-then
-    # Backup files to keep
-    ynh_backup_if_checksum_is_different --file=$config_syncing_server_js
-    ynh_backup_if_checksum_is_different --file=$config_syncing_server_js_worker
-    # Remove destination directory
-    ynh_secure_remove --file="$final_path/live/syncing-server-js"
-    ynh_secure_remove --file="$config_syncing_server_js"
-    ynh_secure_remove --file="$config_syncing_server_js_worker"
     # Download, check integrity, uncompress and patch the source from app.src
+    ynh_secure_remove --file="$final_path/live"
     mkdir -p "$final_path/live"
-    ynh_setup_source --source_id=app_syncing-server-js --dest_dir="$final_path/live/syncing-server-js"
+    ynh_setup_source --source_id=app --dest_dir="$final_path/live"
+    cp "$YNH_APP_BASEDIR/sources/extra_files/cron.sh" "$final_path/cron.sh"
+
+    chmod 750 "$final_path"
+    chmod -R o-rwx "$final_path"
+    chown -R $app:$app "$final_path"
 fi
-
-if [[ "$auth_version_installed" < "$auth_version" ]]
-then
-    # Backup files to keep
-    ynh_backup_if_checksum_is_different --file=$config_auth
-    ynh_backup_if_checksum_is_different --file=$config_auth_worker
-    # Remove destination directory
-    ynh_secure_remove --file="$final_path/live/auth"
-    ynh_secure_remove --file="$config_auth"
-    ynh_secure_remove --file="$config_auth_worker"
-    # Download, check integrity, uncompress and patch the source from app.src
-    mkdir -p "$final_path/live"
-    ynh_setup_source --source_id=app_auth --dest_dir="$final_path/live/auth"
-fi
-
-if [[ "$api_gateway_version_installed" < "$api_gateway_version" ]]
-then
-    # Backup files to keep
-    ynh_backup_if_checksum_is_different --file=$config_api_gateway
-    # Remove destination directory
-    ynh_secure_remove --file="$final_path/live/api-gateway"
-    ynh_secure_remove --file="$config_api_gateway"
-    # Download, check integrity, uncompress and patch the source from app.src
-    mkdir -p "$final_path/live"
-    ynh_setup_source --source_id=app_api-gateway --dest_dir="$final_path/live/api-gateway"
-fi
-
-if [[ "$extensions_version_installed" < "$extensions_version" ]]
-then
-    # Remove destination directory
-    ynh_secure_remove --file="$final_path_extensions"
-    # Download, check integrity, uncompress and patch the source from app.src
-    mkdir -p "$final_path_extensions"
-    if test -e "../sources/extra_files/extensions"
-    then
-        cp -a "../sources/extra_files/extensions/." "$final_path_extensions"
-    fi
-
-    find "../conf/" -name "ext_*.src" -print0 | while read -d $'\0' file
-    do
-        basename=$(basename -as .src $file)
-        ynh_setup_source  --dest_dir="$final_path_extensions/src/${basename#'ext_'}" --source_id="$basename"
-    done
-fi
-
-# Copy help file
-ynh_secure_remove --file="$final_path_www/help"
-mkdir -p "$final_path_www/help"
-if test -e "$YNH_APP_BASEDIR/sources/extra_files/help"; then
-    cp --archive "$YNH_APP_BASEDIR/sources/extra_files/help/." "$final_path_www/help"
-fi
-ynh_replace_vars --file="$final_path_www/help/index.html"
-
-chmod 750 "$final_path"
-chmod -R o-rwx "$final_path"
-chown -R $app:$app "$final_path"
-
-chmod 750 "$final_path_www"
-chmod -R o-rwx "$final_path_www"
-chown -R "www-data":"www-data" "$final_path_www"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -386,7 +300,7 @@ ynh_script_progression --message="Upgrading dependencies..." --weight=1
 # Remove old nodejs version
 if [[ "$nodejs_version_installed" < "$NODEJS_VERSION" && -n "$nodejs_version_installed" ]]
 then
-	ynh_remove_nodejs
+    ynh_remove_nodejs
 fi
 
 ynh_install_app_dependencies $pkg_dependencies
@@ -408,11 +322,12 @@ ynh_add_swap --size=$swap_needed
 #=================================================
 ynh_script_progression --message="Modify a config file..."  --weight=2
 
-ynh_add_config --template="env_syncing-server-js.env.sample" --destination="$config_syncing_server_js"
-ynh_add_config --template="env_syncing-server-js-worker.env.sample" --destination="$config_syncing_server_js_worker"
+ynh_add_config --template="env_api-gateway.env.sample" --destination="$config_api_gateway"
 ynh_add_config --template="env_auth.env.sample" --destination="$config_auth"
 ynh_add_config --template="env_auth-worker.env.sample" --destination="$config_auth_worker"
-ynh_add_config --template="env_api-gateway.env.sample" --destination="$config_api_gateway"
+ynh_add_config --template="env_files.env.sample" --destination="$config_files"
+ynh_add_config --template="env_syncing-server.env.sample" --destination="$config_syncing_server"
+ynh_add_config --template="env_syncing-server-worker.env.sample" --destination="$config_syncing_server_worker"
 
 #=================================================
 # INSTALLING Standard Notes - Syncing Server
@@ -421,53 +336,10 @@ if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
     ynh_script_progression --message="Installing Standard Notes - Syncing Server..."  --weight=93
     ynh_use_nodejs
-    if [[ "$syncing_server_js_version_installed" < "$syncing_server_js_version" ]]
-    then
-        pushd "$final_path/live/syncing-server-js"
-            ynh_exec_warn_less ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" PATH=$ynh_node_load_PATH yarn install --pure-lockfile
-            ynh_exec_warn_less ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" PATH=$ynh_node_load_PATH yarn build
-        popd
-        ynh_app_setting_set --app=$app --key=syncing_server_js_version --value=$syncing_server_js_version
-    fi
-    if [[ "$auth_version_installed" < "$auth_version" ]]
-    then
-        pushd "$final_path/live/auth"
-            ynh_exec_warn_less ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" PATH=$ynh_node_load_PATH yarn install --pure-lockfile
-            ynh_exec_warn_less ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" PATH=$ynh_node_load_PATH yarn build
-        popd
-        ynh_app_setting_set --app=$app --key=auth_version --value=$auth_version
-    fi
-    if [[ "$api_gateway_version_installed" < "$api_gateway_version" ]]
-    then
-        pushd "$final_path/live/api-gateway"
-            ynh_exec_warn_less ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" PATH=$ynh_node_load_PATH yarn install --pure-lockfile
-            ynh_exec_warn_less ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" PATH=$ynh_node_load_PATH yarn build
-        popd
-        ynh_app_setting_set --app=$app --key=api_gateway_version --value=$api_gateway_version
-    fi
-fi
-
-#=================================================
-# INSTALLING Standard Notes - Extensions
-#=================================================
-if [[ "$extensions_version_installed" < "$extensions_version" ]]
-then
-    ynh_script_progression --message="Installing Standard Notes - Extensions..."  --weight=1
-
-    if [ $path_url = "/" ]
-    then
-        path=""
-    else
-        path=$path_url
-    fi
-
-    ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$final_path_extensions/repo.json"
-
-    find "$final_path_extensions/src/" -name "*.json" -print0 | while read -d $'\0' file
-    do
-        ynh_replace_string --match_string="__DOMAIN__PATH__" --replace_string="$domain$path" --target_file="$file"
-    done
-    ynh_app_setting_set --app=$app --key=extensions_version --value=$extensions_version
+    pushd "$final_path/live"
+        ynh_exec_warn_less ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" PATH=$ynh_node_load_PATH yarn install --immutable
+        ynh_exec_warn_less ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" PATH=$ynh_node_load_PATH yarn build
+    popd
 fi
 
 #=================================================
@@ -476,22 +348,25 @@ fi
 ynh_script_progression --message="Upgrading systemd configuration..." --weight=1
 
 # Create a dedicated systemd config
-ynh_add_systemd_config --service="$app-syncing-server-js" --template="systemd_syncing-server-js.service"
-ynh_add_systemd_config --service="$app-syncing-server-js-worker" --template="systemd_syncing-server-js-worker.service"
+ynh_add_systemd_config --service="$app-api-gateway" --template="systemd_api-gateway.service"
 ynh_add_systemd_config --service="$app-auth" --template="systemd_auth.service"
 ynh_add_systemd_config --service="$app-auth-worker" --template="systemd_auth-worker.service"
-ynh_add_systemd_config --service="$app-api-gateway" --template="systemd_api-gateway.service"
+ynh_add_systemd_config --service="$app-files" --template="systemd_files.service"
+ynh_add_systemd_config --service="$app-syncing-server" --template="systemd_syncing-server.service"
+ynh_add_systemd_config --service="$app-syncing-server-worker" --template="systemd_syncing-server-worker.service"
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
+ynh_script_progression --message="Storing the config file checksum..." --weight=1
 
 # Calculate and store the config file checksum into the app settings
-ynh_store_file_checksum --file="$config_syncing_server_js"
-ynh_store_file_checksum --file="$config_syncing_server_js_worker"
+ynh_store_file_checksum --file="$config_api_gateway"
 ynh_store_file_checksum --file="$config_auth"
 ynh_store_file_checksum --file="$config_auth_worker"
-ynh_store_file_checksum --file="$config_api_gateway"
+ynh_store_file_checksum --file="$config_files"
+ynh_store_file_checksum --file="$config_syncing_server"
+ynh_store_file_checksum --file="$config_syncing_server_worker"
 ynh_store_file_checksum --file="/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
@@ -506,22 +381,24 @@ mkdir -p "/var/log/$app"
 chown -R "$app": "/var/log/$app"
 
 # Use logrotate to manage application logfile(s)
-ynh_use_logrotate --logfile="/var/log/$app/syncing-server.log"
-ynh_use_logrotate --logfile="/var/log/$app/syncing-server-worker.log"
+ynh_use_logrotate --logfile="/var/log/$app/api-gateway.log"
 ynh_use_logrotate --logfile="/var/log/$app/auth.log"
 ynh_use_logrotate --logfile="/var/log/$app/auth-worker.log"
-ynh_use_logrotate --logfile="/var/log/$app/api-gateway.log"
+ynh_use_logrotate --logfile="/var/log/$app/files.log"
+ynh_use_logrotate --logfile="/var/log/$app/syncing-server.log"
+ynh_use_logrotate --logfile="/var/log/$app/syncing-server-worker.log"
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
 ynh_script_progression --message="Integrate $app service in Yunohost..."  --weight=1
 
-yunohost service add "$app-syncing-server-js" --description="Standard Notes - Syncing Server" --log="/var/log/$app/syncing-server-js.log"
-yunohost service add "$app-syncing-server-js-worker" --description="Standard Notes - Syncing Server - Worker" --log="/var/log/$app/syncing-server-js-worker.log"
+yunohost service add "$app-api-gateway" --description="Standard Notes - API Gateway" --log="/var/log/$app/api-gateway.log"
 yunohost service add "$app-auth" --description="Standard Notes - Auth" --log="/var/log/$app/auth.log"
 yunohost service add "$app-auth-worker" --description="Standard Notes - Auth - Worker" --log="/var/log/$app/auth-worker.log"
-yunohost service add "$app-api-gateway" --description="Standard Notes - API Gateway" --log="/var/log/$app/api-gateway.log"
+yunohost service add "$app-files" --description="Standard Notes - Files" --log="/var/log/$app/files.log"
+yunohost service add "$app-syncing-server" --description="Standard Notes - Syncing Server" --log="/var/log/$app/syncing-server.log"
+yunohost service add "$app-syncing-server-worker" --description="Standard Notes - Syncing Server - Worker" --log="/var/log/$app/syncing-server-worker.log"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -530,30 +407,46 @@ ynh_script_progression --message="Starting a systemd service..." --weight=1
 
 # Start a systemd service
 ynh_systemd_action \
-    --service_name="$app-syncing-server-js" \
+    --service_name="$app-api-gateway" \
     --action="start" \
-    --log_path="/var/log/$app/syncing-server-js.log" \
-    --line_match='{"message":"Server started on port '$port_syncing_server_js'","level":"info"}'
-ynh_systemd_action \
-    --service_name="$app-syncing-server-js-worker" \
-    --action="start" \
-    --log_path="/var/log/$app/syncing-server-js-worker.log" \
-    --line_match='{"message":"Starting worker...","level":"info"}'
+    --log_path="/var/log/$app/api-gateway.log" \
+    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
 ynh_systemd_action \
     --service_name="$app-auth" \
     --action="start" \
     --log_path="/var/log/$app/auth.log" \
-    --line_match='{"message":"Server started on port '$port_auth'","level":"info"}'
+    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
 ynh_systemd_action \
     --service_name="$app-auth-worker" \
     --action="start" \
     --log_path="/var/log/$app/auth-worker.log" \
-    --line_match='{"message":"Starting worker...","level":"info"}'
+    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
 ynh_systemd_action \
-    --service_name="$app-api-gateway" \
+    --service_name="$app-files" \
     --action="start" \
-    --log_path="/var/log/$app/api-gateway.log" \
-    --line_match='{"level":"info","message":"Server started on port '$port_api_gateway'"}'
+    --log_path="/var/log/$app/files.log" \
+    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
+ynh_systemd_action \
+    --service_name="$app-syncing-server" \
+    --action="start" \
+    --log_path="/var/log/$app/syncing-server.log" \
+    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
+ynh_systemd_action \
+    --service_name="$app-syncing-server-worker" \
+    --action="start" \
+    --log_path="/var/log/$app/syncing-server-worker.log" \
+    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
+
+#=================================================
+# SETUP A CRON
+#=================================================
+ynh_script_progression --message="Setup a cron..."
+
+ynh_add_config --template="../conf/cron.env" --destination="$final_path/cron.env"
+ynh_add_config --template="../conf/cron" --destination="/etc/cron.d/$app"
+
+chown root: "/etc/cron.d/$app"
+chmod 640 "/etc/cron.d/$app"
 
 #=================================================
 # SETUP FAIL2BAN
@@ -569,25 +462,6 @@ ynh_add_fail2ban_config --use_template
 ynh_script_progression --message="Reloading nginx web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
-
-#=================================================
-# SEND A README FOR THE ADMIN
-#=================================================
-ynh_script_progression --message="Sending a readme for the admin..."
-
-admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
-
-echo -e "\
-Standard Notes - Syncing Server was successfully upgraded.\n\
-Please configure the Standard Notes web app or mobile app to use this syncing server: https://$domain$path_url\n\
-\n\
-Standard Notes extensions are hosted with this package.\n\
-An Help page for setting-up the Standard Notes Server and Extensions have been created under: https://$domain$path_url/help\n\
-The Help page is accessible via the Yunohost Portal.\n\
-You can deactivate the Help page under: $admin_panel\
-" > message
-
-ynh_send_readme_to_admin --app_message="message" --type='upgrade'
 
 #=================================================
 # STORE SETTINGS

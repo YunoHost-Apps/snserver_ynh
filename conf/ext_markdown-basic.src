@@ -1,5 +1,0 @@
-SOURCE_URL=https://github.com/standardnotes/markdown-basic/archive/1.4.0.zip
-SOURCE_SUM=acfa7ea3974de9441381020c64e343303cbd7d27c30175ed3c047c17c6f98cad
-SOURCE_SUM_PRG=sha256sum
-SOURCE_FORMAT=zip
-SOURCE_IN_SUBDIR=true

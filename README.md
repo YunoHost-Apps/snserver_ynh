@@ -17,19 +17,16 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 The Standard Notes syncing server. An end-to-end encrypted note-taking app.
 
-**Shipped version:** 2022.06.20~ynh1
+**Shipped version:** 2022.07.29~ynh1
+
 
 **Demo:** https://standardnotes.org/demo
 ## Disclaimers / important information
 
 * No single-sign on or LDAP integration
-* Ram requirements (Swap memory will be created during install):
-    * The app requires at least 800MB of RAM to work properly.
-    * The app requires at least 1000MB of RAM to start.
-    * The app requires at least 1500MB of RAM to install.
+* Ram requirements ( 4GB swap memory will be created during install ):
+* Configuration can be changed under: https://my_domain.tld/yunohost/admin/#/apps/$app_id/config-panel
 
-* The ".env" config-files are stored under "/opt/yunohost/$app/live/"
-* You can change the url of this app, but than all useres have to reinstall the extensions.
 
 ## Documentation and resources
 
