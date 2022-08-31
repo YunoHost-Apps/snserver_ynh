@@ -10,6 +10,7 @@ User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/live/
 EnvironmentFile=__FINALPATH__/live/api-gateway.env
+Environment="__YNH_NODE_LOAD_PATH__"
 ExecStart=/usr/bin/yarn start:api-gateway
 StandardOutput=append:/var/log/__APP__/api-gateway.log
 StandardError=inherit

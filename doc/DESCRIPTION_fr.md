@@ -1,0 +1,1 @@
+Standard Notes est une application de prise de notes chiffrée de bout en bout pour les numériciens et les professionnels. Capturez vos notes, vos fichiers et le travail de votre vie en un seul endroit sécurisé.

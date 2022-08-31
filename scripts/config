@@ -23,22 +23,22 @@ final_path=$(ynh_app_setting_get $app final_path)
 
 get__disable_user_registration(){
 
-    disabled=$(ynh_read_var_in_file --file="$final_path/live/auth.env" --key="DISABLE_USER_REGISTRATION")
+	disabled=$(ynh_read_var_in_file --file="$final_path/live/auth.env" --key="DISABLE_USER_REGISTRATION")
 
-    echo $disabled
+	echo $disabled
 }
 
 get__files_limit(){
-    limit=$(ynh_read_var_in_file --file="$final_path/cron.env" --key="FILES_SIZE")
+	limit=$(ynh_read_var_in_file --file="$final_path/cron.env" --key="FILES_SIZE")
 
-    echo $limit
+	echo $limit
 }
 
 get__info(){
-    domain="$(cat /etc/yunohost/current_host)"
-    limit=$(ynh_read_var_in_file --file="$final_path/cron.env" --key="FILES_SIZE")
-    link="https://$domain/yunohost/admin/#/apps/$app/actions"
-    cat << EOF
+	domain="$(cat /etc/yunohost/current_host)"
+	limit=$(ynh_read_var_in_file --file="$final_path/cron.env" --key="FILES_SIZE")
+	link="https://$domain/yunohost/admin/#/apps/$app/actions"
+	cat << EOF
 ask: "Add subscriptions:\nAdd a subscription and $limit MB of file space to all users without a subscription.\n$link"
 EOF
 
@@ -53,56 +53,56 @@ EOF
 #=================================================
 
 set__disable_user_registration(){
-    #---------------------------------------------
-    # IMPORTANT: setter are trigger only if a change is detected
-    #---------------------------------------------
-    if [ $disable_user_registration = "1" ]; then
-        disabled="true"
-    fi
-    if [ $disable_user_registration = "0" ]; then
-        disabled="false"
-    fi
+	#---------------------------------------------
+	# IMPORTANT: setter are trigger only if a change is detected
+	#---------------------------------------------
+	if [ $disable_user_registration = "1" ]; then
+		disabled="true"
+	fi
+	if [ $disable_user_registration = "0" ]; then
+		disabled="false"
+	fi
 
-    config_auth="$final_path/live/auth.env"
-    config_auth_worker="$final_path/live/auth-worker.env"
-    
-    ynh_write_var_in_file --file="$config_auth" --key="DISABLE_USER_REGISTRATION" --value="$disabled"
-    ynh_write_var_in_file --file="$config_auth_worker" --key="DISABLE_USER_REGISTRATION" --value="$disabled"
+	config_auth="$final_path/live/auth.env"
+	config_auth_worker="$final_path/live/auth-worker.env"
+	
+	ynh_write_var_in_file --file="$config_auth" --key="DISABLE_USER_REGISTRATION" --value="$disabled"
+	ynh_write_var_in_file --file="$config_auth_worker" --key="DISABLE_USER_REGISTRATION" --value="$disabled"
 
-    ynh_store_file_checksum --file="$config_auth"
-    ynh_store_file_checksum --file="$config_auth_worker"
+	ynh_store_file_checksum --file="$config_auth"
+	ynh_store_file_checksum --file="$config_auth_worker"
 
-    ynh_systemd_action \
-        --service_name="$app-auth" \
-        --action="restart" \
-        --log_path="/var/log/$app/auth.log" \
-        --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
-    ynh_systemd_action \
-        --service_name="$app-auth-worker" \
-        --action="restart" \
-        --log_path="/var/log/$app/auth-worker.log" \
-        --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
+	ynh_systemd_action \
+		--service_name="$app-auth" \
+		--action="restart" \
+		--log_path="/var/log/$app/auth.log" \
+		--line_match='^.*Server started on port.*$|^.*Starting worker.*$'
+	ynh_systemd_action \
+		--service_name="$app-auth-worker" \
+		--action="restart" \
+		--log_path="/var/log/$app/auth-worker.log" \
+		--line_match='^.*Server started on port.*$|^.*Starting worker.*$'
 
-    #---------------------------------------------
-    # IMPORTANT: to be able to upgrade properly, you have to saved the value in settings too
-    #---------------------------------------------
-    ynh_app_setting_set --app="$app" --key="disable_user_registration" --value="$disabled"
+	#---------------------------------------------
+	# IMPORTANT: to be able to upgrade properly, you have to saved the value in settings too
+	#---------------------------------------------
+	ynh_app_setting_set --app="$app" --key="disable_user_registration" --value="$disabled"
 }
 
 set__files_limit(){
-    #---------------------------------------------
-    # IMPORTANT: setter are trigger only if a change is detected
-    #---------------------------------------------
-    config_cron="$final_path/cron.env"
+	#---------------------------------------------
+	# IMPORTANT: setter are trigger only if a change is detected
+	#---------------------------------------------
+	config_cron="$final_path/cron.env"
 
-    ynh_write_var_in_file --file="$config_cron" --key="FILES_SIZE" --value="$files_limit"
+	ynh_write_var_in_file --file="$config_cron" --key="FILES_SIZE" --value="$files_limit"
 
-    ynh_store_file_checksum --file="$config_cron"
+	ynh_store_file_checksum --file="$config_cron"
 
-    #---------------------------------------------
-    # IMPORTANT: to be able to upgrade properly, you have to saved the value in settings too
-    #---------------------------------------------
-    ynh_app_setting_set --app="$app" --key="files_size" --value="$files_limit"
+	#---------------------------------------------
+	# IMPORTANT: to be able to upgrade properly, you have to saved the value in settings too
+	#---------------------------------------------
+	ynh_app_setting_set --app="$app" --key="files_size" --value="$files_limit"
 }
 
 #=================================================

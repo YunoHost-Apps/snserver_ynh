@@ -11,6 +11,7 @@ User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/live
 EnvironmentFile=__FINALPATH__/live/auth.env
+Environment="__YNH_NODE_LOAD_PATH__"
 ExecStart=/usr/bin/yarn start:auth
 StandardOutput=append:/var/log/__APP__/auth.log
 StandardError=inherit
