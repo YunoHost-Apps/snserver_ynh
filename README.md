@@ -15,9 +15,10 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 ## Overview
 
-The Standard Notes syncing server. An end-to-end encrypted note-taking app.
+Standard Notes is an end-to-end encrypted note-taking app for digitalists and professionals. Capture your notes, files, and life’s work all in one secure place.
 
-**Shipped version:** 2022.07.29~ynh1
+
+**Shipped version:** 2022.08.30~ynh1
 
 
 **Demo:** https://standardnotes.org/demo
@@ -27,13 +28,12 @@ The Standard Notes syncing server. An end-to-end encrypted note-taking app.
 * Ram requirements ( 4GB swap memory will be created during install ):
 * Configuration can be changed under: https://my_domain.tld/yunohost/admin/#/apps/$app_id/config-panel
 
-
 ## Documentation and resources
 
 * Official app website: <https://standardnotes.org/>
 * Official user documentation: <https://standardnotes.com/help>
 * Official admin documentation: <https://docs.standardnotes.org/>
-* Upstream app code repository: <https://github.com/standardnotes/standalone>
+* Upstream app code repository: <https://github.com/standardnotes/server>
 * YunoHost documentation for this app: <https://yunohost.org/app_snserver>
 * Report a bug: <https://github.com/YunoHost-Apps/snserver_ynh/issues>
 
