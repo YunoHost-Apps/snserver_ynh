@@ -251,8 +251,6 @@ if [ -z "$datadir" ]; then
 	chown -R $app:$app "$datadir"
 fi
 
-ynh_app_setting_set --app=$app --key=standalone --value="true"
-
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
