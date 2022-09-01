@@ -10,7 +10,6 @@ User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/live
 EnvironmentFile=__FINALPATH__/live/syncing-server.env
-Environment="__YNH_NODE_LOAD_PATH__"
 ExecStart=/usr/bin/yarn start:syncing-server
 StandardOutput=append:/var/log/__APP__/syncing-server.log
 StandardError=inherit
