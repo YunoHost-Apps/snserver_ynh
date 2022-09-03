@@ -8,42 +8,42 @@ on:
   workflow_dispatch:
   # Run it every monday at 6:00 UTC
   schedule:
-	- cron:  '0 6 * * 1'
+    - cron:  '0 6 * * 1'
 jobs:
   updater:
-	runs-on: ubuntu-latest
-	steps:
-	  - name: Fetch the source code
-		uses: actions/checkout@v2
-		with:
-		  token: ${{ secrets.GITHUB_TOKEN }}
-	  - name: Run the updater script
-		id: run_updater
-		run: |
-		  # Setting up Git user
-		  git config --global user.name 'yunohost-bot'
-		  git config --global user.email 'yunohost-bot@users.noreply.github.com'
-		  # Run the updater script
-		  /bin/bash .github/workflows/updater.sh
-	  - name: Commit changes
-		id: commit
-		if: ${{ env.PROCEED == 'true' }}
-		run: |
-		  git commit -am "Upgrade to $VERSION"
-	  - name: Create Pull Request
-		id: cpr
-		if: ${{ env.PROCEED == 'true' }}
-		uses: peter-evans/create-pull-request@v3
-		with:
-		  token: ${{ secrets.GITHUB_TOKEN }}
-		  commit-message: 'Update: to latest versions'
-		  committer: 'yunohost-bot <yunohost-bot@users.noreply.github.com>'
-		  author: 'yunohost-bot <yunohost-bot@users.noreply.github.com>'
-		  signoff: false
-		  branch: ci-auto-update-${{ env.VERSION }}
-		  base: testing
-		  delete-branch: true
-		  title: 'Upgrade to ${{ env.VERSION }}'
-		  body: |
-			Upgrade ${{ env.VERSION_CURRENT }} to ${{ env.VERSION }}
-		  draft: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch the source code
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run the updater script
+        id: run_updater
+        run: |
+          # Setting up Git user
+          git config --global user.name 'yunohost-bot'
+          git config --global user.email 'yunohost-bot@users.noreply.github.com'
+          # Run the updater script
+          /bin/bash .github/workflows/updater.sh
+      - name: Commit changes
+        id: commit
+        if: ${{ env.PROCEED == 'true' }}
+        run: |
+          git commit -am "Upgrade to $VERSION"
+      - name: Create Pull Request
+        id: cpr
+        if: ${{ env.PROCEED == 'true' }}
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'Update: to latest versions'
+          committer: 'yunohost-bot <yunohost-bot@users.noreply.github.com>'
+          author: 'yunohost-bot <yunohost-bot@users.noreply.github.com>'
+          signoff: false
+          branch: ci-auto-update-${{ env.VERSION }}
+          base: testing
+          delete-branch: true
+          title: 'Upgrade to ${{ env.VERSION }}'
+          body: |
+            Upgrade ${{ env.VERSION_CURRENT }} to ${{ env.VERSION }}
+          draft: false
