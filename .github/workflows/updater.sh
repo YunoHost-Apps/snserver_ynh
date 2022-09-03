@@ -15,8 +15,7 @@
 
 # Fetching information
 current_version=$(cat manifest.json | jq -j '.version|split("~")[0]')
-#repo=$(cat manifest.json | jq -j '.upstream.code|split("https://github.com/")[1]')
-repo="standardnotes/server"
+repo=$(cat manifest.json | jq -j '.upstream.code|split("https://github.com/")[1]')
 commit=""
 id=0
 while [[ -z $commit && $id -le 29 ]]
@@ -31,8 +30,8 @@ do
 done
 
 if [ -z $commit ]; then
-    echo "::warning ::No new version found.."
-    exit 0
+	echo "::warning ::No new version found.."
+	exit 0
 fi
 
 version=$(curl --silent "https://api.github.com/repos/$repo/commits/$commit" | jq -r '.commit.committer.date' | sed 's/T.*$//g' | sed 's/-/./g')
@@ -61,12 +60,12 @@ echo "PROCEED=false" >> $GITHUB_ENV
 
 # Proceed only if the retrieved version is greater than the current one
 if [[ "$current_version" == "$version" ]]; then
-    echo "::warning ::No new version available"
-    exit 0
+	echo "::warning ::No new version available"
+	exit 0
 # Proceed only if a PR for this new version does not already exist
 elif git ls-remote -q --exit-code --heads https://github.com/$GITHUB_REPOSITORY.git ci-auto-update-v$version ; then
-    echo "::warning ::A branch already exists for this update"
-    exit 0
+	echo "::warning ::A branch already exists for this update"
+	exit 0
 fi
 
 asset="https://github.com/$repo/archive/$commit.tar.gz"
@@ -93,6 +92,8 @@ SOURCE_SUM=$checksum
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true
+SOURCE_FILENAME=
+SOURCE_EXTRACT=true
 EOT
 echo "... conf/app.src updated"
 
@@ -104,7 +105,7 @@ echo "... conf/app.src updated"
 # The GitHub Action workflow takes care of committing all changes after this script ends.
 
 #=================================================
-# GENERIC FINALIZA-TION
+# GENERIC FINALIZATION
 #=================================================
 
 # Replace new version in manifest

@@ -91,4 +91,3 @@ ynh_is_main_device_a_sd_card () {
 		return 1
 	fi
 }
-
