@@ -7,7 +7,7 @@
 nodejs_version=16.13.1
 
 swap_needed=4096
-node_max_old_space_size=4096
+node_max_old_space_size=6144
 
 # dependencies used by the app (must be on a single line)
 pkg_dependencies=""
