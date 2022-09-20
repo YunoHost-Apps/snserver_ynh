@@ -18,7 +18,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 Standard Notes is an end-to-end encrypted note-taking app for digitalists and professionals. Capture your notes, files, and life’s work all in one secure place.
 
 
-**Shipped version:** 2022.09.09~ynh1
+**Shipped version:** 2022.09.16~ynh1
 
 
 **Demo:** https://standardnotes.org/demo
