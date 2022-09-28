@@ -10,8 +10,8 @@
 		setup_private=0
 		setup_public=1
 		upgrade=1
-		# 2022.06.20~yhn1
-		upgrade=1	from_commit=2a0f413937f8a3d4bd067a5890480bce1222ec5a
+		# 2022.09.16~yhn1
+		upgrade=1	from_commit=62b95a36cb6b8bc991cc4cd4fccc1b0365d13b11
 		backup_restore=1
 		multi_instance=1
 		port_already_use=0
@@ -20,5 +20,5 @@
 Email=
 Notificationnone
 ;;; Upgrade options
-	; commit=2a0f413937f8a3d4bd067a5890480bce1222ec5a
-		name=2022.06.20~ynh1
+	; commit=62b95a36cb6b8bc991cc4cd4fccc1b0365d13b11
+		name=2022.09.16~ynh1
