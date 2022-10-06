@@ -18,7 +18,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 Standard Notes is an end-to-end encrypted note-taking app for digitalists and professionals. Capture your notes, files, and life’s work all in one secure place.
 
 
-**Shipped version:** 2022.09.30~ynh1 *(:warning: This is the `ci-auto-update-2022.09.30` branch. The [`master` branch](https://github.com/YunoHost-Apps/snserver_ynh/tree/master) used in the catalog is currently on version 2022.09.22\~ynh1.)*
+**Shipped version:** 2022.09.30~ynh1 *(:warning: This is the `testing` branch. The [`master` branch](https://github.com/YunoHost-Apps/snserver_ynh/tree/master) used in the catalog is currently on version 2022.09.22\~ynh1.)*
 
 
 **Demo:** https://standardnotes.org/demo
