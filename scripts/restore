@@ -45,6 +45,7 @@ config_auth_worker="$final_path/live/auth-worker.env"
 config_files="$final_path/live/files.env"
 config_syncing_server="$final_path/live/syncing-server.env"
 config_syncing_server_worker="$final_path/live/syncing-server-worker.env"
+config_workspace="$final_path/live/workspace.env"
 config_nginx="/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
@@ -69,6 +70,7 @@ port_auth_worker=$(ynh_find_port --port=$((port_auth+1)))
 port_files=$(ynh_find_port --port=$((port_auth_worker+1)))
 port_syncing_server=$(ynh_find_port --port=$((port_files+1)))
 port_syncing_server_worker=$(ynh_find_port --port=$((port_syncing_server+1)))
+port_workspace=$(ynh_find_port --port=$((port_syncing_server_worker+1)))
 
 ynh_app_setting_set --app=$app --key=port_api_gateway --value=$port_api_gateway
 ynh_app_setting_set --app=$app --key=port_auth --value=$port_auth
@@ -76,6 +78,7 @@ ynh_app_setting_set --app=$app --key=port_auth_worker --value=$port_auth_worker
 ynh_app_setting_set --app=$app --key=port_files --value=$port_files
 ynh_app_setting_set --app=$app --key=port_syncing_server --value=$port_syncing_server
 ynh_app_setting_set --app=$app --key=port_syncing_server_worker --value=$port_syncing_server_worker
+ynh_app_setting_set --app=$app --key=port_workspace --value=$port_workspace
 
 #=================================================
 # RECREATE THE DEDICATED USER
@@ -158,6 +161,7 @@ ynh_replace_string --match_string="^REDIS_URL.*$" --replace_string="REDIS_URL=re
 ynh_replace_string --match_string="^REDIS_URL.*$" --replace_string="REDIS_URL=redis://localhost:6379/$redis_db" --target_file="$config_files"
 ynh_replace_string --match_string="^REDIS_URL.*$" --replace_string="REDIS_URL=redis://localhost:6379/$redis_db" --target_file="$config_syncing_server"
 ynh_replace_string --match_string="^REDIS_URL.*$" --replace_string="REDIS_URL=redis://localhost:6379/$redis_db" --target_file="$config_syncing_server_worker"
+ynh_replace_string --match_string="^REDIS_URL.*$" --replace_string="REDIS_URL=redis://localhost:6379/$redis_db" --target_file="$config_workspace"
 # Syncing_Server Port
 ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_syncing_server" --target_file="$config_syncing_server"
 ynh_replace_string --match_string="^SYNCING_SERVER_JS_URL.*$" --replace_string="SYNCING_SERVER_JS_URL=http://localhost:$port_syncing_server" --target_file="$config_api_gateway"
@@ -178,6 +182,9 @@ ynh_replace_string_on_line --line="2" --match_string="proxy_pass.*$" --replace_s
 # Files Port
 ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_files" --target_file="$config_files"
 ynh_replace_string_on_line --line="17" --match_string="proxy_pass.*$" --replace_string="proxy_pass http://127.0.0.1:$port_files/;" --target_file="$config_nginx"
+# Workspace Port
+ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_workspace" --target_file="$config_workspace"
+ynh_replace_string --match_string="^WORKSPACE_SERVER_URL.*$" --replace_string="WORKSPACE_SERVER_URL=http://localhost:$port_workspace" --target_file="$config_api_gateway"
 
 #=================================================
 # RESTORE VARIOUS FILES
@@ -206,6 +213,7 @@ ynh_restore_file --origin_path="/etc/systemd/system/$app-auth-worker.service"
 ynh_restore_file --origin_path="/etc/systemd/system/$app-files.service"
 ynh_restore_file --origin_path="/etc/systemd/system/$app-syncing-server.service"
 ynh_restore_file --origin_path="/etc/systemd/system/$app-syncing-server-worker.service"
+ynh_restore_file --origin_path="/etc/systemd/system/$app-workspace.service"
 
 systemctl enable $app-api-gateway.service --quiet
 systemctl enable $app-auth.service --quiet
@@ -213,6 +221,7 @@ systemctl enable $app-auth-worker.service --quiet
 systemctl enable $app-files.service --quiet
 systemctl enable $app-syncing-server.service --quiet
 systemctl enable $app-syncing-server-worker.service --quiet
+systemctl enable $app-workspace.service --quiet
 
 #=================================================
 # RESTORE THE LOGROTATE CONFIGURATION
@@ -235,6 +244,7 @@ yunohost service add "$app-auth-worker" --description="Standard Notes - Auth - W
 yunohost service add "$app-files" --description="Standard Notes - Files" --log="/var/log/$app/files.log"
 yunohost service add "$app-syncing-server" --description="Standard Notes - Syncing Server" --log="/var/log/$app/syncing-server.log"
 yunohost service add "$app-syncing-server-worker" --description="Standard Notes - Syncing Server - Worker" --log="/var/log/$app/syncing-server-worker.log"
+yunohost service add "$app-workspace" --description="Standard Notes - Workspace" --log="/var/log/$app/workspace.log"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -270,6 +280,11 @@ ynh_systemd_action \
 	--service_name="$app-syncing-server-worker" \
 	--action="start" \
 	--log_path="/var/log/$app/syncing-server-worker.log" \
+	--line_match='^.*Server started on port.*$|^.*Starting worker.*$'
+ynh_systemd_action \
+	--service_name="$app-workspace" \
+	--action="start" \
+	--log_path="/var/log/$app/workspace.log" \
 	--line_match='^.*Server started on port.*$|^.*Starting worker.*$'
 
 #=================================================

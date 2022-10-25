@@ -32,6 +32,7 @@ port_auth_worker=$(ynh_app_setting_get --app=$app --key=port_auth_worker)
 port_files=$(ynh_app_setting_get --app=$app --key=port_files)
 port_syncing_server=$(ynh_app_setting_get --app=$app --key=port_syncing_server)
 port_syncing_server_worker=$(ynh_app_setting_get --app=$app --key=port_syncing_server_worker)
+port_workspace=$(ynh_app_setting_get --app=$app --key=port_workspace)
 
 redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
 
@@ -51,6 +52,7 @@ config_auth_worker="$final_path/live/auth-worker.env"
 config_files="$final_path/live/files.env"
 config_syncing_server="$final_path/live/syncing-server.env"
 config_syncing_server_worker="$final_path/live/syncing-server-worker.env"
+config_workspace="$final_path/live/workspace.env"
 
 nodejs_version_installed=$(ynh_app_setting_get --app=$app --key=nodejs_version)
 
@@ -106,6 +108,10 @@ ynh_systemd_action \
 	--service_name="$app-syncing-server-worker" \
 	--action="stop" \
 	--log_path="/var/log/$app/syncing-server-worker.log"
+ynh_systemd_action \
+	--service_name="$app-workspace" \
+	--action="stop" \
+	--log_path="/var/log/$app/workspace.log"
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
@@ -131,19 +137,22 @@ if [[ -z "$port_api_gateway" || \
 	  -z "$port_auth_worker" || \
 	  -z "$port_files" || \
 	  -z "$port_syncing_server" || \
-	  -z "$port_syncing_server_worker" ]]; then
+	  -z "$port_syncing_server_worker" || \
+	  -z "$port_workspace" ]]; then
 	port_api_gateway=$(ynh_find_port --port=3000)
 	port_auth=$(ynh_find_port --port=$((port_api_gateway+1)))
 	port_auth_worker=$(ynh_find_port --port=$((port_auth+1)))
 	port_files=$(ynh_find_port --port=$((port_auth_worker+1)))
 	port_syncing_server=$(ynh_find_port --port=$((port_files+1)))
 	port_syncing_server_worker=$(ynh_find_port --port=$((port_syncing_server+1)))
+	port_workspace=$(ynh_find_port --port=$((port_syncing_server_worker+1)))
 	ynh_app_setting_set --app=$app --key=port_api_gateway --value=$port_api_gateway
 	ynh_app_setting_set --app=$app --key=port_auth --value=$port_auth
 	ynh_app_setting_set --app=$app --key=port_auth_worker --value=$port_auth_worker
 	ynh_app_setting_set --app=$app --key=port_files --value=$port_files
 	ynh_app_setting_set --app=$app --key=port_syncing_server --value=$port_syncing_server
 	ynh_app_setting_set --app=$app --key=port_syncing_server_worker --value=$port_syncing_server_worker
+	ynh_app_setting_set --app=$app --key=port_workspace --value=$port_workspace
 fi
 
 # If jwt_secret doesn't exist, create it
@@ -317,6 +326,7 @@ ynh_add_config --template="env_auth-worker.env.sample" --destination="$config_au
 ynh_add_config --template="env_files.env.sample" --destination="$config_files"
 ynh_add_config --template="env_syncing-server.env.sample" --destination="$config_syncing_server"
 ynh_add_config --template="env_syncing-server-worker.env.sample" --destination="$config_syncing_server_worker"
+ynh_add_config --template="env_workspace.env.sample" --destination="$config_workspace"
 
 #=================================================
 # INSTALLING Standard Notes - Syncing Server
@@ -326,8 +336,8 @@ then
 	ynh_script_progression --message="Installing Standard Notes - Syncing Server..." --weight=93
 	ynh_use_nodejs
 	pushd "$final_path/live"
-		ynh_exec_warn_less ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" $ynh_node_load_PATH yarn install --immutable
-		ynh_exec_warn_less ynh_exec_as $app env NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" $ynh_node_load_PATH yarn build
+		ynh_exec_warn_less ynh_exec_as $app env NODE_ENV="production" NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" $ynh_node_load_PATH yarn install --immutable
+		ynh_exec_warn_less ynh_exec_as $app env NODE_ENV="production" NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" $ynh_node_load_PATH yarn build
 	popd
 fi
 
@@ -343,6 +353,7 @@ ynh_add_systemd_config --service="$app-auth-worker" --template="systemd_auth-wor
 ynh_add_systemd_config --service="$app-files" --template="systemd_files.service"
 ynh_add_systemd_config --service="$app-syncing-server" --template="systemd_syncing-server.service"
 ynh_add_systemd_config --service="$app-syncing-server-worker" --template="systemd_syncing-server-worker.service"
+ynh_add_systemd_config --service="$app-workspace" --template="systemd_workspace.service"
 
 #=================================================
 # GENERIC FINALIZATION
@@ -361,6 +372,7 @@ ynh_use_logrotate --logfile="/var/log/$app/auth-worker.log"
 ynh_use_logrotate --logfile="/var/log/$app/files.log"
 ynh_use_logrotate --logfile="/var/log/$app/syncing-server.log"
 ynh_use_logrotate --logfile="/var/log/$app/syncing-server-worker.log"
+ynh_use_logrotate --logfile="/var/log/$app/workspace.log"
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
@@ -373,6 +385,7 @@ yunohost service add "$app-auth-worker" --description="Standard Notes - Auth - W
 yunohost service add "$app-files" --description="Standard Notes - Files" --log="/var/log/$app/files.log"
 yunohost service add "$app-syncing-server" --description="Standard Notes - Syncing Server" --log="/var/log/$app/syncing-server.log"
 yunohost service add "$app-syncing-server-worker" --description="Standard Notes - Syncing Server - Worker" --log="/var/log/$app/syncing-server-worker.log"
+yunohost service add "$app-workspace" --description="Standard Notes - Workspace" --log="/var/log/$app/workspace.log"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -409,6 +422,11 @@ ynh_systemd_action \
 	--service_name="$app-syncing-server-worker" \
 	--action="start" \
 	--log_path="/var/log/$app/syncing-server-worker.log" \
+	--line_match='^.*Server started on port.*$|^.*Starting worker.*$'
+ynh_systemd_action \
+	--service_name="$app-workspace" \
+	--action="start" \
+	--log_path="/var/log/$app/workspace.log" \
 	--line_match='^.*Server started on port.*$|^.*Starting worker.*$'
 
 #=================================================
