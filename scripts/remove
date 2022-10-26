@@ -25,6 +25,7 @@ port_auth_worker=$(ynh_app_setting_get --app=$app --key=port_auth_worker)
 port_files=$(ynh_app_setting_get --app=$app --key=port_files)
 port_syncing_server=$(ynh_app_setting_get --app=$app --key=port_syncing_server)
 port_syncing_server_worker=$(ynh_app_setting_get --app=$app --key=port_syncing_server_worker)
+port_workspace=$(ynh_app_setting_get --app=$app --key=port_workspace)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
@@ -67,6 +68,11 @@ then
 	ynh_script_progression --message="Removing $app-syncing-server-worker service..." --weight=1
 	yunohost service remove "$app-syncing-server-worker"
 fi
+if ynh_exec_warn_less yunohost service status "$app-workspace" >/dev/null
+then
+	ynh_script_progression --message="Removing $app-workspace service..." --weight=1
+	yunohost service remove "$app-workspace"
+fi
 
 #=================================================
 # STOP AND REMOVE SERVICE
@@ -80,6 +86,7 @@ ynh_remove_systemd_config --service="$app-auth-worker"
 ynh_remove_systemd_config --service="$app-files"
 ynh_remove_systemd_config --service="$app-syncing-server"
 ynh_remove_systemd_config --service="$app-syncing-server-worker"
+ynh_remove_systemd_config --service="$app-workspace"
 
 ynh_reset_systemd
 
