@@ -5,7 +5,7 @@
     "description": {
         "en": "The Standard Notes syncing server. An end-to-end encrypted note-taking app."
     },
-    "version": "2022.11.07~ynh1",
+    "version": "2022.11.13~ynh1",
     "url": "https://github.com/standardnotes/standalone",
     "upstream": {
         "license": "AGPL-3.0-or-later",
