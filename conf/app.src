@@ -1,5 +1,5 @@
-SOURCE_URL=https://github.com/standardnotes/server/archive/d931c525088f5a9507e6cb90c25f438275e8c8b8.tar.gz
-SOURCE_SUM=2676d4d8135e83928bba20d9c1b9edb1466f3e0acc49c1db4abb90461692a112
+SOURCE_URL=https://github.com/standardnotes/server/archive/97ff4d5ac2c3ce93d565f26f2f3db0674459336c.tar.gz
+SOURCE_SUM=88354582c6b6884aa2541ee1774d2d8228f6a6ac78d629a2e764a817b71dd389
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true
