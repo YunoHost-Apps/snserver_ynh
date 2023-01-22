@@ -5,7 +5,7 @@ It shall NOT be edited by hand.
 
 # Standard Notes Server for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/snserver.svg)](https://dash.yunohost.org/appci/app/snserver) ![Working status](https://ci-apps.yunohost.org/ci/badges/snserver.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/snserver.maintain.svg)  
+[![Integration level](https://dash.yunohost.org/integration/snserver.svg)](https://dash.yunohost.org/appci/app/snserver) ![Working status](https://ci-apps.yunohost.org/ci/badges/snserver.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/snserver.maintain.svg)
 [![Install Standard Notes Server with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=snserver)
 
 *[Lire ce readme en français.](./README_fr.md)*

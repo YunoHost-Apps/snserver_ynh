@@ -5,15 +5,15 @@ It shall NOT be edited by hand.
 
 # Standard Notes Server pour YunoHost
 
-[![Niveau d'intégration](https://dash.yunohost.org/integration/snserver.svg)](https://dash.yunohost.org/appci/app/snserver) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/snserver.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/snserver.maintain.svg)  
+[![Niveau d’intégration](https://dash.yunohost.org/integration/snserver.svg)](https://dash.yunohost.org/appci/app/snserver) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/snserver.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/snserver.maintain.svg)
 [![Installer Standard Notes Server avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=snserver)
 
 *[Read this readme in english.](./README.md)*
 
-> *Ce package vous permet d'installer Standard Notes Server rapidement et simplement sur un serveur YunoHost.
-Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour savoir comment l'installer et en profiter.*
+> *Ce package vous permet d’installer Standard Notes Server rapidement et simplement sur un serveur YunoHost.
+Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour savoir comment l’installer et en profiter.*
 
-## Vue d'ensemble
+## Vue d’ensemble
 
 Standard Notes est une application de prise de notes chiffrée de bout en bout pour les numériciens et les professionnels. Capturez vos notes, vos fichiers et le travail de votre vie en un seul endroit sécurisé.
 
@@ -29,10 +29,10 @@ Standard Notes est une application de prise de notes chiffrée de bout en bout p
 
 ## Documentations et ressources
 
-* Site officiel de l'app : <https://standardnotes.org/>
+* Site officiel de l’app : <https://standardnotes.org/>
 * Documentation officielle utilisateur : <https://standardnotes.com/help>
-* Documentation officielle de l'admin : <https://docs.standardnotes.org/>
-* Dépôt de code officiel de l'app : <https://github.com/standardnotes/server>
+* Documentation officielle de l’admin : <https://docs.standardnotes.org/>
+* Dépôt de code officiel de l’app : <https://github.com/standardnotes/server>
 * Documentation YunoHost pour cette app : <https://yunohost.org/app_snserver>
 * Signaler un bug : <https://github.com/YunoHost-Apps/snserver_ynh/issues>
 
@@ -48,4 +48,4 @@ ou
 sudo yunohost app upgrade snserver -u https://github.com/YunoHost-Apps/snserver_ynh/tree/testing --debug
 ```
 
-**Plus d'infos sur le packaging d'applications :** <https://yunohost.org/packaging_apps>
+**Plus d’infos sur le packaging d’applications :** <https://yunohost.org/packaging_apps>
