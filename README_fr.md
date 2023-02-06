@@ -18,7 +18,7 @@ Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) po
 Standard Notes est une application de prise de notes chiffrée de bout en bout pour les numériciens et les professionnels. Capturez vos notes, vos fichiers et le travail de votre vie en un seul endroit sécurisé.
 
 
-**Version incluse :** 2023.01.26~ynh1
+**Version incluse :** 2023.02.02~ynh1
 
 **Démo :** https://standardnotes.org/demo
 ## Avertissements / informations importantes
@@ -26,6 +26,12 @@ Standard Notes est une application de prise de notes chiffrée de bout en bout p
 * Pas d'authentification unique ou d'intégration LDAP.
 * Besoins en mémoire vive (4 Go de mémoire swap seront créés pendant l'installation) :
 * La configuration peut être modifiée sous : https://my_domain.tld/yunohost/admin/#/apps/$app_id/config-panel
+
+## :red_circle: Fonctions indésirables
+
+- **Package not maintained**: This YunoHost package is not maintained and needs adoption.
+
+- **Non-free assets**: Contains and makes use of non-free assets. The most common case is apps using artwork - images, sounds, music, etc. - under a commercial license.
 
 ## Documentations et ressources
 

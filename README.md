@@ -18,7 +18,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 Standard Notes is an end-to-end encrypted note-taking app for digitalists and professionals. Capture your notes, files, and life’s work all in one secure place.
 
 
-**Shipped version:** 2023.01.26~ynh1
+**Shipped version:** 2023.02.02~ynh1
 
 **Demo:** https://standardnotes.org/demo
 ## Disclaimers / important information
@@ -26,6 +26,12 @@ Standard Notes is an end-to-end encrypted note-taking app for digitalists and pr
 * No single-sign on or LDAP integration
 * Ram requirements ( 4GB swap memory will be created during install ):
 * Configuration can be changed under: https://my_domain.tld/yunohost/admin/#/apps/$app_id/config-panel
+
+## :red_circle: Antifeatures
+
+- **Package not maintained**: This YunoHost package is not maintained and needs adoption.
+
+- **Non-free assets**: Contains and makes use of non-free assets. The most common case is apps using artwork - images, sounds, music, etc. - under a commercial license.
 
 ## Documentation and resources
 
