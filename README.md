@@ -6,6 +6,7 @@ It shall NOT be edited by hand.
 # Standard Notes Server for YunoHost
 
 [![Integration level](https://dash.yunohost.org/integration/snserver.svg)](https://dash.yunohost.org/appci/app/snserver) ![Working status](https://ci-apps.yunohost.org/ci/badges/snserver.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/snserver.maintain.svg)
+
 [![Install Standard Notes Server with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=snserver)
 
 *[Lire ce readme en français.](./README_fr.md)*
@@ -26,6 +27,12 @@ Standard Notes is an end-to-end encrypted note-taking app for digitalists and pr
 * No single-sign on or LDAP integration
 * Ram requirements ( 4GB swap memory will be created during install ):
 * Configuration can be changed under: https://my_domain.tld/yunohost/admin/#/apps/$app_id/config-panel
+
+## :red_circle: Antifeatures
+
+- **Package not maintained**: This YunoHost package is not maintained and needs adoption.
+
+- **Non-free assets**: Contains and makes use of non-free assets. The most common case is apps using artwork - images, sounds, music, etc. - under a commercial license.
 
 ## Documentation and resources
 
