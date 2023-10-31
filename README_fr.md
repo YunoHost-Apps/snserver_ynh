@@ -6,6 +6,7 @@ It shall NOT be edited by hand.
 # Standard Notes Server pour YunoHost
 
 [![Niveau d’intégration](https://dash.yunohost.org/integration/snserver.svg)](https://dash.yunohost.org/appci/app/snserver) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/snserver.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/snserver.maintain.svg)
+
 [![Installer Standard Notes Server avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=snserver)
 
 *[Read this readme in english.](./README.md)*
@@ -27,13 +28,19 @@ Standard Notes est une application de prise de notes chiffrée de bout en bout p
 * Besoins en mémoire vive (4 Go de mémoire swap seront créés pendant l'installation) :
 * La configuration peut être modifiée sous : https://my_domain.tld/yunohost/admin/#/apps/$app_id/config-panel
 
+## :red_circle: Fonctions indésirables
+
+- **Package not maintained**: This YunoHost package is not maintained and needs adoption.
+
+- **Non-free assets**: Contains and makes use of non-free assets. The most common case is apps using artwork - images, sounds, music, etc. - under a commercial license.
+
 ## Documentations et ressources
 
 * Site officiel de l’app : <https://standardnotes.org/>
 * Documentation officielle utilisateur : <https://standardnotes.com/help>
 * Documentation officielle de l’admin : <https://docs.standardnotes.org/>
 * Dépôt de code officiel de l’app : <https://github.com/standardnotes/server>
-* Documentation YunoHost pour cette app : <https://yunohost.org/app_snserver>
+* YunoHost Store: <https://apps.yunohost.org/app/snserver>
 * Signaler un bug : <https://github.com/YunoHost-Apps/snserver_ynh/issues>
 
 ## Informations pour les développeurs
