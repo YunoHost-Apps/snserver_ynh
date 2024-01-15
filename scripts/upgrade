@@ -52,62 +52,55 @@ ynh_systemd_action \
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
 
-# If jwt_secret doesn't exist, create it
-if [ -z "$jwt_secret" ]; then
+# Create non existing settings
+if [ -z "${jwt_secret:-}" ]; then
     jwt_secret=$(ynh_string_random --length=48 | base64)
-    ynh_app_setting_set --app=$app --key=jwt_secret --value=$jwt_secret
+    ynh_app_setting_set --app="$app" --key=jwt_secret --value="$jwt_secret"
 fi
-# If legacy_jwt_secret doesn't exist, create it
-if [ -z "$legacy_jwt_secret" ]; then
+if [ -z "${legacy_jwt_secret:-}" ]; then
     legacy_jwt_secret=$(ynh_string_random --length=48 | base64)
-    ynh_app_setting_set --app=$app --key=legacy_jwt_secret --value=$legacy_jwt_secret
+    ynh_app_setting_set --app="$app" --key=legacy_jwt_secret --value="$legacy_jwt_secret"
 fi
-# If auth_jwt_secret doesn't exist, create it
-if [ -z "$auth_jwt_secret" ]; then
+if [ -z "${auth_jwt_secret:-}" ]; then
     auth_jwt_secret=$(ynh_string_random --length=48 | base64)
-    ynh_app_setting_set --app=$app --key=auth_jwt_secret --value=$auth_jwt_secret
+    ynh_app_setting_set --app="$app" --key=auth_jwt_secret --value="$auth_jwt_secret"
 fi
-# If pseudo_key_params_key doesn't exist, create it
-if [ -z "$pseudo_key_params_key" ]; then
+if [ -z "${pseudo_key_params_key:-}" ]; then
     pseudo_key_params_key=$(ynh_string_random --length=48 | base64)
-    ynh_app_setting_set --app=$app --key=pseudo_key_params_key --value=$pseudo_key_params_key
+    ynh_app_setting_set --app="$app" --key=pseudo_key_params_key --value="$pseudo_key_params_key"
 fi
-# If encryption_server_key doesn't exist, create it
-if [ -z "$encryption_server_key" ]; then
+if [ -z "${encryption_server_key:-}" ]; then
     encryption_server_key=$(hexdump -n 32 -e '4/4 "%08X"' /dev/random) # 32bytes hex key is required
-    ynh_app_setting_set --app=$app --key=encryption_server_key --value=$encryption_server_key
+    ynh_app_setting_set --app="$app" --key=encryption_server_key --value="$encryption_server_key"
 fi
-# If valet_token_secret doesn't exist, create it
-if [ -z "$valet_token_secret" ]; then
+if [ -z "${valet_token_secret:-}" ]; then
     valet_token_secret=$(ynh_string_random --length=48 | base64)
-    ynh_app_setting_set --app=$app --key=valet_token_secret --value=$valet_token_secret
+    ynh_app_setting_set --app="$app" --key=valet_token_secret --value="$valet_token_secret"
 fi
-# If disable_user_registration doesn't exist, create it
-if [ -z "$disable_user_registration" ]; then
+if [ -z "${disable_user_registration:-}" ]; then
     disable_user_registration=false
-    ynh_app_setting_set --app=$app --key=DISABLE_USER_REGISTRATION --value=$disable_user_registration
+    ynh_app_setting_set --app="$app" --key=DISABLE_USER_REGISTRATION --value="$disable_user_registration"
 fi
-# If files_zise doesn't exist, create it
-if [ -z "$files_size" ]; then
+if [ -z "${files_size:-}" ]; then
     files_size=100
-    ynh_app_setting_set --app=$app --key=FILES_SIZE --value=$files_size
+    ynh_app_setting_set --app="$app" --key=FILES_SIZE --value="$files_size"
 fi
 
+# Delete legacy settings
 if [ -n "${api_gateway_version_installed+x}" ]; then
-    ynh_app_setting_delete --app=$app --key=api_gateway_version_installed
+    ynh_app_setting_delete --app="$app" --key=api_gateway_version_installed
 fi
 if [ -n "${auth_version_installed+x}" ]; then
-    ynh_app_setting_delete --app=$app --key=auth_version_installe
+    ynh_app_setting_delete --app="$app" --key=auth_version_installe
 fi
 if [ -n "${syncing_server_version_installed+x}" ]; then
-    ynh_app_setting_delete --app=$app --key=syncing_server_version_installed
+    ynh_app_setting_delete --app="$app" --key=syncing_server_version_installed
 fi
 if [ -n "${install_dir_www+x}" ]; then
-    ynh_app_setting_delete --app=$app --key=install_dir_www
+    ynh_app_setting_delete --app="$app" --key=install_dir_www
 fi
-# If install_dir_extensions exist, delete it
 if [ -n "${install_dir_extensions+x}" ]; then
-    ynh_app_setting_delete --app=$app --key=install_dir_extensions
+    ynh_app_setting_delete --app="$app" --key=install_dir_extensions
 fi
 
 # If old service exsits; remove it
