@@ -36,6 +36,10 @@ ram.runtime = "50M" # FIXME: replace with an **estimate** minimum ram requiremen
     type = "path"
     default = "/"
 
+    [install.init_main_permission]
+    type = "group"
+    default = "visitors"
+
 [resources]
     [resources.sources.main]
     url = "https://github.com/standardnotes/server/archive/5ea91aeafc6c986391e6f4acc5cad20584a90828.tar.gz"
@@ -63,6 +67,10 @@ ram.runtime = "50M" # FIXME: replace with an **estimate** minimum ram requiremen
     workspace.default = 3006
 
     [resources.apt]
+    packages = [
+        "mariadb-server",
+    ]
+
     [resources.apt.extras.yarn]
     repo = "deb https://dl.yarnpkg.com/debian/ stable main"
     key = "https://dl.yarnpkg.com/debian/pubkey.gpg"
