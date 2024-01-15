@@ -14,15 +14,6 @@ source /usr/share/yunohost/helpers
 redis_db=$(ynh_redis_get_free_db)
 ynh_app_setting_set --app=$app --key=redis_db --value="$redis_db"
 
-config_api_gateway="$install_dir/live/api-gateway.env"
-config_auth="$install_dir/live/auth.env"
-config_auth_worker="$install_dir/live/auth-worker.env"
-config_files="$install_dir/live/files.env"
-config_syncing_server="$install_dir/live/syncing-server.env"
-config_syncing_server_worker="$install_dir/live/syncing-server-worker.env"
-config_workspace="$install_dir/live/workspace.env"
-config_nginx="/etc/nginx/conf.d/$domain.d/$app.conf"
-
 #=================================================
 # RESTORE THE APP MAIN DIR
 #=================================================
@@ -129,10 +120,10 @@ ynh_replace_string --match_string="^AUTH_SERVER_URL.*$" --replace_string="AUTH_S
 ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_auth_worker" --target_file="$config_auth_worker"
 # API-Gateway Port
 ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_api_gateway" --target_file="$config_api_gateway"
-ynh_replace_string_on_line --line="2" --match_string="proxy_pass.*$" --replace_string="proxy_pass http://127.0.0.1:$port_api_gateway/;" --target_file="$config_nginx"
+ynh_replace_string_on_line --line="2" --match_string="proxy_pass.*$" --replace_string="proxy_pass http://127.0.0.1:$port_api_gateway/;" --target_file="/etc/nginx/conf.d/$domain.d/$app.conf"
 # Files Port
 ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_files" --target_file="$config_files"
-ynh_replace_string_on_line --line="17" --match_string="proxy_pass.*$" --replace_string="proxy_pass http://127.0.0.1:$port_files/;" --target_file="$config_nginx"
+ynh_replace_string_on_line --line="17" --match_string="proxy_pass.*$" --replace_string="proxy_pass http://127.0.0.1:$port_files/;" --target_file="/etc/nginx/conf.d/$domain.d/$app.conf"
 # Workspace Port
 ynh_replace_string --match_string="^PORT.*$" --replace_string="PORT=$port_workspace" --target_file="$config_workspace"
 ynh_replace_string --match_string="^WORKSPACE_SERVER_URL.*$" --replace_string="WORKSPACE_SERVER_URL=http://localhost:$port_workspace" --target_file="$config_api_gateway"

@@ -9,6 +9,13 @@ nodejs_version=16.13.1
 swap_needed=4096
 node_max_old_space_size=6144
 
+config_api_gateway="$install_dir/live/api-gateway.env"
+config_auth="$install_dir/live/auth.env"
+config_auth_worker="$install_dir/live/auth-worker.env"
+config_files="$install_dir/live/files.env"
+config_syncing_server="$install_dir/live/syncing-server.env"
+config_syncing_server_worker="$install_dir/live/syncing-server-worker.env"
+config_workspace="$install_dir/live/workspace.env"
 
 #=================================================
 # PERSONAL HELPERS
