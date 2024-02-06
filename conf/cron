@@ -1,1 +1,1 @@
-*/5 * * * * __APP__ __FINALPATH__/cron.sh > /var/log/__APP__/cron.log 2>&1
+*/5 * * * * __APP__ __INSTALL_DIR__/cron.sh > /var/log/__APP__/cron.log 2>&1
