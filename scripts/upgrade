@@ -279,7 +279,7 @@ then
 	# Download, check integrity, uncompress and patch the source from app.src
 	ynh_secure_remove --file="$final_path/live"
 	mkdir -p "$final_path/live"
-	ynh_setup_source --source_id=app --dest_dir="$final_path/live"
+	ynh_setup_source --source_id=app --dest_dir="$final_path/live" --full_replace=1
 	cp "$YNH_APP_BASEDIR/sources/extra_files/cron.sh" "$final_path/cron.sh"
 
 	chmod 750 "$final_path"
