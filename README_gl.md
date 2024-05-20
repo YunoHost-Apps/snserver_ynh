@@ -28,10 +28,10 @@ Standard Notes is an end-to-end encrypted note-taking app for digitalists and pr
 * Ram requirements ( 4GB swap memory will be created during install ):
 * Configuration can be changed under: https://my_domain.tld/yunohost/admin/#/apps/$app_id/config-panel
 
-## :red_circle: Caraterísticas cuestionables
+## :red_circle: Debes considerar
 
 - **Non-free assets**: Contains and makes use of non-free assets. The most common case is apps using artwork - images, sounds, music, etc. - under a commercial license.
-- **Package not maintained**: This YunoHost package is not maintained and needs adoption.
+- **Package not maintained**: This YunoHost package is not actively maintained and needs adoption. This means that minimal maintenance is made by volunteers who don't use the app, so you should expect the app to lose reliability over time. You can [learn how to package](https://yunohost.org/packaging_apps_intro) if you'd like to adopt it.
 
 ## Documentación e recursos
 

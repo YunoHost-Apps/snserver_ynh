@@ -30,8 +30,8 @@ Standard Notes est une application de prise de notes chiffrée de bout en bout p
 
 ## :red_circle: Anti-fonctionnalités
 
-- **Ressources non libres**: Contient ou utilise des médias non libres. Le cas le plus fréquent concerne des applications utilisant des œuvres (images, sons, musiques, etc.) sous une licence commerciale.
-- **Paquet non maintenu**: Ce package YunoHost n'est plus maintenu et doit être adopté.
+- **Ressources non libres **: Contient ou utilise des médias non libres. Le cas le plus fréquent concerne des applications utilisant des œuvres (images, sons, musiques, etc.) sous une licence commerciale.
+- **Package non maintenu **: Ce package YunoHost n'est pas activement maintenu et a besoin d'être adopté. Cela veut dire que la maintenance minimale est réalisée par des bénévoles qui n'utilisent pas l'application, il faut donc s'attendre à ce que l'app perde en fiabilité avec le temps. Vous pouvez [apprendre comment packager](https://yunohost.org/packaging_apps_intro) si vous voulez l'adopter.
 
 ## Documentations et ressources
 

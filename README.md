@@ -9,7 +9,7 @@ It shall NOT be edited by hand.
 
 [![Install Standard Notes Server with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=snserver)
 
-*[Read this README is other languages.](./ALL_README.md)*
+*[Read this README in other languages.](./ALL_README.md)*
 
 > *This package allows you to install Standard Notes Server quickly and simply on a YunoHost server.*  
 > *If you don't have YunoHost, please consult [the guide](https://yunohost.org/install) to learn how to install it.*
@@ -31,7 +31,7 @@ Standard Notes is an end-to-end encrypted note-taking app for digitalists and pr
 ## :red_circle: Antifeatures
 
 - **Non-free assets**: Contains and makes use of non-free assets. The most common case is apps using artwork - images, sounds, music, etc. - under a commercial license.
-- **Package not maintained**: This YunoHost package is not maintained and needs adoption.
+- **Package not maintained**: This YunoHost package is not actively maintained and needs adoption. This means that minimal maintenance is made by volunteers who don't use the app, so you should expect the app to lose reliability over time. You can [learn how to package](https://yunohost.org/packaging_apps_intro) if you'd like to adopt it.
 
 ## Documentation and resources
 
