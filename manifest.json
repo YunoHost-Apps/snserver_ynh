@@ -21,7 +21,7 @@
         "email": "46000361+FabianWilkens@users.noreply.github.com"
     },
     "requirements": {
-        "yunohost": ">= 11.1"
+        "yunohost": ">= 11.2.12"
     },
     "multi_instance": true,
     "services": [
