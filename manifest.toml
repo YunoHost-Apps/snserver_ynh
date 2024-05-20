@@ -4,7 +4,8 @@ packaging_format = 2
 
 id = "snserver"
 name = "Standard Notes Server"
-description.en = "The Standard Notes syncing server. An end-to-end encrypted note-taking app."
+description.en = "End-to-end encrypted note-taking app syncing server"
+description.fr = "Serveur de synchronisation de prise de notes cryptées de bout en bout"
 
 version = "2023.01.26~ynh2"
 
