@@ -19,7 +19,7 @@ No se debe editar a mano.
 Standard Notes is an end-to-end encrypted note-taking app for digitalists and professionals. Capture your notes, files, and life’s work all in one secure place.
 
 
-**Versión actual:** 2023.01.26~ynh2
+**Versión actual:** 1.23.0~ynh1
 
 **Demo:** <https://standardnotes.org/demo>
 ## :red_circle: funcionalidades no deseadas
