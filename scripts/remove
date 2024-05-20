@@ -11,72 +11,39 @@ source ynh_add_swap
 source /usr/share/yunohost/helpers
 
 #=================================================
-# LOAD SETTINGS
+# REMOVE SYSTEM CONFIGURATIONS
 #=================================================
-ynh_script_progression --message="Loading installation settings..." --weight=1
-
-app=$YNH_APP_INSTANCE_NAME
-
-domain=$(ynh_app_setting_get --app=$app --key=domain)
-port_api_gateway=$(ynh_app_setting_get --app=$app --key=port_api_gateway)
-port_auth=$(ynh_app_setting_get --app=$app --key=port_auth)
-port_auth_worker=$(ynh_app_setting_get --app=$app --key=port_auth_worker)
-port_files=$(ynh_app_setting_get --app=$app --key=port_files)
-port_syncing_server=$(ynh_app_setting_get --app=$app --key=port_syncing_server)
-port_syncing_server_worker=$(ynh_app_setting_get --app=$app --key=port_syncing_server_worker)
-port_workspace=$(ynh_app_setting_get --app=$app --key=port_workspace)
-db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-db_user=$db_name
-final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-datadir=$(ynh_app_setting_get --app=$app --key=datadir)
-
-#=================================================
-# STANDARD REMOVE
-#=================================================
-# REMOVE SERVICE INTEGRATION IN YUNOHOST
-#=================================================
+ynh_script_progression --message="Removing system configurations related to $app..." --weight=1
 
 # Remove the service from the list of services known by YunoHost (added from `yunohost service add`)
-if ynh_exec_warn_less yunohost service status "$app-api-gateway" >/dev/null
-then
-	ynh_script_progression --message="Removing $app-api-gateway service..." --weight=1
-	yunohost service remove "$app-api-gateway"
+if ynh_exec_warn_less yunohost service status "$app-api-gateway" >/dev/null; then
+    ynh_script_progression --message="Removing $app-api-gateway service..." --weight=1
+    yunohost service remove "$app-api-gateway"
 fi
-if ynh_exec_warn_less yunohost service status "$app-auth" >/dev/null
-then
-	ynh_script_progression --message="Removing $app-auth service..." --weight=1
-	yunohost service remove "$app-auth"
+if ynh_exec_warn_less yunohost service status "$app-auth" >/dev/null; then
+    ynh_script_progression --message="Removing $app-auth service..." --weight=1
+    yunohost service remove "$app-auth"
 fi
-if ynh_exec_warn_less yunohost service status "$app-auth-worker" >/dev/null
-then
-	ynh_script_progression --message="Removing $app-auth-worker service..." --weight=1
-	yunohost service remove "$app-auth-worker"
+if ynh_exec_warn_less yunohost service status "$app-auth-worker" >/dev/null; then
+    ynh_script_progression --message="Removing $app-auth-worker service..." --weight=1
+    yunohost service remove "$app-auth-worker"
 fi
-if ynh_exec_warn_less yunohost service status "$app-files" >/dev/null
-then
-	ynh_script_progression --message="Removing $app-files service..." --weight=1
-	yunohost service remove "$app-files"
+if ynh_exec_warn_less yunohost service status "$app-files" >/dev/null; then
+    ynh_script_progression --message="Removing $app-files service..." --weight=1
+    yunohost service remove "$app-files"
 fi
-if ynh_exec_warn_less yunohost service status "$app-syncing-server" >/dev/null
-then
-	ynh_script_progression --message="Removing $app-syncing-server service..." --weight=1
-	yunohost service remove "$app-syncing-server"
+if ynh_exec_warn_less yunohost service status "$app-syncing-server" >/dev/null; then
+    ynh_script_progression --message="Removing $app-syncing-server service..." --weight=1
+    yunohost service remove "$app-syncing-server"
 fi
-if ynh_exec_warn_less yunohost service status "$app-syncing-server-worker" >/dev/null
-then
-	ynh_script_progression --message="Removing $app-syncing-server-worker service..." --weight=1
-	yunohost service remove "$app-syncing-server-worker"
+if ynh_exec_warn_less yunohost service status "$app-syncing-server-worker" >/dev/null; then
+    ynh_script_progression --message="Removing $app-syncing-server-worker service..." --weight=1
+    yunohost service remove "$app-syncing-server-worker"
 fi
-if ynh_exec_warn_less yunohost service status "$app-workspace" >/dev/null
-then
-	ynh_script_progression --message="Removing $app-workspace service..." --weight=1
-	yunohost service remove "$app-workspace"
+if ynh_exec_warn_less yunohost service status "$app-workspace" >/dev/null; then
+    ynh_script_progression --message="Removing $app-workspace service..." --weight=1
+    yunohost service remove "$app-workspace"
 fi
-
-#=================================================
-# STOP AND REMOVE SERVICE
-#=================================================
-ynh_script_progression --message="Stopping and removing the systemd service..." --weight=1
 
 # Remove the dedicated systemd config
 ynh_remove_systemd_config --service="$app-api-gateway"
@@ -89,72 +56,23 @@ ynh_remove_systemd_config --service="$app-workspace"
 
 ynh_reset_systemd
 
-#=================================================
-# REMOVE LOGROTATE CONFIGURATION
-#=================================================
-ynh_script_progression --message="Removing logrotate configuration..." --weight=1
-
 # Remove the app-specific logrotate config
 ynh_remove_logrotate
 
-#=================================================
-# REMOVE THE MYSQL DATABASE
-#=================================================
-ynh_script_progression --message="Removing the MySQL database..." --weight=1
-
-# Remove a database if it exists, along with the associated user
-ynh_mysql_remove_db --db_user=$db_user --db_name=$db_name
-
-#=================================================
-# REMOVE REDIS DB
-#=================================================
-ynh_script_progression --message="Removing the Redis database..." --weight=1
-
 ynh_redis_remove_db
-
-#=================================================
-# REMOVE APP MAIN DIR
-#=================================================
-ynh_script_progression --message="Removing app main directory..." --weight=1
-
-# Remove the app directory securely
-ynh_secure_remove --file="$final_path"
-
-#=================================================
-# REMOVE DATA DIR
-#=================================================
-
-# Remove the data directory if --purge option is used
-if [ "${YNH_APP_PURGE:-0}" -eq 1 ]
-then
-	ynh_script_progression --message="Removing app data directory..." --weight=1
-	ynh_secure_remove --file="$datadir"
-fi
-
-#=================================================
-# REMOVE NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Removing NGINX web server configuration..." --weight=1
 
 # Remove the dedicated NGINX config
 ynh_remove_nginx_config
 
-#=================================================
-# REMOVE DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Removing dependencies..." --weight=10
-
-# Remove metapackage and its dependencies
-ynh_remove_app_dependencies
-ynh_remove_nodejs
-
-#=================================================
-# REMOVE FAIL2BAN CONFIGURATION
-#=================================================
-ynh_script_progression --message="Removing Fail2Ban configuration..." --weight=1
-
 # Remove the dedicated Fail2Ban config
 ynh_remove_fail2ban_config
+
+#=================================================
+# REMOVE NODEJS
+#=================================================
+ynh_script_progression --message="Removing NodeJS..." --weight=10
+
+ynh_remove_nodejs
 
 #=================================================
 # SPECIFIC REMOVE
@@ -175,18 +93,8 @@ ynh_secure_remove --file="/var/log/$app"
 ynh_script_progression --message="Removing swap..."
 
 if [ ${PACKAGE_CHECK_EXEC:-0} -eq 0 ]; then
-	ynh_del_swap
+    ynh_del_swap
 fi
-
-#=================================================
-# GENERIC FINALIZATION
-#=================================================
-# REMOVE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Removing the dedicated system user..." --weight=1
-
-# Delete a system user
-ynh_system_user_delete --username=$app
 
 #=================================================
 # END OF SCRIPT

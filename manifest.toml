@@ -1,0 +1,84 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/master/schemas/manifest.v2.schema.json
+
+packaging_format = 2
+
+id = "snserver"
+name = "Standard Notes Server"
+description.en = "End-to-end encrypted note-taking app syncing server"
+description.fr = "Serveur de synchronisation de prise de notes cryptées de bout en bout"
+
+version = "2023.01.26~ynh2"
+
+maintainers = ["Fabian Wilkens"]
+
+[upstream]
+license = "AGPL-3.0-or-later"
+website = "https://standardnotes.org"
+demo = "https://standardnotes.org/demo"
+admindoc = "https://docs.standardnotes.org"
+userdoc = "https://standardnotes.com/help"
+code = "https://github.com/standardnotes/server"
+
+[integration]
+yunohost = ">= 11.2.12"
+architectures = "all"
+multi_instance = true
+
+ldap = false
+
+sso = false
+
+disk = "50M"
+ram.build = "50M"
+ram.runtime = "50M"
+
+[install]
+    [install.domain]
+    type = "domain"
+
+    [install.path]
+    type = "path"
+    default = "/"
+
+    [install.init_main_permission]
+    type = "group"
+    default = "visitors"
+
+[resources]
+    [resources.sources.main]
+    url = "https://github.com/standardnotes/server/archive/5ea91aeafc6c986391e6f4acc5cad20584a90828.tar.gz"
+    sha256 = "87d98db93233f88da30e5b89fa9df02bc0d2ee2ddadc9087a42b90987ec3c581"
+    autoupdate.strategy = "latest_github_release"
+    autoupdate.asset = "tarball"
+
+    [resources.system_user]
+
+    [resources.install_dir]
+
+    [resources.data_dir]
+    subdirs = ["uploads"]
+
+    [resources.permissions]
+    main.url = "/"
+
+    [resources.ports]
+    api_gateway.default = 3000
+    auth.default = 3001
+    auth_worker.default = 3002
+    files.default = 3003
+    syncing_server.default = 3004
+    syncing_server_worker.default = 3005
+    workspace.default = 3006
+
+    [resources.apt]
+    packages = [
+        "mariadb-server",
+    ]
+
+    [resources.apt.extras.yarn]
+    repo = "deb https://dl.yarnpkg.com/debian/ stable main"
+    key = "https://dl.yarnpkg.com/debian/pubkey.gpg"
+    packages = "yarn"
+
+    [resources.database]
+    type = "mysql"

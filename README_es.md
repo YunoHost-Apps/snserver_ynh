@@ -19,15 +19,9 @@ No se debe editar a mano.
 Standard Notes is an end-to-end encrypted note-taking app for digitalists and professionals. Capture your notes, files, and life’s work all in one secure place.
 
 
-**Versión actual:** 2023.01.26~ynh1
+**Versión actual:** 2023.01.26~ynh2
 
 **Demo:** <https://standardnotes.org/demo>
-## informaciones importantes
-
-* No single-sign on or LDAP integration
-* Ram requirements ( 4GB swap memory will be created during install ):
-* Configuration can be changed under: https://my_domain.tld/yunohost/admin/#/apps/$app_id/config-panel
-
 ## :red_circle: funcionalidades no deseadas
 
 - **Non-free assets**: Contains and makes use of non-free assets. The most common case is apps using artwork - images, sounds, music, etc. - under a commercial license.
@@ -35,9 +29,9 @@ Standard Notes is an end-to-end encrypted note-taking app for digitalists and pr
 
 ## Documentaciones y recursos
 
-- Sitio web oficial: <https://standardnotes.org/>
+- Sitio web oficial: <https://standardnotes.org>
 - Documentación usuario oficial: <https://standardnotes.com/help>
-- Documentación administrador oficial: <https://docs.standardnotes.org/>
+- Documentación administrador oficial: <https://docs.standardnotes.org>
 - Repositorio del código fuente oficial de la aplicación : <https://github.com/standardnotes/server>
 - Catálogo YunoHost: <https://apps.yunohost.org/app/snserver>
 - Reportar un error: <https://github.com/YunoHost-Apps/snserver_ynh/issues>
