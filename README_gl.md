@@ -19,25 +19,19 @@ NON debe editarse manualmente.
 Standard Notes is an end-to-end encrypted note-taking app for digitalists and professionals. Capture your notes, files, and life’s work all in one secure place.
 
 
-**Versión proporcionada:** 2023.01.26~ynh1
+**Versión proporcionada:** 2023.01.26~ynh2
 
 **Demo:** <https://standardnotes.org/demo>
-## Avisos / información importante
-
-* No single-sign on or LDAP integration
-* Ram requirements ( 4GB swap memory will be created during install ):
-* Configuration can be changed under: https://my_domain.tld/yunohost/admin/#/apps/$app_id/config-panel
-
-## :red_circle: Caraterísticas cuestionables
+## :red_circle: Debes considerar
 
 - **Non-free assets**: Contains and makes use of non-free assets. The most common case is apps using artwork - images, sounds, music, etc. - under a commercial license.
-- **Package not maintained**: This YunoHost package is not maintained and needs adoption.
+- **Package not maintained**: This YunoHost package is not actively maintained and needs adoption. This means that minimal maintenance is made by volunteers who don't use the app, so you should expect the app to lose reliability over time. You can [learn how to package](https://yunohost.org/packaging_apps_intro) if you'd like to adopt it.
 
 ## Documentación e recursos
 
-- Web oficial da app: <https://standardnotes.org/>
+- Web oficial da app: <https://standardnotes.org>
 - Documentación oficial para usuarias: <https://standardnotes.com/help>
-- Documentación oficial para admin: <https://docs.standardnotes.org/>
+- Documentación oficial para admin: <https://docs.standardnotes.org>
 - Repositorio de orixe do código: <https://github.com/standardnotes/server>
 - Tenda YunoHost: <https://apps.yunohost.org/app/snserver>
 - Informar dun problema: <https://github.com/YunoHost-Apps/snserver_ynh/issues>

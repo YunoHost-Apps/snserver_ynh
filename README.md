@@ -9,7 +9,7 @@ It shall NOT be edited by hand.
 
 [![Install Standard Notes Server with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=snserver)
 
-*[Read this README is other languages.](./ALL_README.md)*
+*[Read this README in other languages.](./ALL_README.md)*
 
 > *This package allows you to install Standard Notes Server quickly and simply on a YunoHost server.*  
 > *If you don't have YunoHost, please consult [the guide](https://yunohost.org/install) to learn how to install it.*
@@ -19,25 +19,19 @@ It shall NOT be edited by hand.
 Standard Notes is an end-to-end encrypted note-taking app for digitalists and professionals. Capture your notes, files, and life’s work all in one secure place.
 
 
-**Shipped version:** 2023.01.26~ynh1
+**Shipped version:** 2023.01.26~ynh2
 
 **Demo:** <https://standardnotes.org/demo>
-## Disclaimers / important information
-
-* No single-sign on or LDAP integration
-* Ram requirements ( 4GB swap memory will be created during install ):
-* Configuration can be changed under: https://my_domain.tld/yunohost/admin/#/apps/$app_id/config-panel
-
 ## :red_circle: Antifeatures
 
 - **Non-free assets**: Contains and makes use of non-free assets. The most common case is apps using artwork - images, sounds, music, etc. - under a commercial license.
-- **Package not maintained**: This YunoHost package is not maintained and needs adoption.
+- **Package not maintained**: This YunoHost package is not actively maintained and needs adoption. This means that minimal maintenance is made by volunteers who don't use the app, so you should expect the app to lose reliability over time. You can [learn how to package](https://yunohost.org/packaging_apps_intro) if you'd like to adopt it.
 
 ## Documentation and resources
 
-- Official app website: <https://standardnotes.org/>
+- Official app website: <https://standardnotes.org>
 - Official user documentation: <https://standardnotes.com/help>
-- Official admin documentation: <https://docs.standardnotes.org/>
+- Official admin documentation: <https://docs.standardnotes.org>
 - Upstream app code repository: <https://github.com/standardnotes/server>
 - YunoHost Store: <https://apps.yunohost.org/app/snserver>
 - Report a bug: <https://github.com/YunoHost-Apps/snserver_ynh/issues>
