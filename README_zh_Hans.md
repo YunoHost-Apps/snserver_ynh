@@ -19,7 +19,7 @@
 Standard Notes is an end-to-end encrypted note-taking app for digitalists and professionals. Capture your notes, files, and life’s work all in one secure place.
 
 
-**分发版本：** 2023.01.26~ynh2
+**分发版本：** 1.23.0~ynh1
 
 **演示：** <https://standardnotes.org/demo>
 ## :red_circle: 负面特征

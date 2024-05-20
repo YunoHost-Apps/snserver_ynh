@@ -19,7 +19,7 @@ Il NE doit PAS être modifié à la main.
 Standard Notes est une application de prise de notes chiffrée de bout en bout pour les numériciens et les professionnels. Capturez vos notes, vos fichiers et le travail de votre vie en un seul endroit sécurisé.
 
 
-**Version incluse :** 2023.01.26~ynh2
+**Version incluse :** 1.23.0~ynh1
 
 **Démo :** <https://standardnotes.org/demo>
 ## :red_circle: Anti-fonctionnalités
