@@ -20,7 +20,7 @@ userdoc = "https://standardnotes.com/help"
 code = "https://github.com/standardnotes/server"
 
 [integration]
-yunohost = ">= 11.2"
+yunohost = ">= 11.2.12"
 architectures = "all"
 multi_instance = true
 
