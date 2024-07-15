@@ -5,7 +5,7 @@ EZ editatu eskuz.
 
 # Standard Notes Server YunoHost-erako
 
-[![Integrazio maila](https://dash.yunohost.org/integration/snserver.svg)](https://dash.yunohost.org/appci/app/snserver) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/snserver.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/snserver.maintain.svg)
+[![Integrazio maila](https://dash.yunohost.org/integration/snserver.svg)](https://ci-apps.yunohost.org/ci/apps/snserver/) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/snserver.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/snserver.maintain.svg)
 
 [![Instalatu Standard Notes Server YunoHost-ekin](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=snserver)
 
