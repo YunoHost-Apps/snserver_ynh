@@ -48,8 +48,9 @@ ram.runtime = "50M"
     [resources.sources.main]
     url = "https://github.com/standardnotes/server/archive/5ea91aeafc6c986391e6f4acc5cad20584a90828.tar.gz"
     sha256 = "87d98db93233f88da30e5b89fa9df02bc0d2ee2ddadc9087a42b90987ec3c581"
-    autoupdate.strategy = "latest_github_release"
-    autoupdate.asset = "tarball"
+
+    # Upstream has no proper releases ... tags are funky ...
+    # autoupdate.strategy = "latest_github_release"
 
     [resources.system_user]
 
