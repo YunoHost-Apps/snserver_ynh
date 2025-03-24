@@ -3,9 +3,11 @@ Este archivo README esta generado automaticamente<https://github.com/YunoHost/ap
 No se debe editar a mano.
 -->
 
-# Standard Notes Server para Yunohost
+# Standard Notes Server para YunoHost
 
-[![Nivel de integración](https://dash.yunohost.org/integration/snserver.svg)](https://ci-apps.yunohost.org/ci/apps/snserver/) ![Estado funcional](https://ci-apps.yunohost.org/ci/badges/snserver.status.svg) ![Estado En Mantención](https://ci-apps.yunohost.org/ci/badges/snserver.maintain.svg)
+[![Nivel de integración](https://apps.yunohost.org/badge/integration/snserver)](https://ci-apps.yunohost.org/ci/apps/snserver/)
+![Estado funcional](https://apps.yunohost.org/badge/state/snserver)
+![Estado En Mantención](https://apps.yunohost.org/badge/maintained/snserver)
 
 [![Instalar Standard Notes Server con Yunhost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=snserver)
 
@@ -19,7 +21,7 @@ No se debe editar a mano.
 Standard Notes is an end-to-end encrypted note-taking app for digitalists and professionals. Capture your notes, files, and life’s work all in one secure place.
 
 
-**Versión actual:** 2023.01.26~ynh2
+**Versión actual:** 2023.01.26~ynh3
 
 **Demo:** <https://standardnotes.org/demo>
 ## :red_circle: Características no deseables
@@ -38,7 +40,7 @@ Standard Notes is an end-to-end encrypted note-taking app for digitalists and pr
 
 ## Información para desarrolladores
 
-Por favor enviar sus correcciones a la [`branch testing`](https://github.com/YunoHost-Apps/snserver_ynh/tree/testing
+Por favor enviar sus correcciones a la [rama `testing`](https://github.com/YunoHost-Apps/snserver_ynh/tree/testing).
 
 Para probar la rama `testing`, sigue asÍ:
 
