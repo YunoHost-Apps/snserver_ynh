@@ -5,7 +5,9 @@ EZ editatu eskuz.
 
 # Standard Notes Server YunoHost-erako
 
-[![Integrazio maila](https://dash.yunohost.org/integration/snserver.svg)](https://ci-apps.yunohost.org/ci/apps/snserver/) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/snserver.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/snserver.maintain.svg)
+[![Integrazio maila](https://apps.yunohost.org/badge/integration/snserver)](https://ci-apps.yunohost.org/ci/apps/snserver/)
+![Funtzionamendu egoera](https://apps.yunohost.org/badge/state/snserver)
+![Mantentze egoera](https://apps.yunohost.org/badge/maintained/snserver)
 
 [![Instalatu Standard Notes Server YunoHost-ekin](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=snserver)
 
@@ -19,7 +21,7 @@ EZ editatu eskuz.
 Standard Notes is an end-to-end encrypted note-taking app for digitalists and professionals. Capture your notes, files, and life’s work all in one secure place.
 
 
-**Paketatutako bertsioa:** 2023.01.26~ynh2
+**Paketatutako bertsioa:** 2023.01.26~ynh3
 
 **Demoa:** <https://standardnotes.org/demo>
 ## :red_circle: Ezaugarri zalantzagarriak
@@ -40,7 +42,7 @@ Standard Notes is an end-to-end encrypted note-taking app for digitalists and pr
 
 Bidali `pull request`a [`testing` abarrera](https://github.com/YunoHost-Apps/snserver_ynh/tree/testing).
 
-`testing` abarra probatzeko, ondorengoa egin:
+`testing` abarra probatzeko, honakoa egin:
 
 ```bash
 sudo yunohost app install https://github.com/YunoHost-Apps/snserver_ynh/tree/testing --debug

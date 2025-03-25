@@ -5,7 +5,9 @@ Ini TIDAK boleh diedit dengan tangan.
 
 # Standard Notes Server untuk YunoHost
 
-[![Tingkat integrasi](https://dash.yunohost.org/integration/snserver.svg)](https://ci-apps.yunohost.org/ci/apps/snserver/) ![Status kerja](https://ci-apps.yunohost.org/ci/badges/snserver.status.svg) ![Status pemeliharaan](https://ci-apps.yunohost.org/ci/badges/snserver.maintain.svg)
+[![Tingkat integrasi](https://apps.yunohost.org/badge/integration/snserver)](https://ci-apps.yunohost.org/ci/apps/snserver/)
+![Status kerja](https://apps.yunohost.org/badge/state/snserver)
+![Status pemeliharaan](https://apps.yunohost.org/badge/maintained/snserver)
 
 [![Pasang Standard Notes Server dengan YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=snserver)
 
@@ -19,7 +21,7 @@ Ini TIDAK boleh diedit dengan tangan.
 Standard Notes is an end-to-end encrypted note-taking app for digitalists and professionals. Capture your notes, files, and life’s work all in one secure place.
 
 
-**Versi terkirim:** 2023.01.26~ynh2
+**Versi terkirim:** 2023.01.26~ynh3
 
 **Demo:** <https://standardnotes.org/demo>
 ## :red_circle: Antifitur

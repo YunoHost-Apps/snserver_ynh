@@ -5,7 +5,9 @@
 
 # YunoHost 上的 Standard Notes Server
 
-[![集成程度](https://dash.yunohost.org/integration/snserver.svg)](https://ci-apps.yunohost.org/ci/apps/snserver/) ![工作状态](https://ci-apps.yunohost.org/ci/badges/snserver.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/snserver.maintain.svg)
+[![集成程度](https://apps.yunohost.org/badge/integration/snserver)](https://ci-apps.yunohost.org/ci/apps/snserver/)
+![工作状态](https://apps.yunohost.org/badge/state/snserver)
+![维护状态](https://apps.yunohost.org/badge/maintained/snserver)
 
 [![使用 YunoHost 安装 Standard Notes Server](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=snserver)
 
@@ -19,7 +21,7 @@
 Standard Notes is an end-to-end encrypted note-taking app for digitalists and professionals. Capture your notes, files, and life’s work all in one secure place.
 
 
-**分发版本：** 2023.01.26~ynh2
+**分发版本：** 2023.01.26~ynh3
 
 **演示：** <https://standardnotes.org/demo>
 ## :red_circle: 负面特征

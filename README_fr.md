@@ -5,7 +5,9 @@ Il NE doit PAS être modifié à la main.
 
 # Standard Notes Server pour YunoHost
 
-[![Niveau d’intégration](https://dash.yunohost.org/integration/snserver.svg)](https://ci-apps.yunohost.org/ci/apps/snserver/) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/snserver.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/snserver.maintain.svg)
+[![Niveau d’intégration](https://apps.yunohost.org/badge/integration/snserver)](https://ci-apps.yunohost.org/ci/apps/snserver/)
+![Statut du fonctionnement](https://apps.yunohost.org/badge/state/snserver)
+![Statut de maintenance](https://apps.yunohost.org/badge/maintained/snserver)
 
 [![Installer Standard Notes Server avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=snserver)
 
@@ -19,7 +21,7 @@ Il NE doit PAS être modifié à la main.
 Standard Notes est une application de prise de notes chiffrée de bout en bout pour les numériciens et les professionnels. Capturez vos notes, vos fichiers et le travail de votre vie en un seul endroit sécurisé.
 
 
-**Version incluse :** 2023.01.26~ynh2
+**Version incluse :** 2023.01.26~ynh3
 
 **Démo :** <https://standardnotes.org/demo>
 ## :red_circle: Anti-fonctionnalités
