@@ -84,9 +84,6 @@ ynh_script_progression --message="Removing various files..." --weight=1
 # Remove a cron file
 ynh_secure_remove --file="/etc/cron.d/$app"
 
-# Remove the log files
-ynh_secure_remove --file="/var/log/$app"
-
 #=================================================
 # REMOVE SWAP
 #=================================================

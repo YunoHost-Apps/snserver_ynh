@@ -8,4 +8,13 @@ test_format = 1.0
     # Tests to run
     # ------------
 
-    test_upgrade_from.62b95a36.name = "2022.09.16~ynh1"
+    # -------------------------------
+    # Default args to use for install
+    # -------------------------------
+
+    # -------------------------------
+    # Commits to test upgrade from
+    # -------------------------------
+
+    # test_upgrade_from.62b95a36.name = "2022.09.16~ynh1"
+    test_upgrade_from.e8f144b902077d56c5240471564d33db9cf60d63.name = "Upgrade from 2023.01.26~ynh2"
