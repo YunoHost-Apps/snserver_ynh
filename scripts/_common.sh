@@ -4,7 +4,7 @@
 # COMMON VARIABLES
 #=================================================
 
-nodejs_version=16.13.1
+nodejs_version=20.10.0
 
 swap_needed=4096
 node_max_old_space_size=6144
