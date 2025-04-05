@@ -7,7 +7,6 @@
 #=================================================
 
 source _common.sh
-source ynh_add_swap
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -89,9 +88,7 @@ ynh_secure_remove --file="/etc/cron.d/$app"
 #=================================================
 ynh_script_progression --message="Removing swap..."
 
-if [ ${PACKAGE_CHECK_EXEC:-0} -eq 0 ]; then
-    ynh_del_swap
-fi
+ynh_del_swap
 
 #=================================================
 # END OF SCRIPT
