@@ -13,9 +13,9 @@ maintainers = ["Fabian Wilkens"]
 
 [upstream]
 license = "AGPL-3.0-or-later"
-website = "https://standardnotes.org"
-demo = "https://standardnotes.org/demo"
-admindoc = "https://docs.standardnotes.org"
+website = "https://standardnotes.com/"
+demo = "https://standardnotes.com/demo"
+admindoc = "https://docs.standardnotes.com"
 userdoc = "https://standardnotes.com/help"
 code = "https://github.com/standardnotes/server"
 
