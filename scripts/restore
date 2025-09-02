@@ -87,9 +87,9 @@ fi
 #=================================================
 # REINSTALL NODEJS
 #=================================================
-ynh_script_progression --message="Reinstalling NodeJS..." --weight=17
+#REMOVEME? ynh_script_progression --message="Reinstalling NodeJS..." --weight=17
 
-ynh_install_nodejs --nodejs_version="$nodejs_version"
+#REMOVEME? ynh_install_nodejs --#REMOVEME? nodejs_version="$nodejs_version"
 
 #=================================================
 # MODIFY CONFIG

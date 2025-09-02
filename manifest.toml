@@ -20,7 +20,7 @@ userdoc = "https://standardnotes.com/help"
 code = "https://github.com/standardnotes/server"
 
 [integration]
-yunohost = ">= 11.2.12"
+yunohost = ">= 12.1.17"
 architectures = "all"
 multi_instance = true
 
@@ -83,3 +83,6 @@ ram.runtime = "50M"
 
     [resources.database]
     type = "mysql"
+
+    [resources.nodejs]
+    version = "16"

@@ -25,9 +25,9 @@ ynh_app_setting_set --app="$app" --key=FILES_SIZE --value=$files_size
 #=================================================
 # INSTALL NODEJS
 #=================================================
-ynh_script_progression --message="Installing NodeJS..." --weight=17
+#REMOVEME? ynh_script_progression --message="Installing NodeJS..." --weight=17
 
-ynh_install_nodejs --nodejs_version="$nodejs_version"
+#REMOVEME? ynh_install_nodejs --#REMOVEME? nodejs_version="$nodejs_version"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -78,7 +78,7 @@ ynh_add_config --template="cron.env" --destination="$install_dir/cron.env"
 #=================================================
 ynh_script_progression --message="Building Standard Notes - Syncing Server..." --weight=93
 
-ynh_use_nodejs
+#REMOVEME? ynh_use_nodejs
 pushd "$install_dir/live"
     ynh_exec_warn_less ynh_exec_as "$app" env NODE_ENV="production" NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" "$ynh_node_load_PATH" yarn install --immutable
     ynh_exec_warn_less ynh_exec_as "$app" env NODE_ENV="production" NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" "$ynh_node_load_PATH" yarn build

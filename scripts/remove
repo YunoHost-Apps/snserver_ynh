@@ -70,9 +70,9 @@ ynh_remove_fail2ban_config
 #=================================================
 # REMOVE NODEJS
 #=================================================
-ynh_script_progression --message="Removing NodeJS..." --weight=10
+#REMOVEME? ynh_script_progression --message="Removing NodeJS..." --weight=10
 
-ynh_remove_nodejs
+#REMOVEME? ynh_remove_nodejs
 
 #=================================================
 # SPECIFIC REMOVE
