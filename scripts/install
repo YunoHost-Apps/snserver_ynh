@@ -101,9 +101,6 @@ ynh_config_add_logrotate "/var/log/$app/syncing-server.log"
 ynh_config_add_logrotate "/var/log/$app/syncing-server-worker.log"
 ynh_config_add_logrotate "/var/log/$app/workspace.log"
 
-# Create a dedicated Fail2Ban config
-ynh_config_add_fail2ban
-
 ynh_config_add --template="cron" --destination="/etc/cron.d/$app"
 chmod 640 "/etc/cron.d/$app"
 chown root: "/etc/cron.d/$app"
