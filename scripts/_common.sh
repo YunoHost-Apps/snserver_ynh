@@ -1,10 +1,8 @@
 #!/bin/bash
 
 #=================================================
-# COMMON VARIABLES
+# COMMON VARIABLES AND CUSTOM HELPERS
 #=================================================
-
-nodejs_version=20.10.0
 
 swap_needed=4096
 node_max_old_space_size=6144
@@ -17,10 +15,6 @@ config_syncing_server="$install_dir/live/syncing-server.env"
 config_syncing_server_worker="$install_dir/live/syncing-server-worker.env"
 config_workspace="$install_dir/live/workspace.env"
 
-#=================================================
-# PERSONAL HELPERS
-#=================================================
-
 # Reset failed systemd services.
 ynh_reset_systemd(){
     systemctl reset-failed
@@ -28,16 +22,16 @@ ynh_reset_systemd(){
 
 # Substitute/replace a string (or expression) by another in a file on a line
 #
-# usage: ynh_replace_string_on_line --line=line --match_string=match_string --replace_string=replace_string --target_file=target_file
+# usage: ynh_replace_on_line --line=line --match=match_string --replace=replace_string --file=target_file
 # | arg: -l, --line=			- Replace match on nth line in the file
-# | arg: -m, --match_string=	- String to be searched and replaced in the file
-# | arg: -r, --replace_string=  - String that will replace matches
-# | arg: -f, --target_file=	 - File in which the string will be replaced.
+# | arg: -m, --match=	- String to be searched and replaced in the file
+# | arg: -r, --replace=  - String that will replace matches
+# | arg: -f, --file=	 - File in which the string will be replaced.
 #
 # As this helper is based on sed command, regular expressions and references to
 # sub-expressions can be used (see sed manual page for more information)
 #
-ynh_replace_string_on_line() {
+ynh_replace_on_line() {
     # Declare an array to define the options of this helper.
     local legacy_args=lmrf
     local -A args_array=([l]=line= [m]=match_string= [r]=replace_string= [f]=target_file=)
@@ -57,11 +51,3 @@ ynh_replace_string_on_line() {
     set -o xtrace # set -x
     sed --in-place "${line} s${delimit}${match_string}${delimit}${replace_string}${delimit}" "$target_file"
 }
-
-#=================================================
-# EXPERIMENTAL HELPERS
-#=================================================
-
-#=================================================
-# FUTURE OFFICIAL HELPERS
-#=================================================

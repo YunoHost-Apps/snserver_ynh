@@ -1,11 +1,5 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC START
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source ynh_add_swap
 source /usr/share/yunohost/helpers
@@ -18,36 +12,23 @@ redis_db=$(ynh_redis_get_free_db)
 disable_user_registration=false
 files_size=100
 
-ynh_app_setting_set --app="$app" --key=redis_db --value="$redis_db"
-ynh_app_setting_set --app="$app" --key=DISABLE_USER_REGISTRATION --value=$disable_user_registration
-ynh_app_setting_set --app="$app" --key=FILES_SIZE --value=$files_size
-
-#=================================================
-# INSTALL NODEJS
-#=================================================
-ynh_script_progression --message="Installing NodeJS..." --weight=17
-
-ynh_install_nodejs --nodejs_version="$nodejs_version"
+ynh_app_setting_set --key=redis_db --value="$redis_db"
+ynh_app_setting_set --key=DISABLE_USER_REGISTRATION --value=$disable_user_registration
+ynh_app_setting_set --key=FILES_SIZE --value=$files_size
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Setting up source files..." --weight=2
+ynh_script_progression "Setting up source files..."
 
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source  --dest_dir="$install_dir/live"
-cp "$YNH_APP_BASEDIR/sources/extra_files/cron.sh" "$install_dir/cron.sh"
-
-chmod -R o-rwx "$install_dir"
-chown -R "$app:$app" "$install_dir"
-
-chmod -R o-rwx "$data_dir"
-chown -R "$app:$app" "$data_dir"
+cp "$YNH_APP_BASEDIR/sources/cron.sh" "$install_dir/cron.sh"
 
 #=================================================
 # ADD A CONFIGURATION
 #=================================================
-ynh_script_progression --message="Adding configuration files..." --weight=2
+ynh_script_progression "Adding configuration files..."
 
 jwt_secret=$(ynh_string_random --length=48 | base64)
 legacy_jwt_secret=$(ynh_string_random --length=48 | base64)
@@ -56,50 +37,49 @@ pseudo_key_params_key=$(ynh_string_random --length=48 | base64)
 encryption_server_key=$(hexdump -n 32 -e '4/4 "%08X"' /dev/random) # 32bytes hex key is required
 valet_token_secret=$(ynh_string_random --length=48 | base64)
 
-ynh_app_setting_set --app=$app --key=jwt_secret --value=$jwt_secret
-ynh_app_setting_set --app=$app --key=legacy_jwt_secret --value=$legacy_jwt_secret
-ynh_app_setting_set --app=$app --key=auth_jwt_secret --value=$auth_jwt_secret
-ynh_app_setting_set --app=$app --key=pseudo_key_params_key --value=$pseudo_key_params_key
-ynh_app_setting_set --app=$app --key=encryption_server_key --value=$encryption_server_key
-ynh_app_setting_set --app=$app --key=valet_token_secret --value=$valet_token_secret
+ynh_app_setting_set --key=jwt_secret --value=$jwt_secret
+ynh_app_setting_set --key=legacy_jwt_secret --value=$legacy_jwt_secret
+ynh_app_setting_set --key=auth_jwt_secret --value=$auth_jwt_secret
+ynh_app_setting_set --key=pseudo_key_params_key --value=$pseudo_key_params_key
+ynh_app_setting_set --key=encryption_server_key --value=$encryption_server_key
+ynh_app_setting_set --key=valet_token_secret --value=$valet_token_secret
 
-ynh_add_config --template="env_api-gateway.env.sample" --destination="$config_api_gateway"
-ynh_add_config --template="env_auth.env.sample" --destination="$config_auth"
-ynh_add_config --template="env_auth-worker.env.sample" --destination="$config_auth_worker"
-ynh_add_config --template="env_files.env.sample" --destination="$config_files"
-ynh_add_config --template="env_syncing-server.env.sample" --destination="$config_syncing_server"
-ynh_add_config --template="env_syncing-server-worker.env.sample" --destination="$config_syncing_server_worker"
-ynh_add_config --template="env_workspace.env.sample" --destination="$config_workspace"
+ynh_config_add --template="env_api-gateway.env.sample" --destination="$config_api_gateway"
+ynh_config_add --template="env_auth.env.sample" --destination="$config_auth"
+ynh_config_add --template="env_auth-worker.env.sample" --destination="$config_auth_worker"
+ynh_config_add --template="env_files.env.sample" --destination="$config_files"
+ynh_config_add --template="env_syncing-server.env.sample" --destination="$config_syncing_server"
+ynh_config_add --template="env_syncing-server-worker.env.sample" --destination="$config_syncing_server_worker"
+ynh_config_add --template="env_workspace.env.sample" --destination="$config_workspace"
 
-ynh_add_config --template="cron.env" --destination="$install_dir/cron.env"
+ynh_config_add --template="cron.env" --destination="$install_dir/cron.env"
 
 #=================================================
 # INSTALLING Standard Notes - Syncing Server
 #=================================================
-ynh_script_progression --message="Building Standard Notes - Syncing Server..." --weight=93
+ynh_script_progression "Building Standard Notes - Syncing Server..."
 
-ynh_use_nodejs
 pushd "$install_dir/live"
-    ynh_exec_warn_less ynh_exec_as "$app" env NODE_ENV="production" NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" "$ynh_node_load_PATH" yarn install --immutable
-    ynh_exec_warn_less ynh_exec_as "$app" env NODE_ENV="production" NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" "$ynh_node_load_PATH" yarn build
+    ynh_hide_warnings ynh_exec_as_app NODE_ENV="production" NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" yarn install --immutable
+    ynh_hide_warnings ynh_exec_as_app NODE_ENV="production" NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" yarn build
 popd
 
 #=================================================
 # SYSTEM CONFIGURATION
 #=================================================
-ynh_script_progression --message="Adding system configurations related to $app..." --weight=1
+ynh_script_progression "Adding system configurations related to $app..."
 
 # Create a dedicated NGINX config
-ynh_add_nginx_config
+ynh_config_add_nginx
 
 # Create a dedicated systemd config
-ynh_add_systemd_config --service="$app-api-gateway" --template="systemd_api-gateway.service"
-ynh_add_systemd_config --service="$app-auth" --template="systemd_auth.service"
-ynh_add_systemd_config --service="$app-auth-worker" --template="systemd_auth-worker.service"
-ynh_add_systemd_config --service="$app-files" --template="systemd_files.service"
-ynh_add_systemd_config --service="$app-syncing-server" --template="systemd_syncing-server.service"
-ynh_add_systemd_config --service="$app-syncing-server-worker" --template="systemd_syncing-server-worker.service"
-ynh_add_systemd_config --service="$app-workspace" --template="systemd_workspace.service"
+ynh_config_add_systemd --service="$app-api-gateway" --template="systemd_api-gateway.service"
+ynh_config_add_systemd --service="$app-auth" --template="systemd_auth.service"
+ynh_config_add_systemd --service="$app-auth-worker" --template="systemd_auth-worker.service"
+ynh_config_add_systemd --service="$app-files" --template="systemd_files.service"
+ynh_config_add_systemd --service="$app-syncing-server" --template="systemd_syncing-server.service"
+ynh_config_add_systemd --service="$app-syncing-server-worker" --template="systemd_syncing-server-worker.service"
+ynh_config_add_systemd --service="$app-workspace" --template="systemd_workspace.service"
 
 yunohost service add "$app-api-gateway" --description="Standard Notes - API Gateway" --log="/var/log/$app/api-gateway.log"
 yunohost service add "$app-auth" --description="Standard Notes - Auth" --log="/var/log/$app/auth.log"
@@ -110,69 +90,69 @@ yunohost service add "$app-syncing-server-worker" --description="Standard Notes 
 yunohost service add "$app-workspace" --description="Standard Notes - Workspace" --log="/var/log/$app/workspace.log"
 
 # Use logrotate to manage application logfile(s)
-ynh_use_logrotate --logfile="/var/log/$app/api-gateway.log"
-ynh_use_logrotate --logfile="/var/log/$app/auth.log"
-ynh_use_logrotate --logfile="/var/log/$app/auth-worker.log"
-ynh_use_logrotate --logfile="/var/log/$app/files.log"
-ynh_use_logrotate --logfile="/var/log/$app/syncing-server.log"
-ynh_use_logrotate --logfile="/var/log/$app/syncing-server-worker.log"
-ynh_use_logrotate --logfile="/var/log/$app/workspace.log"
+ynh_config_add_logrotate "/var/log/$app/api-gateway.log"
+ynh_config_add_logrotate "/var/log/$app/auth.log"
+ynh_config_add_logrotate "/var/log/$app/auth-worker.log"
+ynh_config_add_logrotate "/var/log/$app/files.log"
+ynh_config_add_logrotate "/var/log/$app/syncing-server.log"
+ynh_config_add_logrotate "/var/log/$app/syncing-server-worker.log"
+ynh_config_add_logrotate "/var/log/$app/workspace.log"
 
 # Create a dedicated Fail2Ban config
-ynh_add_fail2ban_config --use_template
+ynh_config_add_fail2ban
 
-ynh_add_config --template="cron" --destination="/etc/cron.d/$app"
+ynh_config_add --template="cron" --destination="/etc/cron.d/$app"
 chmod 640 "/etc/cron.d/$app"
 chown root: "/etc/cron.d/$app"
 
-if [ "${PACKAGE_CHECK_EXEC:-0}" -eq 0 ]; then
+if ! ynh_in_ci_tests; then
     ynh_add_swap --size="$swap_needed"
 fi
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting systemd services..." --weight=1
+ynh_script_progression "Starting systemd services..."
 
 # Start a systemd service
-ynh_systemd_action \
-    --service_name="$app-api-gateway" \
+ynh_systemctl \
+    --service="$app-api-gateway" \
     --action="start" \
     --log_path="/var/log/$app/api-gateway.log" \
-    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
-ynh_systemd_action \
-    --service_name="$app-auth" \
+    --wait_until='^.*Server started on port.*$|^.*Starting worker.*$'
+ynh_systemctl \
+    --service="$app-auth" \
     --action="start" \
     --log_path="/var/log/$app/auth.log" \
-    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
-ynh_systemd_action \
-    --service_name="$app-auth-worker" \
+    --wait_until='^.*Server started on port.*$|^.*Starting worker.*$'
+ynh_systemctl \
+    --service="$app-auth-worker" \
     --action="start" \
     --log_path="/var/log/$app/auth-worker.log" \
-    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
-ynh_systemd_action \
-    --service_name="$app-files" \
+    --wait_until='^.*Server started on port.*$|^.*Starting worker.*$'
+ynh_systemctl \
+    --service="$app-files" \
     --action="start" \
     --log_path="/var/log/$app/files.log" \
-    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
-ynh_systemd_action \
-    --service_name="$app-syncing-server" \
+    --wait_until='^.*Server started on port.*$|^.*Starting worker.*$'
+ynh_systemctl \
+    --service="$app-syncing-server" \
     --action="start" \
     --log_path="/var/log/$app/syncing-server.log" \
-    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
-ynh_systemd_action \
-    --service_name="$app-syncing-server-worker" \
+    --wait_until='^.*Server started on port.*$|^.*Starting worker.*$'
+ynh_systemctl \
+    --service="$app-syncing-server-worker" \
     --action="start" \
     --log_path="/var/log/$app/syncing-server-worker.log" \
-    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
-ynh_systemd_action \
-    --service_name="$app-workspace" \
+    --wait_until='^.*Server started on port.*$|^.*Starting worker.*$'
+ynh_systemctl \
+    --service="$app-workspace" \
     --action="start" \
     --log_path="/var/log/$app/workspace.log" \
-    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
+    --wait_until='^.*Server started on port.*$|^.*Starting worker.*$'
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Installation of $app completed" --last
+ynh_script_progression "Installation of $app completed"
