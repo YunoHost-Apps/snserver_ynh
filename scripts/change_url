@@ -1,44 +1,28 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC STARTING
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# STANDARD MODIFICATIONS
-#=================================================
 #=================================================
 # MODIFY URL IN NGINX CONF
 #=================================================
-ynh_script_progression --message="Updating NGINX web server configuration..." --weight=2
+ynh_script_progression "Updating NGINX web server configuration..."
 
-ynh_change_url_nginx_config
+ynh_config_change_url_nginx
 
 #=================================================
 # SPECIFIC MODIFICATIONS
 #=================================================
 # MODIFY CONFIG
 #=================================================
-ynh_script_progression --message="Modify configuring..." --weight=1
+ynh_script_progression "Modify configuring..."
 
-ynh_replace_string --match_string="^FILES_SERVER_URL.*$" --replace_string="FILES_SERVER_URL=https://$new_domain$new_path/files" --target_file="$config_api_gateway"
-ynh_store_file_checksum --file="$config_api_gateway"
-
-#=================================================
-# SETUP FAIL2BAN
-#=================================================
-ynh_script_progression --message="Configuring Fail2Ban..." --weight=1
-
-# Create a dedicated Fail2Ban config
-ynh_add_fail2ban_config --use_template
+ynh_replace --match="^FILES_SERVER_URL.*$" --replace="FILES_SERVER_URL=https://$new_domain$new_path/files" --file="$config_api_gateway"
+ynh_store_file_checksum "$config_api_gateway"
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Change of URL completed for $app" --last
+ynh_script_progression "Change of URL completed for $app"

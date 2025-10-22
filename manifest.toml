@@ -7,7 +7,7 @@ name = "Standard Notes Server"
 description.en = "End-to-end encrypted note-taking app syncing server"
 description.fr = "Serveur de synchronisation de prise de notes cryptées de bout en bout"
 
-version = "2023.01.26~ynh3"
+version = "2025.04.29~ynh1"
 
 maintainers = ["Fabian Wilkens"]
 
@@ -20,7 +20,8 @@ userdoc = "https://standardnotes.com/help"
 code = "https://github.com/standardnotes/server"
 
 [integration]
-yunohost = ">= 11.2.12"
+yunohost = ">= 11.2.18"
+helpers_version = "2.1"
 architectures = "all"
 multi_instance = true
 
@@ -46,8 +47,8 @@ ram.runtime = "50M"
 
 [resources]
     [resources.sources.main]
-    url = "https://github.com/standardnotes/server/archive/5ea91aeafc6c986391e6f4acc5cad20584a90828.tar.gz"
-    sha256 = "87d98db93233f88da30e5b89fa9df02bc0d2ee2ddadc9087a42b90987ec3c581"
+    url = "https://github.com/standardnotes/server/archive/162a63ae2bb926e1f061d3967dbe98878f0aedb7.tar.gz"
+    sha256 = "9e72af3cf30b14f4f01e4a436b017f2ba7f0b505255962d551c3431d28a365a0"
 
     autoupdate.strategy = "latest_github_commit"
 
@@ -68,7 +69,6 @@ ram.runtime = "50M"
     files.default = 3003
     syncing_server.default = 3004
     syncing_server_worker.default = 3005
-    workspace.default = 3006
 
     [resources.apt]
     packages = [
@@ -83,3 +83,6 @@ ram.runtime = "50M"
 
     [resources.database]
     type = "mysql"
+
+    [resources.nodejs]
+    version = "20.10.0"
