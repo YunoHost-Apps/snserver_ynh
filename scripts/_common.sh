@@ -13,7 +13,6 @@ config_auth_worker="$install_dir/live/auth-worker.env"
 config_files="$install_dir/live/files.env"
 config_syncing_server="$install_dir/live/syncing-server.env"
 config_syncing_server_worker="$install_dir/live/syncing-server-worker.env"
-config_workspace="$install_dir/live/workspace.env"
 
 # Reset failed systemd services.
 ynh_reset_systemd(){

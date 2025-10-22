@@ -44,7 +44,6 @@ ynh_restore "/etc/systemd/system/$app-auth-worker.service"
 ynh_restore "/etc/systemd/system/$app-files.service"
 ynh_restore "/etc/systemd/system/$app-syncing-server.service"
 ynh_restore "/etc/systemd/system/$app-syncing-server-worker.service"
-ynh_restore "/etc/systemd/system/$app-workspace.service"
 
 systemctl enable "$app-api-gateway.service" --quiet
 systemctl enable "$app-auth.service" --quiet
@@ -52,7 +51,6 @@ systemctl enable "$app-auth-worker.service" --quiet
 systemctl enable "$app-files.service" --quiet
 systemctl enable "$app-syncing-server.service" --quiet
 systemctl enable "$app-syncing-server-worker.service" --quiet
-systemctl enable "$app-workspace.service" --quiet
 
 yunohost service add "$app-api-gateway" --description="Standard Notes - API Gateway" --log="/var/log/$app/api-gateway.log"
 yunohost service add "$app-auth" --description="Standard Notes - Auth" --log="/var/log/$app/auth.log"
@@ -60,7 +58,6 @@ yunohost service add "$app-auth-worker" --description="Standard Notes - Auth - W
 yunohost service add "$app-files" --description="Standard Notes - Files" --log="/var/log/$app/files.log"
 yunohost service add "$app-syncing-server" --description="Standard Notes - Syncing Server" --log="/var/log/$app/syncing-server.log"
 yunohost service add "$app-syncing-server-worker" --description="Standard Notes - Syncing Server - Worker" --log="/var/log/$app/syncing-server-worker.log"
-yunohost service add "$app-workspace" --description="Standard Notes - Workspace" --log="/var/log/$app/workspace.log"
 
 ynh_restore "/etc/logrotate.d/$app"
 
@@ -84,7 +81,6 @@ ynh_replace --match="^REDIS_URL.*$" --replace="REDIS_URL=redis://localhost:6379/
 ynh_replace --match="^REDIS_URL.*$" --replace="REDIS_URL=redis://localhost:6379/$redis_db" --file="$config_files"
 ynh_replace --match="^REDIS_URL.*$" --replace="REDIS_URL=redis://localhost:6379/$redis_db" --file="$config_syncing_server"
 ynh_replace --match="^REDIS_URL.*$" --replace="REDIS_URL=redis://localhost:6379/$redis_db" --file="$config_syncing_server_worker"
-ynh_replace --match="^REDIS_URL.*$" --replace="REDIS_URL=redis://localhost:6379/$redis_db" --file="$config_workspace"
 # Syncing_Server Port
 ynh_replace --match="^PORT.*$" --replace="PORT=$port_syncing_server" --file="$config_syncing_server"
 ynh_replace --match="^SYNCING_SERVER_JS_URL.*$" --replace="SYNCING_SERVER_JS_URL=http://localhost:$port_syncing_server" --file="$config_api_gateway"
@@ -105,9 +101,6 @@ ynh_replace_on_line --line="2" --match="proxy_pass.*$" --replace="proxy_pass htt
 # Files Port
 ynh_replace --match="^PORT.*$" --replace="PORT=$port_files" --file="$config_files"
 ynh_replace_on_line --line="17" --match="proxy_pass.*$" --replace="proxy_pass http://127.0.0.1:$port_files/;" --file="/etc/nginx/conf.d/$domain.d/$app.conf"
-# Workspace Port
-ynh_replace --match="^PORT.*$" --replace="PORT=$port_workspace" --file="$config_workspace"
-ynh_replace --match="^WORKSPACE_SERVER_URL.*$" --replace="WORKSPACE_SERVER_URL=http://localhost:$port_workspace" --file="$config_api_gateway"
 
 #=================================================
 # RELOAD NGINX AND PHP-FPM OR THE APP SERVICE
@@ -143,11 +136,6 @@ ynh_systemctl \
     --service="$app-syncing-server-worker" \
     --action="start" \
     --log_path="/var/log/$app/syncing-server-worker.log" \
-    --wait_until='^.*Server started on port.*$|^.*Starting worker.*$'
-ynh_systemctl \
-    --service="$app-workspace" \
-    --action="start" \
-    --log_path="/var/log/$app/workspace.log" \
     --wait_until='^.*Server started on port.*$|^.*Starting worker.*$'
 
 ynh_systemctl --service=nginx --action=reload

@@ -30,7 +30,6 @@ ynh_backup "/etc/systemd/system/$app-auth-worker.service"
 ynh_backup "/etc/systemd/system/$app-files.service"
 ynh_backup "/etc/systemd/system/$app-syncing-server.service"
 ynh_backup "/etc/systemd/system/$app-syncing-server-worker.service"
-ynh_backup "/etc/systemd/system/$app-workspace.service"
 
 ynh_backup "/etc/logrotate.d/$app"
 

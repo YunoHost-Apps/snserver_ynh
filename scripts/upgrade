@@ -33,10 +33,6 @@ ynh_systemctl \
     --service="$app-syncing-server-worker" \
     --action="stop" \
     --log_path="/var/log/$app/syncing-server-worker.log"
-ynh_systemctl \
-    --service="$app-workspace" \
-    --action="stop" \
-    --log_path="/var/log/$app/workspace.log"
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
@@ -105,14 +101,23 @@ fi
 if ynh_hide_warnings yunohost service status "$app-syncing-server-js" >/dev/null; then
     ynh_script_progression "Removing old service..."
     yunohost service remove "$app-syncing-server-js"
-    ynh_config_remove_systemd"$app-syncing-server-js"
+    ynh_config_remove_systemd "$app-syncing-server-js"
     ynh_reset_systemd
 fi
 if ynh_hide_warnings yunohost service status "$app-syncing-server-js-worker" >/dev/null; then
     ynh_script_progression "Removing old service..."
     yunohost service remove "$app-syncing-server-js-worker"
-    ynh_config_remove_systemd"$app-syncing-server-js-worker"
+    ynh_config_remove_systemd "$app-syncing-server-js-worker"
     ynh_reset_systemd
+fi
+
+if ynh_hide_warnings yunohost service status "$app-syncing-server-js-worker" >/dev/null; then
+    ynh_script_progression "Removing old service..."
+    yunohost service remove "$app-workspace"
+    ynh_config_remove_systemd "$app-workspace"
+    ynh_reset_systemd
+    ynh_safe_rm "/var/log/$app/workspace.log"
+
 fi
 
 #=================================================
@@ -135,7 +140,6 @@ ynh_config_add --template="env_auth-worker.env.sample" --destination="$config_au
 ynh_config_add --template="env_files.env.sample" --destination="$config_files"
 ynh_config_add --template="env_syncing-server.env.sample" --destination="$config_syncing_server"
 ynh_config_add --template="env_syncing-server-worker.env.sample" --destination="$config_syncing_server_worker"
-ynh_config_add --template="env_workspace.env.sample" --destination="$config_workspace"
 
 ynh_config_add --template="cron.env" --destination="$install_dir/cron.env"
 
@@ -167,7 +171,6 @@ ynh_config_add_systemd --service="$app-auth-worker" --template="systemd_auth-wor
 ynh_config_add_systemd --service="$app-files" --template="systemd_files.service"
 ynh_config_add_systemd --service="$app-syncing-server" --template="systemd_syncing-server.service"
 ynh_config_add_systemd --service="$app-syncing-server-worker" --template="systemd_syncing-server-worker.service"
-ynh_config_add_systemd --service="$app-workspace" --template="systemd_workspace.service"
 
 yunohost service add "$app-api-gateway" --description="Standard Notes - API Gateway" --log="/var/log/$app/api-gateway.log"
 yunohost service add "$app-auth" --description="Standard Notes - Auth" --log="/var/log/$app/auth.log"
@@ -175,7 +178,6 @@ yunohost service add "$app-auth-worker" --description="Standard Notes - Auth - W
 yunohost service add "$app-files" --description="Standard Notes - Files" --log="/var/log/$app/files.log"
 yunohost service add "$app-syncing-server" --description="Standard Notes - Syncing Server" --log="/var/log/$app/syncing-server.log"
 yunohost service add "$app-syncing-server-worker" --description="Standard Notes - Syncing Server - Worker" --log="/var/log/$app/syncing-server-worker.log"
-yunohost service add "$app-workspace" --description="Standard Notes - Workspace" --log="/var/log/$app/workspace.log"
 
 # Use logrotate to manage application logfile(s)
 ynh_config_add_logrotate "/var/log/$app/api-gateway.log"
@@ -184,7 +186,6 @@ ynh_config_add_logrotate "/var/log/$app/auth-worker.log"
 ynh_config_add_logrotate "/var/log/$app/files.log"
 ynh_config_add_logrotate "/var/log/$app/syncing-server.log"
 ynh_config_add_logrotate "/var/log/$app/syncing-server-worker.log"
-ynh_config_add_logrotate "/var/log/$app/workspace.log"
 
 ynh_config_add --template="cron" --destination="/etc/cron.d/$app"
 chown root: "/etc/cron.d/$app"
@@ -229,11 +230,6 @@ ynh_systemctl \
     --service="$app-syncing-server-worker" \
     --action="start" \
     --log_path="/var/log/$app/syncing-server-worker.log" \
-    --wait_until='^.*Server started on port.*$|^.*Starting worker.*$'
-ynh_systemctl \
-    --service="$app-workspace" \
-    --action="start" \
-    --log_path="/var/log/$app/workspace.log" \
     --wait_until='^.*Server started on port.*$|^.*Starting worker.*$'
 
 #=================================================
