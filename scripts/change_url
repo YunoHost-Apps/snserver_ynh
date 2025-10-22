@@ -22,14 +22,6 @@ ynh_replace --match="^FILES_SERVER_URL.*$" --replace="FILES_SERVER_URL=https://$
 ynh_store_file_checksum "$config_api_gateway"
 
 #=================================================
-# SETUP FAIL2BAN
-#=================================================
-ynh_script_progression "Configuring Fail2Ban..."
-
-# Create a dedicated Fail2Ban config
-ynh_config_add_fail2ban
-
-#=================================================
 # END OF SCRIPT
 #=================================================
 

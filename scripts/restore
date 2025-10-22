@@ -97,10 +97,10 @@ ynh_replace --match="^AUTH_SERVER_URL.*$" --replace="AUTH_SERVER_URL=http://loca
 ynh_replace --match="^PORT.*$" --replace="PORT=$port_auth_worker" --file="$config_auth_worker"
 # API-Gateway Port
 ynh_replace --match="^PORT.*$" --replace="PORT=$port_api_gateway" --file="$config_api_gateway"
-ynh_replace_on_line --line="2" --match="proxy_pass.*$" --replace="proxy_pass http://127.0.0.1:$port_api_gateway/;" --file="/etc/nginx/conf.d/$domain.d/$app.conf"
+#ynh_replace_on_line --line="3" --match="proxy_pass.*$" --replace="proxy_pass http://127.0.0.1:$port_api_gateway/;" --file="/etc/nginx/conf.d/$domain.d/$app.conf"
 # Files Port
 ynh_replace --match="^PORT.*$" --replace="PORT=$port_files" --file="$config_files"
-ynh_replace_on_line --line="17" --match="proxy_pass.*$" --replace="proxy_pass http://127.0.0.1:$port_files/;" --file="/etc/nginx/conf.d/$domain.d/$app.conf"
+#ynh_replace_on_line --line="18" --match="proxy_pass.*$" --replace="proxy_pass http://127.0.0.1:$port_files/;" --file="/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
 # RELOAD NGINX AND PHP-FPM OR THE APP SERVICE
