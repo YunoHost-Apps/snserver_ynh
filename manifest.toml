@@ -69,7 +69,6 @@ ram.runtime = "50M"
     files.default = 3003
     syncing_server.default = 3004
     syncing_server_worker.default = 3005
-    workspace.default = 3006
 
     [resources.apt]
     packages = [

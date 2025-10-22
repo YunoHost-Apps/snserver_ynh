@@ -50,7 +50,6 @@ ynh_config_add --template="env_auth-worker.env.sample" --destination="$config_au
 ynh_config_add --template="env_files.env.sample" --destination="$config_files"
 ynh_config_add --template="env_syncing-server.env.sample" --destination="$config_syncing_server"
 ynh_config_add --template="env_syncing-server-worker.env.sample" --destination="$config_syncing_server_worker"
-ynh_config_add --template="env_workspace.env.sample" --destination="$config_workspace"
 
 ynh_config_add --template="cron.env" --destination="$install_dir/cron.env"
 
