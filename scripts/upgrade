@@ -1,182 +1,175 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC START
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source ynh_add_swap
 source /usr/share/yunohost/helpers
 
 #=================================================
-# STANDARD UPGRADE STEPS
-#=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Stopping systemd services..." --weight=1
+ynh_script_progression "Stopping systemd services..."
 
-ynh_systemd_action \
-    --service_name="$app-api-gateway" \
+ynh_systemctl \
+    --service="$app-api-gateway" \
     --action="stop" \
     --log_path="/var/log/$app/api-gateway.log"
-ynh_systemd_action \
-    --service_name="$app-auth" \
+ynh_systemctl \
+    --service="$app-auth" \
     --action="stop" \
     --log_path="/var/log/$app/auth.log"
-ynh_systemd_action \
-    --service_name="$app-auth-worker" \
+ynh_systemctl \
+    --service="$app-auth-worker" \
     --action="stop" \
     --log_path="/var/log/$app/auth-worker.log"
-ynh_systemd_action \
-    --service_name="$app-files" \
+ynh_systemctl \
+    --service="$app-files" \
     --action="stop" \
     --log_path="/var/log/$app/files.log"
-ynh_systemd_action \
-    --service_name="$app-syncing-server" \
+ynh_systemctl \
+    --service="$app-syncing-server" \
     --action="stop" \
     --log_path="/var/log/$app/syncing-server.log"
-ynh_systemd_action \
-    --service_name="$app-syncing-server-worker" \
+ynh_systemctl \
+    --service="$app-syncing-server-worker" \
     --action="stop" \
     --log_path="/var/log/$app/syncing-server-worker.log"
-ynh_systemd_action \
-    --service_name="$app-workspace" \
-    --action="stop" \
-    --log_path="/var/log/$app/workspace.log"
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
-ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
+ynh_script_progression "Ensuring downward compatibility..."
 
 # Create non existing settings
 if [ -z "${jwt_secret:-}" ]; then
     jwt_secret=$(ynh_string_random --length=48 | base64)
-    ynh_app_setting_set --app="$app" --key=jwt_secret --value="$jwt_secret"
+    ynh_app_setting_set --key=jwt_secret --value="$jwt_secret"
 fi
+
 if [ -z "${legacy_jwt_secret:-}" ]; then
     legacy_jwt_secret=$(ynh_string_random --length=48 | base64)
-    ynh_app_setting_set --app="$app" --key=legacy_jwt_secret --value="$legacy_jwt_secret"
+    ynh_app_setting_set --key=legacy_jwt_secret --value="$legacy_jwt_secret"
 fi
+
 if [ -z "${auth_jwt_secret:-}" ]; then
     auth_jwt_secret=$(ynh_string_random --length=48 | base64)
-    ynh_app_setting_set --app="$app" --key=auth_jwt_secret --value="$auth_jwt_secret"
+    ynh_app_setting_set --key=auth_jwt_secret --value="$auth_jwt_secret"
 fi
+
 if [ -z "${pseudo_key_params_key:-}" ]; then
     pseudo_key_params_key=$(ynh_string_random --length=48 | base64)
-    ynh_app_setting_set --app="$app" --key=pseudo_key_params_key --value="$pseudo_key_params_key"
+    ynh_app_setting_set --key=pseudo_key_params_key --value="$pseudo_key_params_key"
 fi
+
 if [ -z "${encryption_server_key:-}" ]; then
     encryption_server_key=$(hexdump -n 32 -e '4/4 "%08X"' /dev/random) # 32bytes hex key is required
-    ynh_app_setting_set --app="$app" --key=encryption_server_key --value="$encryption_server_key"
+    ynh_app_setting_set --key=encryption_server_key --value="$encryption_server_key"
 fi
+
 if [ -z "${valet_token_secret:-}" ]; then
     valet_token_secret=$(ynh_string_random --length=48 | base64)
-    ynh_app_setting_set --app="$app" --key=valet_token_secret --value="$valet_token_secret"
+    ynh_app_setting_set --key=valet_token_secret --value="$valet_token_secret"
 fi
+
 if [ -z "${disable_user_registration:-}" ]; then
     disable_user_registration=false
-    ynh_app_setting_set --app="$app" --key=DISABLE_USER_REGISTRATION --value="$disable_user_registration"
+    ynh_app_setting_set --key=DISABLE_USER_REGISTRATION --value="$disable_user_registration"
 fi
+
 if [ -z "${files_size:-}" ]; then
     files_size=100
-    ynh_app_setting_set --app="$app" --key=FILES_SIZE --value="$files_size"
+    ynh_app_setting_set --key=FILES_SIZE --value="$files_size"
 fi
 
 # Delete legacy settings
 if [ -n "${api_gateway_version_installed+x}" ]; then
-    ynh_app_setting_delete --app="$app" --key=api_gateway_version_installed
+    ynh_app_setting_delete --key=api_gateway_version_installed
 fi
 if [ -n "${auth_version_installed+x}" ]; then
-    ynh_app_setting_delete --app="$app" --key=auth_version_installe
+    ynh_app_setting_delete --key=auth_version_installe
 fi
 if [ -n "${syncing_server_version_installed+x}" ]; then
-    ynh_app_setting_delete --app="$app" --key=syncing_server_version_installed
+    ynh_app_setting_delete --key=syncing_server_version_installed
 fi
 if [ -n "${install_dir_www+x}" ]; then
-    ynh_app_setting_delete --app="$app" --key=install_dir_www
+    ynh_app_setting_delete --key=install_dir_www
 fi
 if [ -n "${install_dir_extensions+x}" ]; then
-    ynh_app_setting_delete --app="$app" --key=install_dir_extensions
+    ynh_app_setting_delete --key=install_dir_extensions
 fi
 
 # If old service exsits; remove it
-if ynh_exec_warn_less yunohost service status "$app-syncing-server-js" >/dev/null; then
-    ynh_script_progression --message="Removing old service..." --weight=1
+if ynh_hide_warnings yunohost service status "$app-syncing-server-js" >/dev/null; then
+    ynh_script_progression "Removing old service..."
     yunohost service remove "$app-syncing-server-js"
-    ynh_remove_systemd_config --service="$app-syncing-server-js"
+    ynh_config_remove_systemd "$app-syncing-server-js"
     ynh_reset_systemd
 fi
-if ynh_exec_warn_less yunohost service status "$app-syncing-server-js-worker" >/dev/null; then
-    ynh_script_progression --message="Removing old service..." --weight=1
+if ynh_hide_warnings yunohost service status "$app-syncing-server-js-worker" >/dev/null; then
+    ynh_script_progression "Removing old service..."
     yunohost service remove "$app-syncing-server-js-worker"
-    ynh_remove_systemd_config --service="$app-syncing-server-js-worker"
+    ynh_config_remove_systemd "$app-syncing-server-js-worker"
     ynh_reset_systemd
 fi
 
-#=================================================
-# UPGRADE NODEJS
-#=================================================
-ynh_script_progression --message="Upgrading NodeJS..." --weight=1
-
-ynh_install_nodejs --nodejs_version="$nodejs_version"
+if ynh_hide_warnings yunohost service status "$app-syncing-server-js-worker" >/dev/null; then
+    ynh_script_progression "Removing old service..."
+    yunohost service remove "$app-workspace"
+    ynh_config_remove_systemd "$app-workspace"
+    ynh_reset_systemd
+    ynh_safe_rm "/var/log/$app/workspace.log"
+fi
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Upgrading source files..." --weight=1
+ynh_script_progression "Upgrading source files..."
 
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source  --dest_dir="$install_dir/live" --full_replace=1
+ynh_setup_source  --dest_dir="$install_dir/live" --full_replace
 cp "$YNH_APP_BASEDIR/sources/extra_files/cron.sh" "$install_dir/cron.sh"
+
+#=================================================
+# ADD A CONFIGURATION
+#=================================================
+ynh_script_progression "Adding configuration files..."
+
+ynh_config_add --template="env_api-gateway.env.sample" --destination="$config_api_gateway"
+ynh_config_add --template="env_auth.env.sample" --destination="$config_auth"
+ynh_config_add --template="env_auth-worker.env.sample" --destination="$config_auth_worker"
+ynh_config_add --template="env_files.env.sample" --destination="$config_files"
+ynh_config_add --template="env_syncing-server.env.sample" --destination="$config_syncing_server"
+ynh_config_add --template="env_syncing-server-worker.env.sample" --destination="$config_syncing_server_worker"
+
+ynh_config_add --template="cron.env" --destination="$install_dir/cron.env"
 
 chmod -R o-rwx "$install_dir"
 chown -R "$app:$app" "$install_dir"
 
 #=================================================
-# ADD A CONFIGURATION
-#=================================================
-ynh_script_progression --message="Adding configuration files..." --weight=2
-
-ynh_add_config --template="env_api-gateway.env.sample" --destination="$config_api_gateway"
-ynh_add_config --template="env_auth.env.sample" --destination="$config_auth"
-ynh_add_config --template="env_auth-worker.env.sample" --destination="$config_auth_worker"
-ynh_add_config --template="env_files.env.sample" --destination="$config_files"
-ynh_add_config --template="env_syncing-server.env.sample" --destination="$config_syncing_server"
-ynh_add_config --template="env_syncing-server-worker.env.sample" --destination="$config_syncing_server_worker"
-ynh_add_config --template="env_workspace.env.sample" --destination="$config_workspace"
-
-ynh_add_config --template="cron.env" --destination="$install_dir/cron.env"
-
-#=================================================
 # INSTALLING Standard Notes - Syncing Server
 #=================================================
-ynh_script_progression --message="Building Standard Notes - Syncing Server..." --weight=93
+ynh_script_progression "Building Standard Notes - Syncing Server..."
 
-ynh_use_nodejs
 pushd "$install_dir/live"
-    ynh_exec_warn_less ynh_exec_as "$app" env NODE_ENV="production" NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" "$ynh_node_load_PATH" yarn install --immutable
-    ynh_exec_warn_less ynh_exec_as "$app" env NODE_ENV="production" NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" "$ynh_node_load_PATH" yarn build
+    ynh_hide_warnings ynh_exec_as_app NODE_ENV="production" NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" yarn install --immutable
+    ynh_hide_warnings ynh_exec_as_app NODE_ENV="production" NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" yarn build
 popd
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
 #=================================================
-ynh_script_progression --message="Upgrading system configurations related to $app..." --weight=1
+ynh_script_progression "Upgrading system configurations related to $app..."
 
 # Create a dedicated NGINX config
-ynh_add_nginx_config
+ynh_config_add_nginx
 
 # Create a dedicated systemd config
-ynh_add_systemd_config --service="$app-api-gateway" --template="systemd_api-gateway.service"
-ynh_add_systemd_config --service="$app-auth" --template="systemd_auth.service"
-ynh_add_systemd_config --service="$app-auth-worker" --template="systemd_auth-worker.service"
-ynh_add_systemd_config --service="$app-files" --template="systemd_files.service"
-ynh_add_systemd_config --service="$app-syncing-server" --template="systemd_syncing-server.service"
-ynh_add_systemd_config --service="$app-syncing-server-worker" --template="systemd_syncing-server-worker.service"
-ynh_add_systemd_config --service="$app-workspace" --template="systemd_workspace.service"
+ynh_config_add_systemd --service="$app-api-gateway" --template="systemd_api-gateway.service"
+ynh_config_add_systemd --service="$app-auth" --template="systemd_auth.service"
+ynh_config_add_systemd --service="$app-auth-worker" --template="systemd_auth-worker.service"
+ynh_config_add_systemd --service="$app-files" --template="systemd_files.service"
+ynh_config_add_systemd --service="$app-syncing-server" --template="systemd_syncing-server.service"
+ynh_config_add_systemd --service="$app-syncing-server-worker" --template="systemd_syncing-server-worker.service"
 
 yunohost service add "$app-api-gateway" --description="Standard Notes - API Gateway" --log="/var/log/$app/api-gateway.log"
 yunohost service add "$app-auth" --description="Standard Notes - Auth" --log="/var/log/$app/auth.log"
@@ -184,72 +177,62 @@ yunohost service add "$app-auth-worker" --description="Standard Notes - Auth - W
 yunohost service add "$app-files" --description="Standard Notes - Files" --log="/var/log/$app/files.log"
 yunohost service add "$app-syncing-server" --description="Standard Notes - Syncing Server" --log="/var/log/$app/syncing-server.log"
 yunohost service add "$app-syncing-server-worker" --description="Standard Notes - Syncing Server - Worker" --log="/var/log/$app/syncing-server-worker.log"
-yunohost service add "$app-workspace" --description="Standard Notes - Workspace" --log="/var/log/$app/workspace.log"
 
 # Use logrotate to manage application logfile(s)
-ynh_use_logrotate --logfile="/var/log/$app/api-gateway.log"
-ynh_use_logrotate --logfile="/var/log/$app/auth.log"
-ynh_use_logrotate --logfile="/var/log/$app/auth-worker.log"
-ynh_use_logrotate --logfile="/var/log/$app/files.log"
-ynh_use_logrotate --logfile="/var/log/$app/syncing-server.log"
-ynh_use_logrotate --logfile="/var/log/$app/syncing-server-worker.log"
-ynh_use_logrotate --logfile="/var/log/$app/workspace.log"
+ynh_config_add_logrotate "/var/log/$app/api-gateway.log"
+ynh_config_add_logrotate "/var/log/$app/auth.log"
+ynh_config_add_logrotate "/var/log/$app/auth-worker.log"
+ynh_config_add_logrotate "/var/log/$app/files.log"
+ynh_config_add_logrotate "/var/log/$app/syncing-server.log"
+ynh_config_add_logrotate "/var/log/$app/syncing-server-worker.log"
 
-# Create a dedicated Fail2Ban config
-ynh_add_fail2ban_config --use_template
-
-ynh_add_config --template="cron" --destination="/etc/cron.d/$app"
+ynh_config_add --template="cron" --destination="/etc/cron.d/$app"
 chown root: "/etc/cron.d/$app"
 chmod 640 "/etc/cron.d/$app"
 
-if [ "${PACKAGE_CHECK_EXEC:-0}" -eq 0 ]; then
+if ! ynh_in_ci_tests; then
     ynh_add_swap --size="$swap_needed"
 fi
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting systemd services..." --weight=1
+ynh_script_progression "Starting systemd services..."
 
 # Start a systemd service
-ynh_systemd_action \
-    --service_name="$app-api-gateway" \
+ynh_systemctl \
+    --service="$app-api-gateway" \
     --action="start" \
     --log_path="/var/log/$app/api-gateway.log" \
-    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
-ynh_systemd_action \
-    --service_name="$app-auth" \
+    --wait_until='^.*Server started on port.*$|^.*Starting worker.*$'
+ynh_systemctl \
+    --service="$app-auth" \
     --action="start" \
     --log_path="/var/log/$app/auth.log" \
-    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
-ynh_systemd_action \
-    --service_name="$app-auth-worker" \
+    --wait_until='^.*Server started on port.*$|^.*Starting worker.*$'
+ynh_systemctl \
+    --service="$app-auth-worker" \
     --action="start" \
     --log_path="/var/log/$app/auth-worker.log" \
-    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
-ynh_systemd_action \
-    --service_name="$app-files" \
+    --wait_until='^.*Server started on port.*$|^.*Starting worker.*$'
+ynh_systemctl \
+    --service="$app-files" \
     --action="start" \
     --log_path="/var/log/$app/files.log" \
-    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
-ynh_systemd_action \
-    --service_name="$app-syncing-server" \
+    --wait_until='^.*Server started on port.*$|^.*Starting worker.*$'
+ynh_systemctl \
+    --service="$app-syncing-server" \
     --action="start" \
     --log_path="/var/log/$app/syncing-server.log" \
-    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
-ynh_systemd_action \
-    --service_name="$app-syncing-server-worker" \
+    --wait_until='^.*Server started on port.*$|^.*Starting worker.*$'
+ynh_systemctl \
+    --service="$app-syncing-server-worker" \
     --action="start" \
     --log_path="/var/log/$app/syncing-server-worker.log" \
-    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
-ynh_systemd_action \
-    --service_name="$app-workspace" \
-    --action="start" \
-    --log_path="/var/log/$app/workspace.log" \
-    --line_match='^.*Server started on port.*$|^.*Starting worker.*$'
+    --wait_until='^.*Server started on port.*$|^.*Starting worker.*$'
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Upgrade of $app completed" --last
+ynh_script_progression "Upgrade of $app completed"
