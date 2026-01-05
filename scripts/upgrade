@@ -70,15 +70,8 @@ if [ -z "${valet_token_secret:-}" ]; then
     ynh_app_setting_set --key=valet_token_secret --value="$valet_token_secret"
 fi
 
-if [ -z "${disable_user_registration:-}" ]; then
-    disable_user_registration=false
-    ynh_app_setting_set --key=DISABLE_USER_REGISTRATION --value="$disable_user_registration"
-fi
-
-if [ -z "${files_size:-}" ]; then
-    files_size=100
-    ynh_app_setting_set --key=FILES_SIZE --value="$files_size"
-fi
+ynh_app_setting_set --key=disable_user_registration --value="false"
+ynh_app_setting_set --key=files_size --value="100"
 
 # Delete legacy settings
 if [ -n "${api_gateway_version_installed+x}" ]; then
@@ -126,7 +119,7 @@ ynh_script_progression "Upgrading source files..."
 
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source  --dest_dir="$install_dir/live" --full_replace
-cp "$YNH_APP_BASEDIR/sources/extra_files/cron.sh" "$install_dir/cron.sh"
+cp "$YNH_APP_BASEDIR/conf/cron.sh" "$install_dir/cron.sh"
 
 #=================================================
 # ADD A CONFIGURATION
