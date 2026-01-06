@@ -151,6 +151,9 @@ chown -R "$app:$app" "$install_dir"
 ynh_script_progression "Building Standard Notes - Syncing Server..."
 
 pushd "$install_dir/live"
+    corepack enable
+    ynh_hide_warnings corepack prepare yarn@4.12.0 --activate
+    
     ynh_hide_warnings ynh_exec_as_app NODE_ENV="production" NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" yarn install --immutable
     ynh_hide_warnings ynh_exec_as_app NODE_ENV="production" NODE_OPTIONS="--max-old-space-size=$node_max_old_space_size" yarn build
 popd
