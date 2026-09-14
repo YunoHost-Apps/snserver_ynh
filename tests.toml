@@ -17,4 +17,4 @@ test_format = 1.0
     # -------------------------------
 
     # test_upgrade_from.62b95a36.name = "2022.09.16~ynh1"
-    test_upgrade_from.e8f144b902077d56c5240471564d33db9cf60d63.name = "Upgrade from 2023.01.26~ynh2"
+    test_upgrade_from.7683dafdf9598fd6318bd353fc6ac20203a043c1.name = "3.202.4"
