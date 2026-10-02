@@ -7,7 +7,7 @@ name = "Standard Notes Server"
 description.en = "End-to-end encrypted note-taking app syncing server"
 description.fr = "Serveur de synchronisation de prise de notes chifrées de bout en bout"
 
-version = "2026.09.10~ynh1"
+version = "2026.09.21~ynh1"
 
 maintainers = ["Fabian Wilkens"]
 
@@ -46,8 +46,8 @@ ram.runtime = "50M"
 
 [resources]
     [resources.sources.main]
-    url = "https://github.com/standardnotes/server/archive/6a43c34eff09780cb556f8fea06bb97ddcb42002.tar.gz"
-    sha256 = "81268c1617a1ed1797cd905cef396ecdf958ddd67959de7b13494f8863e6b4d7"
+    url = "https://github.com/standardnotes/server/archive/3125ba9212fe7c1f8b635017babdb726778ff26e.tar.gz"
+    sha256 = "991dc8df3354d38dddb544c445ced10db2e7cc816045d9bd659f20e0cc84052f"
 
     autoupdate.strategy = "latest_github_commit"
 
