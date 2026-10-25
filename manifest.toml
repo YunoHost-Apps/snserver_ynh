@@ -7,7 +7,7 @@ name = "Standard Notes Server"
 description.en = "End-to-end encrypted note-taking app syncing server"
 description.fr = "Serveur de synchronisation de prise de notes chifrées de bout en bout"
 
-version = "2026.10.02~ynh1"
+version = "2026.10.02~ynh2"
 
 maintainers = ["Fabian Wilkens"]
 
@@ -79,5 +79,5 @@ ram.runtime = "50M"
     type = "mysql"
 
     [resources.nodejs]
-    version = "20.10.0"
+    version = "24.22.1"
     
